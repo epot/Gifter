@@ -28,7 +28,9 @@ object Application extends Controller {
   )
   
   val REQUIRED_ATTRIBUTES=Seq(
-    "email" -> "http://schema.openid.net/contact/email"
+    "email" -> "http://schema.openid.net/contact/email",
+    "firstname" -> "http://axschema.org/namePerson/first",
+    "lastname" -> "http://axschema.org/namePerson/last"
   )
   
   /**
@@ -65,6 +67,8 @@ object Application extends Controller {
       promise match {
         case Redeemed(info) => 
           println("Watchaaaaaaaaa "+ info.attributes.get("email").get)
+          println("Watchaaaaaaaaa "+ info.attributes.get("firstname").get)
+          println("Watchaaaaaaaaa "+ info.attributes.get("lastname").get)
           Ok(html.index(loginForm))
         case Thrown(throwable) => Unauthorized("Authorization refused by your openid provider<br>"+throwable.getMessage)
       }

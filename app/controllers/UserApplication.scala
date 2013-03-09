@@ -2,12 +2,16 @@ package controllers
 
 import models.user._
 import models._
+import anorm._
 import play.api.mvc._
 import play.api._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.data.format.Formats._
 import play.api.data.validation.Constraints._
+import play.api.db._
+import play.api.Play.current
+import play.api.db.evolutions.Evolutions
 
 trait Secured {
 
@@ -40,6 +44,25 @@ object UserApplication extends Controller with Secured {
 
   def index = IsAuthenticated { user => implicit request =>
     Ok(views.html.userHome(user))
+  }
+  
+  /** temporary method to reset the bootstrap data */
+  def reset = IsAuthenticated { user => implicit request =>
+    Logger.info("!!! resetting data !!!")
+    DB.withConnection { implicit connection =>
+      val api = current.plugin[DBPlugin].map(_.api).getOrElse(throw new Exception(
+        "there should be a database plugin registered at this point but looks like it's not available, so evolution won't work. Please make sure you register a db plugin properly"))
+      api.datasources.foreach {
+        case (ds, db) => {
+          val database = Evolutions.databaseEvolutions(api, db)
+          SQL(database(0).sql_down).executeUpdate()
+          SQL(database(0).sql_up).executeUpdate()
+        }
+      }
+    }
+
+    bootstrap.InitialData.addTestData()
+    Redirect(routes.UserApplication.index)
   }
 
 }

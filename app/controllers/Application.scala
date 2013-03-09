@@ -25,9 +25,9 @@ object Application extends Controller {
   }
   
   val REQUIRED_ATTRIBUTES=Seq(
-    "email" -> "http://schema.openid.net/contact/email",
-    "firstname" -> "http://axschema.org/namePerson/first",
-    "lastname" -> "http://axschema.org/namePerson/last"
+    "email" -> "http://schema.openid.net/contact/email"
+    ,"firstname" -> "http://axschema.org/namePerson/first"
+    //,"lastname" -> "http://axschema.org/namePerson/last"
   )  
   
   /**
@@ -74,7 +74,7 @@ object Application extends Controller {
             case Some(user) => user
             case None => {
               val user = User.create(
-                  User(name=info.attributes.get("firstname").get + " " + info.attributes.get("lastname").get), 
+                  User(name=info.attributes.get("firstname").get), 
                   Identity(email=email, adapter=Identity.Adapter.Google) )
               user
             }

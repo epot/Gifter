@@ -24,8 +24,15 @@
               ><a href="@routes.UserApplication.index">Home</a></li>
             </ul>
             @if(connected.isDefined) {
-              <ul class="span2 nav right">
-                <li><a href="@routes.Application.logout">sign out</a></li>
+              <ul class="span2 nav right">  
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="#">@connected.get.name<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="#">Profile</a></li>
+                      <li class="divider"></li>
+                      <li><a href="@routes.Application.logout">Sign out</a></li>
+                    </ul>
+                  </li>
               </ul>
             }
           </div>

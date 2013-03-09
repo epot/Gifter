@@ -1,0 +1,67 @@
+package models.gift
+
+import java.util.Date
+import models.user._
+import anorm._
+import anorm.SqlParser._
+import play.api.db._
+import play.api.Play.current
+import java.text.SimpleDateFormat
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormatter
+import org.joda.time.format.DateTimeFormat
+
+case class Event(
+  id: Pk[Long] = NotAssigned,
+  creator: User,
+  name: String,
+  date: DateTime = DateTime.now
+  ) {
+
+  def isOwner(user: User) = creator == user
+}
+
+object Event {
+
+  val simple =
+    get[Pk[Long]]("event.id") ~
+    get[Long]("event.creatorid") ~
+    get[String]("event.name") ~
+    get[Date]("event.date") map {
+      case id~creatorid~name~date =>
+        Event(id, User.findById(creatorid).get, name, new DateTime(date))
+  }
+  def create(event: Event): Event =
+  DB.withConnection { implicit connection =>
+      // Get the user id
+      val id: Long = event.id.getOrElse {
+        SQL("select next value for event_seq").as(scalar[Long].single)
+      }
+      
+      SQL(
+        """
+          insert into event values (
+            {id}, {creatorid}, {name}, {date}
+          )
+        """
+      ).on(
+        'id -> id,
+        'creatorid -> event.creator.id,
+        'name -> event.name,
+        'date -> event.date.toDate
+      ).executeUpdate()
+      
+      event.copy(id = Id(id))
+  }
+  
+  /**
+   * Find all events related to a user
+   */
+  def findByUser(user: User): List[Event] =
+  DB.withConnection{ implicit connection =>
+    SQL("select * from event where creatorid = {creatorid}")
+    .on('creatorid -> user.id)
+      .as(Event.simple *)
+  }
+
+}

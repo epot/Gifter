@@ -70,7 +70,7 @@ object Application extends Controller {
       promise match {
         case Redeemed(info) => 
           val email = info.attributes.get("email").get
-          Ok(html.userHome(User.findByEmail(email) match {
+          val user = User.findByEmail(email) match {
             case Some(user) => user
             case None => {
               val user = User.create(
@@ -78,7 +78,9 @@ object Application extends Controller {
                   Identity(email=email, adapter=Identity.Adapter.Google) )
               user
             }
-          }))
+          }
+          
+          Redirect(routes.UserApplication.index).withSession("userId" -> user.id.toString)
           
         case Thrown(throwable) => Unauthorized("Authorization refused by your openid provider<br>"+throwable.getMessage)
       }

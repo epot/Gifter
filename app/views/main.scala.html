@@ -1,23 +1,38 @@
-@(title: String)(content: Html)
+@(title: String,
+  connected: Option[models.user.User] = None, 
+  screen: String = "home")(content: Html)
 
 <!DOCTYPE html>
-
 <html>
     <head>
         <title>@title</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.css")" />
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/main.css")" />
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/gifter.png")">
         <script src="@routes.Assets.at("javascripts/jquery-1.9.1.js")" type="text/javascript"></script>
     </head>
     <body>
-
-        <header>
-            <a href="@routes.Application.index">@title</a>
-        </header>
-
-        <section>
-            @content
-        </section>
-
+      <div id="top" class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+          <div class="container">
+            <ul class="nav">
+              <li
+              @if(screen == "home"){
+                class="active"
+              }
+              ><a href="@routes.UserApplication.index">Home</a></li>
+            </ul>
+            @if(connected.isDefined) {
+              <ul class="span2 nav right">
+                <li><a href="@routes.Application.logout">sign out</a></li>
+              </ul>
+            }
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        @content
+      </div>
     </body>
 </html>

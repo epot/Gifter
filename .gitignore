@@ -6,4 +6,5 @@ tmp
 .classpath
 .project
 .settings
+.target
 *.class

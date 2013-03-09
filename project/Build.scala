@@ -4,11 +4,13 @@ import play.Project._
 
 object ApplicationBuild extends Build {
 
-    val appName         = "helloworld"
+    val appName         = "Gifter"
     val appVersion      = "1.0"
 
     val appDependencies = Seq(
       // Add your project dependencies here,
+      jdbc,
+      anorm
     )
 
     val main = play.Project(appName, appVersion, appDependencies).settings(

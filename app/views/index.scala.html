@@ -1,21 +1,42 @@
-@(loginForm: Form[String])
+@(loginForm: Form[(String, String)])
 
 @import helper._
 
-@main(title = "Gifter") {
+@main(title = "Home") {
+  <div class="page-header">
+    <h1>Login <small><a href="">Or create a new account</a></small></h1>
+  </div>
+  <div class="row">
+    <div class="span14">
+      @helper.form(routes.Application.authenticate) {
 
-    <h1>Awesome login:</h1>
-    @form(action = routes.Application.loginPost) {
+        @loginForm.globalError.map { error =>
+          <div class="alert error">
+            <p>@error.message</p>
+          </div>
+        }
 
-        @inputText(
-            field = loginForm("openid"),
-            args = '_label -> "OpenId?"
-        )
+        <fieldset>
+          @inputText(
+            loginForm("email"),
+            '_label -> "Email",
+            '_help -> "",
+            '_error -> loginForm.error("email")
+          )
 
+          @inputPassword(
+            loginForm("password"),
+            '_label -> "Password",
+            '_error -> loginForm.error("password")
+          )
+        </fieldset>
 
-        <p class="btn">
-            <input type="submit" id="submit" value="Google login">
-        <p>
-
-    }
+        <div class="actions">
+          <input type="submit" class="btn-primary" value="Login">
+        </div>
+      }
+      <h3>Or use one of your following account:</h3>
+      <a href="@routes.Application.googleLogin"> <img src="@routes.Assets.at("images/providers/google.png")"/></a>
+    </div>
+  </div>
 }

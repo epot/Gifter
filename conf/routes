@@ -3,12 +3,14 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
+GET     /                           controllers.UserApplication.index
 
-# Hello action
-#GET     /hello                     controllers.Application.sayHello
-POST     /login                     controllers.Application.loginPost
+# Login action
+GET      /logout                    controllers.Application.logout
 GET      /openIDCallback            controllers.Application.openIDCallback
+GET      /googleLogin               controllers.Application.googleLogin
+GET      /index                     controllers.Application.index
+POST     /login                     controllers.Application.authenticate
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

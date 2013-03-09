@@ -1,0 +1,22 @@
+@(user:models.user.User)
+
+@main(title = user.name + "'s Home", connected = Some(user)){
+  <div class="container">
+    <div class="content">
+      <div class="page-header">
+        <h1>Hello dear @user.name</h1>
+      </div>
+      <div class="row">
+        <div id="notifications" class="notifications"></div>
+        <br>
+        <div class="left-right-wrapper">
+          <div class="left">
+            <p>
+              <a href="">Create Event</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}

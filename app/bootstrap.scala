@@ -38,7 +38,6 @@ package bootstrap {
           Event.create(Event(creator=manu, name="Noel 2013"))
           Event.create(Event(creator=manu, name="Anniversaire nico 2013"))
           
-          println("gnnaa")
           for(event <- Event.findByUser(manu)) {
             println(event)
           }

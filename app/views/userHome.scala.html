@@ -17,7 +17,7 @@
           <tr>
             <td>@event.name</td>
             <td>@event.creator.name</td>
-            <td>@event.date</td>
+            <td>@event.date.toDate().format("dd/MM/yyyy")</td>
           </tr>
         }
       </tbody>

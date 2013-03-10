@@ -1,6 +1,7 @@
-@(user:models.user.User)(body: Html)
+@(user:models.user.User,
+title:String = "Gifter home")(body: Html)
 
-@main(title = "Gifter home", connected = Some(user)){
+@main(title, connected = Some(user)){
   <div class="container">
     <div class="content">
       <div class="page-header">
@@ -10,8 +11,13 @@
         <div class="span3 bs-docs-sidebar">
           <ul class="nav nav-list">
             <li class="nav-header">Manage events</li>
-            <li class="active"><a href="#">Events</a></li>
-            <li><a href="#">New event</a></li>
+            <li
+              @if(title.contains("home")){
+                class="active"
+              }><a href="@routes.UserApplication.index">Events</a></li>
+            <li@if(title.contains("new event")){
+                class="active"
+              }><a href="@routes.UserApplication.newEvent">New event</a></li>
             <li><a href="@routes.UserApplication.reset">Reset db</a></li>
           </ul>
         </div>
@@ -22,3 +28,4 @@
     </div>
   </div>
 }
+

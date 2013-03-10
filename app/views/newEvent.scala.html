@@ -1,0 +1,47 @@
+@(user: models.user.User,
+  eventForm: Form[models.gift.Event]
+)
+
+@import helper._
+
+@import models.user._
+@import models.gift.Event
+
+@userHomeTemplate(title= "Gifter new event", user = user) {
+
+  <hr/>
+
+
+  @helper.form(action = routes.UserApplication.postNewEvent, args = 'class -> "form-horizontal") {
+    @eventForm.globalError.map { error =>
+      <div class="alert error">
+        <p>@error.message</p>
+      </div>
+    }
+    <div class="well">
+
+      <input type="hidden" id="creatorid" name="creatorid" value="@user.id.get" >
+      @inputText(
+          eventForm("name"),
+          '_label -> "Name:",
+          '_help -> "")      
+          
+      @input(eventForm("dateStr"), '_label -> "When:", '_help -> "") { (id, name, value, _) =>
+        <input type="text" id="datepicker" name="@name" value="@value"/>
+      }
+          
+      <div class="actions">
+        <input type="submit" class="btn btn-success" value="Submit" />
+      </div>              
+    </div>
+
+  }
+}
+<script type="text/javascript">
+  $(function(){
+    $( "#datepicker" ).datepicker({
+          inline: true,
+          dateFormat: 'dd-mm-yy'
+    });
+  });
+</script>

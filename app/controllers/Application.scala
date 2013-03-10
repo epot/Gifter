@@ -29,6 +29,11 @@ object Application extends Controller {
     ,"firstname" -> "http://axschema.org/namePerson/first"
     //,"lastname" -> "http://axschema.org/namePerson/last"
   )  
+  val REQUIRED_ATTRIBUTES_yahoo=Seq(
+    "email" -> "http://axschema.org/contact/email"
+    ,"nickname" -> "http://axschema.org/namePerson/friendly"
+    //,"lastname" -> "http://axschema.org/namePerson/last"
+  )  
   
   /**
    * represents a sort of backing bean to back the login form.
@@ -66,7 +71,7 @@ object Application extends Controller {
   }
   
   def yahooLogin = Action { implicit request =>
-    val openIdCallbackUrl: String = routes.Application.openIDCallback().absoluteURL()
+    val openIDCallbackYahoo: String = routes.Application.openIDCallbackYahoo().absoluteURL()
     def onRedirected(promise: NotWaiting[String]): Result = {
       promise match {
         case Redeemed(url) => Redirect(url)
@@ -74,7 +79,7 @@ object Application extends Controller {
       }
     }
     AsyncResult(
-      OpenID.redirectURL("https://me.yahoo.com ", openIdCallbackUrl, REQUIRED_ATTRIBUTES).extend1(onRedirected)
+      OpenID.redirectURL("https://me.yahoo.com ", openIDCallbackYahoo, REQUIRED_ATTRIBUTES_yahoo).extend1(onRedirected)
     )
   }
   
@@ -103,6 +108,32 @@ object Application extends Controller {
     )
   }
 
+  def openIDCallbackYahoo = Action { implicit request =>
+    def onVerified(promise:NotWaiting[UserInfo]):Result ={
+      promise match {
+        case Redeemed(info) => 
+          val email = info.attributes.get("email").get
+          val user = User.findByEmail(email) match {
+            case Some(user) => user
+            case None => {
+              val user = User.create(
+                  User(name=info.attributes.get("nickname").get), 
+                  Identity(email=email, adapter=Identity.Adapter.Yahoo) )
+              user
+            }
+          }
+          
+          Redirect(routes.UserApplication.index).withSession("userId" -> user.id.toString)
+          
+        case Thrown(throwable) => Unauthorized("Authorization refused by your openid provider<br>"+throwable.getMessage)
+      }
+    }
+    AsyncResult(
+      OpenID.verifiedId.extend1(onVerified)
+    )
+  }
+  
+  
   def authenticate = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.index(formWithErrors)),

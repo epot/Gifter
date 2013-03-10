@@ -36,6 +36,7 @@ object Identity {
   object Adapter extends Enumeration {
     val UserWithPassword = Value(1, "UserWithPassword")
     val Google = Value(2, "Google")
+    val Yahoo = Value(3, "Yahoo")
   }
 
 }

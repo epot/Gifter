@@ -65,6 +65,19 @@ object Application extends Controller {
     )
   }
   
+  def yahooLogin = Action { implicit request =>
+    val openIdCallbackUrl: String = routes.Application.openIDCallback().absoluteURL()
+    def onRedirected(promise: NotWaiting[String]): Result = {
+      promise match {
+        case Redeemed(url) => Redirect(url)
+        case Thrown(throwable) => Unauthorized("Unable to verify your openid provider.<br>"+throwable.getMessage)
+      }
+    }
+    AsyncResult(
+      OpenID.redirectURL("https://me.yahoo.com ", openIdCallbackUrl, REQUIRED_ATTRIBUTES).extend1(onRedirected)
+    )
+  }
+  
   def openIDCallback = Action { implicit request =>
     def onVerified(promise:NotWaiting[UserInfo]):Result ={
       promise match {

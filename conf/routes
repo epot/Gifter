@@ -9,6 +9,7 @@ GET     /                           controllers.UserApplication.index
 GET      /logout                    controllers.Application.logout
 GET      /openIDCallback            controllers.Application.openIDCallback
 GET      /googleLogin               controllers.Application.googleLogin
+GET      /yahooLogin               controllers.Application.yahooLogin
 GET      /index                     controllers.Application.index
 POST     /login                     controllers.Application.authenticate
 

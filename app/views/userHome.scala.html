@@ -4,7 +4,7 @@
 
 @userHomeTemplate(user = user) {
   <div class="bs-docs-example">
-    <table class="table table-striped table-hover">
+    <table class="table table-striped table-hover table-bordered">
       <thead>
         <tr>
           <th>Event</th>
@@ -15,7 +15,7 @@
       <tbody>
         @for(event <- Event.findByUser(user)) {
           <tr>
-            <td>@event.name</td>
+            <td><a href="@routes.UserApplication.event(event.id.get)">@event.name</a></td>
             <td>@event.creator.name</td>
             <td>@event.date.toDate().format("dd/MM/yyyy")</td>
           </tr>

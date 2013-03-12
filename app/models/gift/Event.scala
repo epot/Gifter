@@ -53,7 +53,14 @@ object Event {
       
       event.copy(id = Id(id))
   }
-  
+    
+  def findById(id: Long): Option[Event] =
+  DB.withConnection{ implicit connection =>
+    SQL("select * from event where id = {id}")
+      .on('id -> id)
+      .as(Event.simple.singleOpt)
+  }
+
   /**
    * Find all events related to a user
    */

@@ -18,6 +18,7 @@ POST     /login                     controllers.Application.authenticate
 GET      /reset                     controllers.UserApplication.reset
 GET      /newEvent                  controllers.UserApplication.newEvent
 POST     /newEvent                  controllers.UserApplication.postNewEvent
+GET      /editEvent/:eventid        controllers.UserApplication.event(eventid: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

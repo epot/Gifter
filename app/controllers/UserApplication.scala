@@ -101,6 +101,12 @@ object UserApplication extends Controller with Secured {
         Ok(views.html.userHome(user))
       }
     )
+  }  
+  
+  def event(eventid: Long) = IsAuthenticated { user => implicit request =>
+    Ok(views.html.event(user, Event.findById(eventid).get))
   }
+
+
 
 }

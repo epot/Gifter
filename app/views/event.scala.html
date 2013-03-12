@@ -1,0 +1,34 @@
+@(user: models.user.User,
+  event: models.gift.Event
+)
+
+@import helper._
+
+@import models.user._
+@import models.gift.Event
+
+@userHomeTemplate(title = event.name, user = user) {
+
+  <ul id="eventTab" class="nav nav-tabs">
+    <li class="active"><a href="#home" data-toggle="tab">Gifts</a></li>
+    <li><a href="#participants" data-toggle="tab">Participants</a></li>
+  </ul>
+  <div id="eventTabContent" class="tab-content">
+    <div class="tab-pane fade" id="gifts">
+      <p>Gnaaaa</p>
+    </div>
+    <div class="tab-pane fade" id="participants">
+      <p>Participants dude</p>
+    </div>
+  </div>
+}
+
+
+<script type="text/javascript">
+  $(function(){
+    $('#eventTab a').click(function (e) {
+      e.preventDefault();
+      $(this).tab('show');
+    })
+  });
+</script>

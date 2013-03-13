@@ -15,6 +15,7 @@ import play.api.libs.concurrent.Execution.Implicits._
 import libs.openid.{UserInfo, OpenID}
 import play.api.mvc._
 import play.api.mvc.Results._
+import anorm._
 
 object Application extends Controller {
 
@@ -145,4 +146,55 @@ object Application extends Controller {
     )
   }
 
+  val signInForm = Form[(User, Identity)](
+    mapping(
+      "name" -> nonEmptyText,
+      "email" -> email.verifying("This email address is already used by another account", email => User.findByEmail(email).isEmpty),
+      "password" -> tuple(
+            "main" -> nonEmptyText,
+            "confirm" -> text
+          ).verifying(
+            // Add an additional constraint: both passwords must match
+            "Passwords don't match", passwords => passwords._1 == passwords._2
+      )
+    )
+    {/*apply*/
+      (name, email, password) =>
+        {
+          (User(name=name), Identity(email=email, adapter=Identity.Adapter.UserWithPassword, hash=password._1))
+        }
+    }
+    {/*unapply*/
+      userTuple =>
+        Some(
+            userTuple._1.name,
+            userTuple._2.email,
+            (userTuple._2.hash, userTuple._2.hash)
+        )
+    }
+  )
+
+  def signIn = Action{ implicit request =>
+    Ok{
+      views.html.signIn(signInForm)
+    }
+  }
+
+  def postSignIn() =
+    Action { implicit request =>
+        signInForm.bindFromRequest.fold(
+            // password fails
+          formWithErrors => {
+            Logger.debug("Could not sign in, the form contains errors: "+formWithErrors.errors)
+            BadRequest(views.html.signIn(formWithErrors))
+          },
+            // password OK
+          (userTuple) => {
+            val userWithId = User.create(userTuple._1, userTuple._2)
+            Logger.debug("Profile successfully created.")
+            Redirect(routes.UserApplication.index).withSession("userId" -> userWithId.id.toString)
+          }
+        )
+    }  
+  
 }

@@ -71,7 +71,7 @@ object User {
         where id = {id}
         """).on(
         'id -> userId,
-        'fullname -> user.name,
+        'name -> user.name,
         'isNotMember -> user.isNotMember
       ).executeUpdate()
   }

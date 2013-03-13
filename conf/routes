@@ -13,8 +13,12 @@ GET      /googleLogin               controllers.Application.googleLogin
 GET      /yahooLogin                controllers.Application.yahooLogin
 GET      /index                     controllers.Application.index
 POST     /login                     controllers.Application.authenticate
+GET      /signIn                    controllers.Application.signIn
+POST     /signIn                    controllers.Application.postSignIn
 
 # User actions
+GET      /profile                   controllers.UserApplication.profile
+POST     /profile                   controllers.UserApplication.postProfile
 GET      /reset                     controllers.UserApplication.reset
 GET      /newEvent                  controllers.UserApplication.newEvent
 POST     /newEvent                  controllers.UserApplication.postNewEvent

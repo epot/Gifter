@@ -107,6 +107,26 @@ object UserApplication extends Controller with Secured {
     Ok(views.html.event(user, Event.findById(eventid).get))
   }
 
+  val profileForm = Form[String](
+   "name" -> nonEmptyText
+  )
 
+  def profile = IsAuthenticated{ user => implicit request =>
+    Ok(views.html.profile(user, profileForm.fill(user.name)))
+  }
+
+  def postProfile() = IsAuthenticated { user => implicit request =>
+    profileForm.bindFromRequest.fold(
+      errors => {
+        println(errors)
+        BadRequest(views.html.profile(user, errors))
+      },
+      name => {
+        val userUpdated = User.update(user.id.get, User(name=name))
+        val userInDb = User.findById(user.id.get).get
+        Ok(views.html.userHome(userInDb))
+      }
+    )
+  }  
 
 }

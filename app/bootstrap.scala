@@ -34,13 +34,13 @@ package bootstrap {
           usersWithIdentity.foreach(tuple => User.create(tuple._1, tuple._2))
           
           val manu = User.findByEmail("emmanuel.pot@gmail.com").get
+          val bob = User.findByEmail("bob@gmail.com").get
           
-          Event.create(Event(creator=manu, name="Noel 2013"))
+          val noel = Event.create(Event(creator=manu, name="Noel 2013"))
           Event.create(Event(creator=manu, name="Anniversaire nico 2013"))
           
-          for(event <- Event.findByUser(manu)) {
-            println(event)
-          }
+          Participant.create(Participant(event=noel, user=manu, role=Participant.Role.Owner))
+          Participant.create(Participant(event=noel, user=bob, role=Participant.Role.Reader))
         }
       }
     }

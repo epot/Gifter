@@ -30,10 +30,11 @@ create sequence event_seq;
 
 create table participant(
   id bigint(20) not null primary key,
-  eventid bigint(20) not null,
   userid bigint(20) not null,
-  foreign key (eventid) references event(id),
-  foreign key (userid) references user(id)
+  eventid bigint(20) not null,
+  role int not null,
+  foreign key (userid) references user(id),
+  foreign key (eventid) references event(id)
 );
 create sequence participant_seq;
 

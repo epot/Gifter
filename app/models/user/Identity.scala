@@ -9,11 +9,9 @@ case class Identity(
   userId: Pk[Long] = NotAssigned,
   email: String,
   adapter: Identity.Adapter.Value,
-  hash: String = "") {}
+  hash: String = "")
 
 object Identity {
-
-  
   def connectWithPassword(email: String, password: String): Option[User] =
     DB.withConnection { implicit connection =>
       val user = SQL(

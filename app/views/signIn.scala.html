@@ -1,0 +1,45 @@
+@(userForm: Form[(models.user.User, models.user.Identity)])
+
+@import helper._
+@import helper.twitterBootstrap._
+
+@main(title = "Sign in") {
+  <div class="container">
+    <div class="content">
+      <div class="page-header">
+      <h1>Create a new account</h1>
+      </div>
+      <div class="row"><div class="span14">
+        @form(routes.Application.postSignIn, args = 'class -> "form-horizontal") {
+          @userForm.globalError.map { error =>
+            <div class="alert error">
+              <p>@error.message</p>
+            </div>
+          }
+          <fieldset>
+            @inputText(userForm("name"), '_label -> "Name", '_help -> "")
+            @inputText(userForm("email"), '_label -> "Email", '_help -> "")
+
+            @inputPassword(
+              userForm("password.main"),
+              '_label -> "Password",
+              '_help -> ""
+            )
+
+            @inputPassword(
+              userForm("password.confirm"),
+              '_label -> "Repeat password",
+              '_error -> userForm.error("password")
+            )
+          </fieldset>
+          <div class="actions">
+            <input type="submit" value="Submit" class="btn-primary"/>
+            <a href="@routes.Application.index">
+              <input type="button" class="btn-danger" value="Cancel">
+            </a>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

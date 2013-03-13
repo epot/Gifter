@@ -1,0 +1,36 @@
+  @(user: models.user.User, profileForm:Form[String])(
+  implicit
+  flash: Flash
+)
+
+@import helper._
+
+@main(title = "Edit profile", connected = Some(user), screen = "profile") {
+  @if(flash.get("success")){
+      <p class="success">@flash.get("success")</p>
+  }
+
+  <div class="container">
+    <div class="content">
+      <div class="page-header">
+              <h1>Modify your profile</h1>
+      </div>
+      <div class="row">
+        <div class="span14">
+
+          @form(routes.UserApplication.postProfile, args = 'class -> "form-horizontal") {
+            <fieldset>
+              @inputText(profileForm("name"), '_label -> "Name", '_help -> "")
+            </fieldset>
+            <div class="actions">
+              <input type="submit" value="Submit" class="btn-primary"/>
+              <a href="@routes.UserApplication.index">
+                <input type="button" class="btn-danger" value="Cancel">
+              </a>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}

@@ -1,6 +1,7 @@
 @(loginForm: Form[(String, String)])
 
 @import helper._
+@import helper.twitterBootstrap._
 
 @main(title = "Home") {
   <div class="page-header">
@@ -32,7 +33,7 @@
         </fieldset>
 
         <div class="actions">
-          <input type="submit" class="btn-primary" value="Login">
+          <input type="submit" class="btn btn-primary" value="Login">
         </div>
       }
       <h3>Or use one of your following account:</h3>

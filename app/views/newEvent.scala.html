@@ -3,6 +3,7 @@
 )
 
 @import helper._
+@import helper.twitterBootstrap._
 
 @import models.user._
 @import models.gift.Event
@@ -12,7 +13,7 @@
   <hr/>
 
 
-  @helper.form(action = routes.UserApplication.postNewEvent, args = 'class -> "form-horizontal") {
+  @helper.form(action = routes.Events.postNewEvent, args = 'class -> "form-horizontal") {
     @eventForm.globalError.map { error =>
       <div class="alert error">
         <p>@error.message</p>
@@ -31,7 +32,10 @@
       }
           
       <div class="actions">
-        <input type="submit" class="btn btn-success" value="Submit" />
+        <input type="submit" class="btn btn-primary" value="Submit" />
+        <a href="@routes.UserApplication.index">
+          <input type="button" class="btn-danger" value="Cancel">
+        </a>
       </div>              
     </div>
 

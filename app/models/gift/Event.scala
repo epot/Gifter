@@ -53,6 +53,17 @@ object Event {
       
       event.copy(id = Id(id))
   }
+
+  /**
+   * Delete an event.
+   */
+  def delete(id: Long) {
+    DB.withConnection { implicit connection => 
+      SQL("delete from event where id = {id}").on(
+        'id -> id
+      ).executeUpdate()
+    }
+  }
     
   def findById(id: Long): Option[Event] =
   DB.withConnection{ implicit connection =>
@@ -69,6 +80,23 @@ object Event {
     SQL("select * from event where creatorid = {creatorid}")
     .on('creatorid -> user.id)
       .as(Event.simple *)
+  }
+  
+  /**
+   * Check if a user is the creator of this task
+   */
+  def isCreator(eventid: Long, userid: Long): Boolean = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          select count(event.id) = 1 from event
+          where event.id = {eventid} and event.creatorid = {creatorid}
+        """
+      ).on(
+        'eventid -> eventid,
+        'creatorid -> userid
+      ).as(scalar[Boolean].single)
+    }
   }
 
 }

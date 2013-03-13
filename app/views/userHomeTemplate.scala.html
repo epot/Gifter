@@ -17,7 +17,7 @@ title:String = "Gifter home")(body: Html)
               }><a href="@routes.UserApplication.index">Events</a></li>
             <li@if(title.contains("new event")){
                 class="active"
-              }><a href="@routes.UserApplication.newEvent">New event</a></li>
+              }><a href="@routes.Events.newEvent">New event</a></li>
             <li><a href="@routes.UserApplication.reset">Reset db</a></li>
           </ul>
         </div>

@@ -39,6 +39,17 @@ trait Secured {
   }
   def IsAuthenticated(f: => User => Request[AnyContent] => Result): play.api.mvc.EssentialAction =
     IsAuthenticated(BodyParsers.parse.anyContent)(f)
+
+  /**
+   * Check if the connected user is a owner of this task.
+   */
+  def IsCreatorOf(eventid: Long)(f: => User => Request[AnyContent] => Result) = IsAuthenticated { user => request =>
+    if(Event.isCreator(eventid, user.id.get)) {
+      f(user)(request)
+    } else {
+      Results.Forbidden
+    }
+  }
 }
 
 object UserApplication extends Controller with Secured {
@@ -64,47 +75,6 @@ object UserApplication extends Controller with Secured {
 
     bootstrap.InitialData.addTestData()
     Redirect(routes.UserApplication.index)
-  }
-  
-  val eventForm = Form[Event](
-    tuple(
-      "creatorid" -> longNumber.verifying ("Could not find creator.", id => User.findById(id).isDefined)
-      ,"name" -> nonEmptyText
-      ,"dateStr" -> date("dd-MM-yyyy")
-      ).transform(
-    {/*apply*/
-      case (creatorid, name, dateStr) => {
-        Event(creator= User.findById(creatorid).get, name=name, date=new DateTime(dateStr))
-      }
-    },{ /*unapply*/
-      event: Event => (
-            event.creator.id.get,
-            event.name,
-            event.date.toDate)
-    })
-  )  
-  
-  def newEvent = IsAuthenticated { user => implicit request =>
-    Ok(views.html.newEvent(user, eventForm))
-  }
-
-
-  def postNewEvent() = IsAuthenticated { user => implicit request =>
-    eventForm.bindFromRequest.fold(
-      errors => {
-        println(errors)
-        BadRequest(views.html.newEvent(user, errors))
-      },
-      event => {
-        println("creating event: " + event)
-        Event.create(event)
-        Ok(views.html.userHome(user))
-      }
-    )
-  }  
-  
-  def event(eventid: Long) = IsAuthenticated { user => implicit request =>
-    Ok(views.html.event(user, Event.findById(eventid).get))
   }
 
   val profileForm = Form[String](

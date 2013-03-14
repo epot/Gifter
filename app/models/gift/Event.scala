@@ -77,8 +77,12 @@ object Event {
    */
   def findByUser(user: User): List[Event] =
   DB.withConnection{ implicit connection =>
-    SQL("select * from event where creatorid = {creatorid}")
-    .on('creatorid -> user.id)
+    SQL("""
+      select distinct event.* from event
+      left outer join participant on participant.eventid = event.id
+      where creatorid = {id} or participant.userid={id}
+    """)
+    .on('id -> user.id)
       .as(Event.simple *)
   }
   

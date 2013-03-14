@@ -69,5 +69,31 @@ object Events extends Controller with Secured {
       case None => BadRequest
     }
   }
+  
+  val addParticipantForm = Form {
+    tuple(
+      "eventid" -> longNumber.verifying ("Could not find event.", id => Event.findById(id).isDefined)
+      ,"email" -> email
+      ,"role" -> nonEmptyText
+    )
+  }
+  
+  def addParticipant() = IsAuthenticated { user => implicit request =>
+    println(request.body.asFormUrlEncoded)
+    
+    addParticipantForm.bindFromRequest.fold(
+      errors => {
+        println(errors)
+        BadRequest
+      },
+      tuple => {
+        val participant = Participant.create(Participant(
+            user=User.findByEmail(tuple._2).get,
+            event=Event.findById(tuple._1).get,
+            role=Participant.Role.withName(tuple._3)))
+        Ok(views.html.participant(user, participant))
+      }
+    )
+  }
 
 }

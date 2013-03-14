@@ -92,23 +92,14 @@ object Participant {
    */
   def findByEventId(eventid: Long): List[Participant] =
     DB.withConnection { implicit connection =>
-      println("looking for participant of " + eventid)
-      val all = SQL(
-        """
-         select * from participant 
-      """
-      ).as(BaseParticipant.simple *)
-      println("all = " + all)
-      val gna = SQL(
+
+      SQL(
         """
          select * from participant 
          where eventid = {eventid}
       """
       ).onParams(eventid).as(BaseParticipant.simple *)
-      
-      println(gna)
-      
-      gna.map(part => Participant(
+      .map(part => Participant(
           id=part.id,
           user=User.findById(part.userid).get,
           event=Event.findById(part.eventid).get,

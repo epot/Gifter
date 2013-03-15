@@ -87,11 +87,35 @@ object Events extends Controller with Secured {
         BadRequest
       },
       tuple => {
-        val participant = Participant.create(Participant(
-            user=User.findByEmail(tuple._2).get,
-            event=Event.findById(tuple._1).get,
-            role=Participant.Role.withName(tuple._3)))
-        Ok(views.html.participant(user, participant))
+        
+        val eventid = tuple._1
+        val email = tuple._2
+        val role = Participant.Role.withName(tuple._3)
+        
+        Participant.findByEventIdAndByEmail(eventid, email) match {
+          case Some(participant) => {
+            Participant.update(participant.id.get, role)
+          }
+          case None => {
+            val user = User.findByEmail(email) match {
+              case Some(user) => user
+              case None => {
+                User.create(
+                    User(name=email, isNotMember=true), 
+                    Identity(email=email, adapter=Identity.Adapter.UserWithPassword)
+                  )
+              }
+            }
+            
+            Participant.create(Participant(
+              user=user,
+              event=Event.findById(eventid).get,
+              role=role))
+          }
+        }
+        
+        Ok(views.html.participants_table(user, Participant.findByEventId(eventid)))
+
       }
     )
   }

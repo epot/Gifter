@@ -1,0 +1,21 @@
+@(user: models.user.User,
+  participants:List[models.gift.Participant]
+)
+
+<table id="participants-table" class="table table-striped table-hover table-bordered">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for(p <- participants) {
+      <tr>
+        <td>@p.user.name</td>
+        <td>@p.role</td>
+      </tr>    
+    }
+  </tbody>
+</table>
+

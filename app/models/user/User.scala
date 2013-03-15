@@ -78,7 +78,7 @@ object User {
 
   def findByEmail(email: String): Option[User] =
     DB.withConnection { implicit connection =>
-      val user = SQL(
+      SQL(
         """
          select u.* from identity iden
          join user u on iden.userId = u.id
@@ -87,7 +87,6 @@ object User {
       ).on(
           'email -> email) 
         .as(User.simple.singleOpt)
-        user
   }
   
   def findById(id: Long): Option[User] =

@@ -82,7 +82,7 @@ object Participant {
         """    
         ).on(
           'id -> id,
-          'role -> role
+          'role -> role.id
         ).executeUpdate()
     }
 
@@ -104,5 +104,34 @@ object Participant {
           user=User.findById(part.userid).get,
           event=Event.findById(part.eventid).get,
           role=Participant.Role(part.role)))
+  }
+  
+  /**
+   * @param gameId
+   * @return list of participants for the given event
+   */
+  def findByEventIdAndByEmail(eventid: Long, email: String): Option[Participant] =
+    DB.withConnection { implicit connection =>
+
+      SQL(
+        """
+         select * from participant
+         join identity on identity.userid = participant.userid
+         where participant.eventid = {eventid} 
+           and identity.email = {email}
+      """
+      ).on(
+          'eventid -> eventid,
+          'email -> email)
+      .as(BaseParticipant.simple.singleOpt) match {
+        case Some(part) => {
+          Some(Participant(
+            id=part.id,
+            user=User.findById(part.userid).get,
+            event=Event.findById(part.eventid).get,
+            role=Participant.Role(part.role)))
+        }
+        case None => None
+      }
   }
 }

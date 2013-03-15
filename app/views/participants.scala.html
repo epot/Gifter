@@ -8,19 +8,7 @@
 @import models.user._
 @import models.gift._
 
-<table id="participants-table" class="table table-striped table-hover table-bordered">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Status</th>
-    </tr>
-  </thead>
-  <tbody>
-    @for(p <- Participant.findByEventId(event.id.get)) {
-      @participant(user, p)
-    }
-  </tbody>
-</table>
+@participants_table(user, Participant.findByEventId(event.id.get))
 
 <div class="add-participant-error alert alert-error">
 </div>
@@ -48,7 +36,7 @@ $('.add-participant-btn').on('click', function(e) {
     contentType: "application/x-www-form-urlencoded",
     data: $('.add-participant-form').serializeArray(),
     success: function( response ) {
-      $('#participants-table tr:last').after(response);
+      $('#participants-table').html(response);
     }
   });
 })

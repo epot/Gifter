@@ -14,7 +14,11 @@
       UserApplication.IsOwnerOf(p.event.id.get, user.id.get) ) {
       <select name="role" participantid="@p.id.get">
         @for(role <- Participant.Role.values) {
-          <option>@role</option>
+          <option
+          @if(p.role == role) {
+            selected
+          }
+          >@role</option>
         }
       </select>
     } else {

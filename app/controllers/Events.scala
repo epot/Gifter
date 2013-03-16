@@ -72,19 +72,18 @@ object Events extends Controller with Secured {
   
   val addParticipantForm = Form {
     tuple(
-      "eventid" -> longNumber.verifying ("Could not find event.", id => Event.findById(id).isDefined)
+      "eventid" -> longNumber.verifying ("Could not find event. Maybe you deleted it ?", id => Event.findById(id).isDefined)
       ,"email" -> email
       ,"role" -> nonEmptyText
     )
   }
   
   def addParticipant() = IsAuthenticated { user => implicit request =>
-    println(request.body.asFormUrlEncoded)
     
     addParticipantForm.bindFromRequest.fold(
       errors => {
         println(errors)
-        BadRequest
+        BadRequest(views.html.participants.participants_add_form(errors))
       },
       tuple => {
         
@@ -115,7 +114,6 @@ object Events extends Controller with Secured {
         }
         
         Ok(views.html.participants.participants_table(user, Participant.findByEventId(eventid)))
-
       }
     )
   }

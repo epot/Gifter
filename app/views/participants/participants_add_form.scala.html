@@ -1,34 +1,48 @@
-@(user: models.user.User,
-  event: models.gift.Event,
-  addParticipantForm: Form[(Long, String, String)]
+@(addParticipantForm: Form[(Long, String, String)]
 )
 
 @import helper._
-@import helper.twitterBootstrap._
 
-@import models.user._
 @import models.gift._
 
-<div class="add-participant-error alert alert-error">
-</div>
-
 <form class="form-search form-inline add-participant-form">
-    <input type="hidden" name="eventid" value="@event.id.get">
-    <input type="text" class="input-medium search-query" name="email" value="" placeholder="Enter an email address...">
+    @addParticipantForm.globalError.map { error =>
+      <div class="alert error">
+        <p>@error.message</p>
+      </div>
+    }
+    @addParticipantForm.error("eventid").map { error =>
+      <div class="alert error">
+        <p>@Messages(error.message)</p>
+      </div>
+    }
+    @addParticipantForm.error("email").map { error =>
+      <div class="alert error">
+        <p>@Messages(error.message)</p>
+      </div>
+    }
+    <div class="well">
+
+    <input type="hidden" name="eventid" value="@addParticipantForm("eventid").value">
+    <input type="text" class="input-medium search-query" name="email" value="@addParticipantForm("email").value" placeholder="Enter an email address...">
     
     <select name="role">
       @for(role <- Participant.Role.values) {
-        <option>@role</option>
+          <option
+          @if(role == addParticipantForm("role").value) {
+            selected
+          }
+          >@role</option>
       }
     </select>
-    
+
+    <!--input type="text" class="input-medium search-query" name="email" value="" placeholder=""-->
+
     <button type="button" class="btn btn-primary add-participant-btn">Add</button>
 </form>
 <script type="text/javascript">
 
 $('.add-participant-btn').on('click', function(e) {
-  $('.add-participant-form')
-  
   $.ajax({
     url: '/addParticipant',
     type: 'GET',
@@ -36,6 +50,11 @@ $('.add-participant-btn').on('click', function(e) {
     data: $('.add-participant-form').serializeArray(),
     success: function( response ) {
       $('#participants-table').html(response);
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+      if(jqXHR.status == 400) {
+        $('.add-participant-form').html(jqXHR.responseText)
+      }
     }
   });
 })

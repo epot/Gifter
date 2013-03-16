@@ -1,0 +1,42 @@
+@(user: models.user.User,
+  event: models.gift.Event,
+  addParticipantForm: Form[(Long, String, String)]
+)
+
+@import helper._
+@import helper.twitterBootstrap._
+
+@import models.user._
+@import models.gift._
+
+<div class="add-participant-error alert alert-error">
+</div>
+
+<form class="form-search form-inline add-participant-form">
+    <input type="hidden" name="eventid" value="@event.id.get">
+    <input type="text" class="input-medium search-query" name="email" value="" placeholder="Enter an email address...">
+    
+    <select name="role">
+      @for(role <- Participant.Role.values) {
+        <option>@role</option>
+      }
+    </select>
+    
+    <button type="button" class="btn btn-primary add-participant-btn">Add</button>
+</form>
+<script type="text/javascript">
+
+$('.add-participant-btn').on('click', function(e) {
+  $('.add-participant-form')
+  
+  $.ajax({
+    url: '/addParticipant',
+    type: 'GET',
+    contentType: "application/x-www-form-urlencoded",
+    data: $('.add-participant-form').serializeArray(),
+    success: function( response ) {
+      $('#participants-table').html(response);
+    }
+  });
+})
+</script>

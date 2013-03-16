@@ -87,7 +87,7 @@ object Participant {
     }
 
   /**
-   * @param gameId
+   * @param eventid
    * @return list of participants for the given event
    */
   def findByEventId(eventid: Long): List[Participant] =
@@ -107,8 +107,8 @@ object Participant {
   }
   
   /**
-   * @param gameId
-   * @return list of participants for the given event
+   * @param evenit
+   * @return a participant if given user participates to this event
    */
   def findByEventIdAndByEmail(eventid: Long, email: String): Option[Participant] =
     DB.withConnection { implicit connection =>
@@ -134,4 +134,34 @@ object Participant {
         case None => None
       }
   }
+  
+  /**
+   * @param eventid
+   * @param userid
+   * @return a participant if given user participates to this event
+   */
+  def findByEventIdAndByUserId(eventid: Long, userid: Long): Option[Participant] =
+    DB.withConnection { implicit connection =>
+
+      SQL(
+        """
+         select * from participant
+         where eventid = {eventid} 
+           and userid = {userid}
+      """
+      ).on(
+          'eventid -> eventid,
+          'userid ->  userid)
+      .as(BaseParticipant.simple.singleOpt) match {
+        case Some(part) => {
+          Some(Participant(
+            id=part.id,
+            user=User.findById(part.userid).get,
+            event=Event.findById(part.eventid).get,
+            role=Participant.Role(part.role)))
+        }
+        case None => None
+      }
+  }
+
 }

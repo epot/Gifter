@@ -1,0 +1,24 @@
+@(user: models.user.User,
+  p:models.gift.Participant
+)
+
+@import models.gift.Participant
+@import controllers.UserApplication
+
+<tr>
+  <td>@p.user.name</td>
+  <td>
+    @if(
+      p.event.creator != p.user &&
+      p.user != user && 
+      UserApplication.IsOwnerOf(p.event.id.get, user.id.get) ) {
+      <select name="role" participantid="@p.id.get">
+        @for(role <- Participant.Role.values) {
+          <option>@role</option>
+        }
+      </select>
+    } else {
+      @p.role
+    }
+  </td>
+</tr>

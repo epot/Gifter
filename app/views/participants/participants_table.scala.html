@@ -11,10 +11,7 @@
   </thead>
   <tbody>
     @for(p <- participants) {
-      <tr>
-        <td>@p.user.name</td>
-        <td>@p.role</td>
-      </tr>    
+      @participant_row(user, p)
     }
   </tbody>
 </table>

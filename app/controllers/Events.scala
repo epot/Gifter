@@ -114,7 +114,7 @@ object Events extends Controller with Secured {
           }
         }
         
-        Ok(views.html.participants_table(user, Participant.findByEventId(eventid)))
+        Ok(views.html.participants.participants_table(user, Participant.findByEventId(eventid)))
 
       }
     )

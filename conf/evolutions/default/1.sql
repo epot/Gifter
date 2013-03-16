@@ -14,7 +14,7 @@ create table identity (
   email varchar(255) not null unique,
   adapter int not null,
   hash varchar(255) not null,
-  foreign key (userid) references user(id)
+  foreign key (userid) references user(id) on delete cascade
 );
 
 
@@ -23,7 +23,7 @@ create table event (
   creatorid bigint(20) not null,
   name varchar(255) not null,
   date timestamp not null,
-  foreign key (creatorid) references user(id)
+  foreign key (creatorid) references user(id) on delete cascade
 );
 
 create sequence event_seq;
@@ -33,8 +33,8 @@ create table participant(
   userid bigint(20) not null,
   eventid bigint(20) not null,
   role int not null,
-  foreign key (userid) references user(id),
-  foreign key (eventid) references event(id)
+  foreign key (userid) references user(id) on delete cascade,
+  foreign key (eventid) references event(id) on delete cascade
 );
 create sequence participant_seq;
 
@@ -43,7 +43,7 @@ create table gift (
   toid bigint(20),
   eventid bigint(20) not null,
   status int not null,
-  foreign key (eventid) references event(id)
+  foreign key (eventid) references event(id) on delete cascade
 );
 create sequence gift_seq;
 
@@ -52,8 +52,8 @@ create table comment (
   creatorid bigint(20) not null,
   giftid bigint(20) not null,
   content varchar(255),
-  foreign key (creatorid) references user(id),
-  foreign key (giftid) references gift(id)
+  foreign key (creatorid) references user(id) on delete cascade,
+  foreign key (giftid) references gift(id) on delete cascade
 );
 create sequence comment_seq;
 

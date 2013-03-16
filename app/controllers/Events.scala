@@ -46,9 +46,8 @@ object Events extends Controller with Secured {
         BadRequest(views.html.newEvent(user, errors))
       },
       event => {
-        println("creating event: " + event)
         Event.create(event)
-        Ok(views.html.userHome(user))
+        Redirect(routes.UserApplication.index).withSession("userId" -> user.id.toString)
       }
     )
   }  
@@ -64,7 +63,7 @@ object Events extends Controller with Secured {
     Event.findById(eventid) match {
       case Some(event) => { 
         Event.delete(eventid)
-        Ok(views.html.userHome(user))
+        Redirect(routes.UserApplication.index).withSession("userId" -> user.id.toString)
       }
       case None => BadRequest
     }

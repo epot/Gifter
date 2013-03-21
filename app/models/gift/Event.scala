@@ -15,7 +15,7 @@ case class Event(
   id: Pk[Long] = NotAssigned,
   creator: User,
   name: String,
-  date: DateTime = DateTime.now
+  date: DateTime
   ) {
 
   def isOwner(user: User) = creator == user

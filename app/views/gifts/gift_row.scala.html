@@ -1,0 +1,13 @@
+@(user: models.user.User,
+  g:models.gift.Gift
+)
+
+@import models.gift.Gift
+@import controllers.UserApplication
+
+<tr>
+  <td>@g.name</td>
+  <td>
+    @g.status
+  </td>
+</tr>

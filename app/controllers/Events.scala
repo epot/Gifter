@@ -77,6 +77,14 @@ object Events extends Controller with Secured {
     )
   }
   
+  val addGiftForm = Form {
+    tuple(
+      "eventid" -> longNumber.verifying ("Could not find event. Maybe you deleted it ?", id => Event.findById(id).isDefined)
+      ,"email" -> email
+      ,"role" -> nonEmptyText
+    )
+  }
+  
   def addParticipant() = IsAuthenticated { user => implicit request =>
     
     addParticipantForm.bindFromRequest.fold(

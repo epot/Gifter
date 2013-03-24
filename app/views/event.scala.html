@@ -7,6 +7,7 @@
 @import models.user._
 @import models.gift.Event
 @import views.html.participants.participants
+@import views.html.gifts.gifts
 
 @userHomeTemplate(title = event.name, user = user) {
   <ul class="nav nav-tabs">
@@ -15,8 +16,10 @@
   </ul>
   
   <div class="tab-content">
-    <div class="tab-pane" id="gifts">gigi</div>
-    <div class="tab-pane active" id="participants">
+    <div class="tab-pane active" id="gifts">
+      @gifts(user, event)
+    </div>
+    <div class="tab-pane" id="participants">
       @participants(user, event)
     </div>
   </div>

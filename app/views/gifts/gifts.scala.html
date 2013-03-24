@@ -1,0 +1,15 @@
+@(user: models.user.User,
+  event: models.gift.Event
+)
+
+@import helper._
+@import helper.twitterBootstrap._
+
+@import models.user._
+@import models.gift._
+
+@gifts_table(user, Gift.findByEventId(event.id.get))
+
+<div id="add-gift-form">
+  @gifts_add_form(Events.addGiftForm.fill(event.id.get, "", ""))
+</div>

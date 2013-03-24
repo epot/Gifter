@@ -1,5 +1,6 @@
 package models.gift
 
+import java.util.Date
 import models.user._
 import anorm._
 import anorm.SqlParser._
@@ -15,8 +16,11 @@ import java.sql.Clob
 case class Gift(
   id: Pk[Long] = NotAssigned,
   event: Event,
+  creationDate: DateTime = DateTime.now,
+  name: String,
   status: Gift.Status.Value = Gift.Status.New,
-  creationDate: DateTime = DateTime.now)
+  to: Option[User] = None,
+  from: Option[User] = None)
 
 object Gift {
   object Status extends Enumeration {
@@ -27,8 +31,10 @@ object Gift {
   }
 
   case class GiftContent(
+    name: String,
     status: Int,
-    creationDate: DateTime
+    to: Option[Long],
+    from: Option[Long]
     )
     
   implicit val GiftContentReads = Json.reads[GiftContent]
@@ -37,14 +43,16 @@ object Gift {
   private case class BaseGift(
     id: Pk[Long] = NotAssigned,
     eventid: Long,
+    creationDate: DateTime,
     content: String)
   private object BaseGift {
     val simple =
       get[Pk[Long]]("gift.id") ~
       get[Long]("gift.eventid") ~
+      get[Date]("gift.creationDate") ~ 
       get[String]("gift.content") map {
-        case id~eventid~content =>
-          BaseGift(id, eventid, content)
+        case id~eventid~creationDate~content =>
+          BaseGift(id, eventid, new DateTime(creationDate), content)
     }    
     
     
@@ -54,17 +62,16 @@ object Gift {
             SQL("select next value for gift_seq").as(scalar[Long].single)
         }
         
-        println("coneeent = " + gift.content)
-        
         SQL(
         """
             insert into gift values (
-              {id}, {eventid}, {content}
+              {id}, {eventid}, {creationDate}, {content}
             )
         """    
         ).on(
           'id -> id,
           'eventid -> gift.eventid,
+          'creationDate -> gift.creationDate.toDate,
           'content -> gift.content
         ).executeUpdate()
         
@@ -78,9 +85,20 @@ object Gift {
     DB.withConnection { implicit connection =>
       // Participant creation done separately again to get the generated Id
       
+      val toid = gift.to match {
+        case Some(user) => Some(user.id.get)
+        case None => None
+      }
+      
+      val fromid = gift.from match {
+        case Some(user) => Some(user.id.get)
+        case None => None
+      }
+      
       val baseGift = BaseGift.create(BaseGift(
           eventid = gift.event.id.get,
-          content = GiftContentWrites.writes(GiftContent(gift.status.id, gift.creationDate)).toString()))
+          creationDate = gift.creationDate,
+          content = GiftContentWrites.writes(GiftContent(gift.name, gift.status.id, toid, fromid)).toString()))
       gift.copy(id = baseGift.id)
   }
   
@@ -99,11 +117,22 @@ object Gift {
       ).onParams(eventid).as(BaseGift.simple *)
       .map(g => {
           val giftContent = GiftContentReads.reads(Json.parse(g.content)).get
+          val to = giftContent.to match {
+            case Some(id) => User.findById(id)
+            case None => None
+          }
+          val from = giftContent.from match {
+            case Some(id) => User.findById(id)
+            case None => None
+          }
           Gift(
             id=g.id,
             event=Event.findById(g.eventid).get,
+            name = giftContent.name,
+            creationDate= g.creationDate,
             status=Gift.Status(giftContent.status),
-            creationDate = new DateTime(giftContent.creationDate)
+            to=to,
+            from = from
             )
           }
         )

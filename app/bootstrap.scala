@@ -42,7 +42,7 @@ package bootstrap {
           Participant.create(Participant(event=noel, user=manu, role=Participant.Role.Owner))
           Participant.create(Participant(event=noel, user=bob, role=Participant.Role.Reader))
           
-          Gift.create(Gift(event=noel))
+          Gift.create(Gift(name="slip au camembert", event=noel))
         }
       }
     }

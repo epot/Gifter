@@ -1,0 +1,18 @@
+@(user: models.user.User,
+  gifts:List[models.gift.Gift]
+)
+
+<table id="gifts-table" class="table table-striped table-hover table-bordered">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for(g <- gifts) {
+      @gift_row(user, g)
+    }
+  </tbody>
+</table>
+

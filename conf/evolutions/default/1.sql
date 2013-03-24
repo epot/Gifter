@@ -41,6 +41,7 @@ create sequence participant_seq;
 create table gift (
   id bigint(20) not null primary key,
   eventid bigint(20) not null,
+  creationDate timestamp not null,
   content nvarchar(max) not null,
   foreign key (eventid) references event(id) on delete cascade
 );

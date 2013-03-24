@@ -22,23 +22,24 @@
       </div>
     }
     <div class="well">
-
-    <input type="hidden" name="eventid" value="@addParticipantForm("eventid").value">
-    <input type="text" class="input-medium search-query" name="email" value="@addParticipantForm("email").value" placeholder="Enter an email address...">
-    
-    <select name="role">
-      @for(role <- Participant.Role.values) {
-          <option
-          @if(role == addParticipantForm("role").value) {
-            selected
-          }
-          >@role</option>
-      }
-    </select>
-
-    <!--input type="text" class="input-medium search-query" name="email" value="" placeholder=""-->
-
-    <button type="button" class="btn btn-primary add-participant-btn">Add</button>
+  
+      <input type="hidden" name="eventid" value="@addParticipantForm("eventid").value">
+      <input type="text" class="input-medium search-query" name="email" value="@addParticipantForm("email").value" placeholder="Enter an email address...">
+      
+      <select name="role">
+        @for(role <- Participant.Role.values) {
+            <option
+            @if(role == addParticipantForm("role").value) {
+              selected
+            }
+            >@role</option>
+        }
+      </select>
+  
+      <!--input type="text" class="input-medium search-query" name="email" value="" placeholder=""-->
+  
+      <button type="button" class="btn btn-primary add-participant-btn">Add</button>
+    </div>
 </form>
 <script type="text/javascript">
 

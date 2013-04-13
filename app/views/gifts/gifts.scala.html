@@ -11,5 +11,6 @@
 @gifts_table(user, Gift.findByEventId(event.id.get))
 
 <div id="add-gift-form">
-  @gifts_add_form(Events.addGiftForm.fill(event.id.get, "", ""))
+  <a href="@routes.Events.newEvent">New event</a></li>
+  <button href="@routes.Events.newGift" type="button" class="btn btn-primary">Add gift</button>
 </div>

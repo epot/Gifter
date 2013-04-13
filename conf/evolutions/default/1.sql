@@ -40,9 +40,11 @@ create sequence participant_seq;
 
 create table gift (
   id bigint(20) not null primary key,
+  creatorid bigint(20) not null,
   eventid bigint(20) not null,
   creationDate timestamp not null,
   content nvarchar(max) not null,
+  foreign key (creatorid) references user(id) on delete cascade,
   foreign key (eventid) references event(id) on delete cascade
 );
 create sequence gift_seq;

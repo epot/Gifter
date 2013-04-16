@@ -2,6 +2,107 @@
   giftForm: Form[models.gift.Gift]
 )
 
+@import helper._
+@import helper.twitterBootstrap._
+
 @import models.gift.Gift
 
+@urlField(field: Field, className: String = "url") = {
+    @input(field, '_label -> "Urls:", '_class -> className) { (id, name, value, _) =>
+        <input type="text" name="@name" value="@value"> 
+        <a class="removeUrl btn btn-danger">×</a>
+    }
+}
 
+@userHomeTemplate(title= "Gifter new gift", user = user) {
+
+  <hr/>
+
+  @helper.form(action = routes.Events.postNewGift, args = 'class -> "form-horizontal") {
+    @giftForm.globalError.map { error =>
+      <div class="alert error">
+        <p>@error.message</p>
+      </div>
+    }
+    @if(giftForm.hasErrors) {
+        <div class="alert error">
+            <p><strong>Oops</strong> Please fix all errors</p>
+        </div>
+    }
+    <div class="well new-gift">
+
+      <input type="hidden" id="creatorid" name="creatorid" value="@giftForm("creatorid").value" >
+      <input type="hidden" id="eventid" name="eventid" value="@giftForm("eventid").value"> 
+      @inputText(
+          giftForm("name"),
+          '_label -> "Name:",
+          '_help -> "")      
+          
+      <div class="urls">
+
+        @repeat(giftForm("urls"), min = 0) { url =>
+          @urlField(url)
+        }
+        
+        @**
+         * Keep an hidden block that will be used as template for Javascript copy code
+         **@
+        @urlField(
+          giftForm("urls[x]"),
+          className = "url_template"
+        )
+        
+        <div class="clearfix">
+          <div class="input">
+            <a class="addUrl btn btn-success">Add an URL</a>
+          </div>
+        </div
+      </div>
+      <hr/>
+          
+      <div class="actions">
+        <input type="submit" class="btn btn-primary" value="Submit" />
+        <a href="@routes.UserApplication.index">
+          <input type="button" class="btn-danger" value="Cancel">
+        </a>
+      </div>              
+    </div>
+
+  }
+  <script type="text/javascript" charset="utf-8">
+    
+    $('.removeUrl').on('click', function(e) {
+      alert("gneu")
+      var urls = $(this).parents('.urls')
+      alert($(this).parents('.url').html())
+      $(this).parents('.url').remove()
+      renumber(urls)
+    })
+    
+    $('.addUrl').on('click', function(e) {
+      var urls = $(this).parents('.urls')
+      var template = $('.url_template', urls)
+      template.before('<div class="clearfix url">' + template.html() + '</div>')
+      renumber(urls)
+    })
+    
+    // -- renumber fields
+    
+    // Rename fields to have a coherent payload like:
+    //
+    // urls[0]
+    // urls[1]
+    // ...
+    //
+    // This is probably not the easiest way to do it. A jQuery plugin would help.
+    var renumber = function(urls) {
+      $('.new-gift').each(function(i) {
+        $('.url input', this).each(function(i) {
+          $(this).attr('name', $(this).attr('name').replace(/urls\[.+\]/g, 'urls[' + i + ']'))
+        })
+      })
+    }
+    
+</script>
+  
+}

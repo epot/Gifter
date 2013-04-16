@@ -27,7 +27,7 @@ POST     /newEvent                  controllers.Events.postNewEvent
 POST     /deleteEvent/:eventid      controllers.Events.postDeleteEvent(eventid: Long)
 GET      /editEvent/:eventid        controllers.Events.event(eventid: Long)
 GET      /addParticipant            controllers.Events.addParticipant
-GET      /newGift                   controllers.Events.newGift
+GET      /newGift/:eventid          controllers.Events.newGift(eventid: Long)
 POST     /newGift                   controllers.Events.postNewGift
 GET      /editGift/:giftid          controllers.Events.gift(giftid: Long)
 

@@ -82,14 +82,15 @@ object Events extends Controller with Secured {
       "creatorid" -> longNumber.verifying ("Could not find creator.", id => User.findById(id).isDefined)
       ,"eventid" -> longNumber.verifying ("Could not find event. Maybe you deleted it ?", id => Event.findById(id).isDefined)
       ,"name" -> nonEmptyText
-      ,"urls" -> list(text)
+      ,"urls" -> list(nonEmptyText)
     ).transform(
     {/*apply*/
       case (creatorid, eventid, name, urls) => {
         Gift(creator=User.findById(creatorid).get, 
             event=Event.findById(eventid).get, 
             name=name, 
-            urls=for {url <- urls if !url.isEmpty()} yield (url))
+            urls=urls
+            )
       }
     },{ /*unapply*/
       gift: Gift => (
@@ -101,7 +102,7 @@ object Events extends Controller with Secured {
   }
 
   def newGift(eventid: Long) = IsAuthenticated { user => implicit request =>
-    Ok(views.html.gifts.new_gift(user, giftForm.fill(Gift(creator=user, event=Event.findById(eventid).get, name=""))))
+    Ok(views.html.gifts.new_gift(user, giftForm.fill(Gift(creator=user, event=Event.findById(eventid).get, name="", urls=List("slip", "gneu")))))
   }
   def postNewGift() = IsAuthenticated { user => implicit request =>
     giftForm.bindFromRequest.fold(
@@ -119,6 +120,20 @@ object Events extends Controller with Secured {
   def gift(giftid: Long) = IsAuthenticated { user => implicit request =>
     Ok(views.html.event(user, Event.findById(giftid).get))
   }
+  
+  /**
+   * Delete an event.
+   */
+  def postDeleteGift(giftid: Long) = IsCreatorOfGift(giftid) { user => implicit request =>
+    Gift.findById(giftid) match {
+      case Some(gift) => { 
+        Gift.delete(giftid)
+        Redirect(routes.UserApplication.index).withSession("userId" -> user.id.toString)
+      }
+      case None => BadRequest
+    }
+  }
+  
   
   def addParticipant() = IsAuthenticated { user => implicit request =>
     

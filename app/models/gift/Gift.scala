@@ -110,18 +110,36 @@ object Gift {
   }
   
   /**
-   * @param eventid
-   * @return list of gifts for the given event
+   * Delete a gift.
    */
-  def findByEventId(eventid: Long): List[Gift] =
-    DB.withConnection { implicit connection =>
+  def delete(id: Long) {
+    DB.withConnection { implicit connection => 
+      SQL("delete from gift where id = {id}").on(
+        'id -> id
+      ).executeUpdate()
+    }
+  }
+    
+  def findById(id: Long): Option[Gift] = {
+    find("id = " + id) match {
+      case Nil => None
+      case list => Some(list.head)
+    }
+  }
+    
 
-      SQL(
+  def find(where: String = ""): List[Gift] =
+  DB.withConnection { implicit connection =>
+    val whereClause = where match {
+      case s if (where != "") => "where "+s
+      case _ => ""
+    }
+      
+    SQL(
         """
          select * from gift 
-         where eventid = {eventid}
-      """
-      ).onParams(eventid).as(BaseGift.simple *)
+        """+whereClause
+      ).as(BaseGift.simple *)
       .map(g => {
           val giftContent = GiftContentReads.reads(Json.parse(g.content)).get
           val to = giftContent.to match {
@@ -146,5 +164,30 @@ object Gift {
           }
         )
   }
+  
+  /**
+   * @param eventid
+   * @return list of gifts for the given event
+   */
+  def findByEventId(eventid: Long): List[Gift] =
+    find("gift.eventid = " + eventid)
+  
+  /**
+   * Check if a user is the creator of this task
+   */
+  def isCreator(giftid: Long, userid: Long): Boolean = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          select count(gift.id) = 1 from gift
+          where gift.id = {giftid} and gift.creatorid = {creatorid}
+        """
+      ).on(
+        'giftid -> giftid,
+        'creatorid -> userid
+      ).as(scalar[Boolean].single)
+    }
+  }
+
 
 }

@@ -72,9 +72,7 @@
   <script type="text/javascript" charset="utf-8">
     
     $('.removeUrl').on('click', function(e) {
-      alert("gneu")
       var urls = $(this).parents('.urls')
-      alert($(this).parents('.url').html())
       $(this).parents('.url').remove()
       renumber(urls)
     })

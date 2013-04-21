@@ -109,6 +109,29 @@ object Gift {
       gift.copy(id = baseGift.id)
   }
   
+  def update(gift: Gift) = 
+  DB.withConnection{ implicit connectin =>
+      val toid = gift.to match {
+        case Some(user) => Some(user.id.get)
+        case None => None
+      }
+      
+      val fromid = gift.from match {
+        case Some(user) => Some(user.id.get)
+        case None => None
+      }
+
+    SQL("""
+        update gift set
+        content={content}
+        where id = {id}
+        """).on(
+        'id -> gift.id.get,
+        'content -> GiftContentWrites.writes(GiftContent(gift.name, gift.status.id, toid, fromid, gift.urls)).toString()
+      ).executeUpdate()
+  }
+
+  
   /**
    * Delete a gift.
    */

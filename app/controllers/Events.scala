@@ -79,14 +79,25 @@ object Events extends Controller with Secured {
   
   val giftForm = Form[Gift] {
     tuple(
-      "creatorid" -> longNumber.verifying ("Could not find creator.", id => User.findById(id).isDefined)
+      "id" -> optional(longNumber).verifying ("Could not find gift to update.", 
+          optid => optid match {
+            case Some(id) => Gift.findById(id).isDefined
+            case None => true 
+          })
+      ,"creatorid" -> longNumber.verifying ("Could not find creator.", id => User.findById(id).isDefined)
       ,"eventid" -> longNumber.verifying ("Could not find event. Maybe you deleted it ?", id => Event.findById(id).isDefined)
       ,"name" -> nonEmptyText
       ,"urls" -> list(nonEmptyText)
     ).transform(
     {/*apply*/
-      case (creatorid, eventid, name, urls) => {
-        Gift(creator=User.findById(creatorid).get, 
+      case (optid, creatorid, eventid, name, urls) => {
+        val pkid = optid match {
+          case Some(x) => anorm.Id(x)
+          case None => NotAssigned
+        }
+        Gift(
+            id=pkid,
+            creator=User.findById(creatorid).get, 
             event=Event.findById(eventid).get, 
             name=name, 
             urls=urls
@@ -94,6 +105,7 @@ object Events extends Controller with Secured {
       }
     },{ /*unapply*/
       gift: Gift => (
+            gift.id.toOption,
             gift.creator.id.get,
             gift.event.id.get,
             gift.name,
@@ -102,23 +114,26 @@ object Events extends Controller with Secured {
   }
 
   def newGift(eventid: Long) = IsAuthenticated { user => implicit request =>
-    Ok(views.html.gifts.new_gift(user, giftForm.fill(Gift(creator=user, event=Event.findById(eventid).get, name="", urls=List("slip", "gneu")))))
+    Ok(views.html.gifts.edit_gift(user, giftForm.fill(Gift(creator=user, event=Event.findById(eventid).get, name=""))))
   }
-  def postNewGift() = IsAuthenticated { user => implicit request =>
+  def postEditGift() = IsAuthenticated { user => implicit request =>
     giftForm.bindFromRequest.fold(
       errors => {
         println(errors)
-        BadRequest(views.html.gifts.new_gift(user, errors))
+        BadRequest(views.html.gifts.edit_gift(user, errors))
       },
       gift => {
-        Gift.create(gift)
+        gift.id.toOption match {
+          case Some(x) => Gift.update(gift)
+          case None => Gift.create(gift)
+        }
         Redirect(routes.Events.event(gift.event.id.get)).withSession("userId" -> user.id.toString)
       }
     )
   }  
   
-  def gift(giftid: Long) = IsAuthenticated { user => implicit request =>
-    Ok(views.html.event(user, Event.findById(giftid).get))
+  def editGift(giftid: Long) = IsAuthenticated { user => implicit request =>
+    Ok(views.html.gifts.edit_gift(user, giftForm.fill(Gift.findById(giftid).get)))
   }
   
   /**

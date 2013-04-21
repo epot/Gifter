@@ -18,7 +18,7 @@
 
   <hr/>
 
-  @helper.form(action = routes.Events.postNewGift, args = 'class -> "form-horizontal") {
+  @helper.form(action = routes.Events.postEditGift, args = 'class -> "form-horizontal") {
     @giftForm.globalError.map { error =>
       <div class="alert error">
         <p>@error.message</p>

@@ -143,7 +143,7 @@ object Events extends Controller with Secured {
     Gift.findById(giftid) match {
       case Some(gift) => { 
         Gift.delete(giftid)
-        Redirect(routes.UserApplication.index).withSession("userId" -> user.id.toString)
+        Redirect(routes.Events.event(gift.event.id.get)).withSession("userId" -> user.id.toString)
       }
       case None => BadRequest
     }

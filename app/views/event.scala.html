@@ -6,8 +6,10 @@
 
 @import models.user._
 @import models.gift.Event
+
 @import views.html.participants.participants
 @import views.html.gifts.gifts
+@import views.html.modal.deleteModal
 
 @userHomeTemplate(title = event.name, user = user) {
   <ul class="nav nav-tabs">
@@ -23,4 +25,16 @@
       @participants(user, event)
     </div>
   </div>
+  
+  @deleteModal("Confirm deletion",
+    "If you delete this gift, you will make tons of users unhappy. Are you sure you want to do that ?")
 }
+
+
+<script type="text/javascript">
+  $('.open-delete-modal').click(function() {
+    var giftid = $(this).data('id');
+    $(".modal-footer #delete-event-form").attr("action", "/deleteGift/" + giftid);
+    $('#delete-modal').modal('show');
+  });
+</script>

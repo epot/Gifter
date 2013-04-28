@@ -3,6 +3,8 @@
 @import helper._
 @import helper.twitterBootstrap._
 
+@import views.html.modal.deleteModal
+
 @import models.gift._
 
 @userHomeTemplate(user = user) {
@@ -38,23 +40,8 @@
     </table>
   </div>
   
-  <!-- Modal -->
-  <div id="delete-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-      <h3 id="myModalLabel">Confirm deletion</h3>
-    </div>
-    <div class="modal-body">
-      <p>If you delete this event, you will make tons of users unhappy. Are you sure you want to do that ?</p>
-    </div>
-    <div class="modal-footer">
-      <form id="delete-event-form" action="" method="POST" class="form-horizontal">
-        <input type="hidden" name="eventid" id="eventid" value="gna"/>
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-        <button type="submit" class="btn btn-primary">Confirm</button>
-      </form>
-    </div>
-  </div
+  @deleteModal("Confirm deletion",
+    "If you delete this event, you will make tons of users unhappy. Are you sure you want to do that ?")
 }
 
 

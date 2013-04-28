@@ -1,0 +1,19 @@
+@(title: String,
+confirmationMessage: String)
+
+  <!-- Modal -->
+  <div id="delete-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 id="myModalLabel">@title</h3>
+    </div>
+    <div class="modal-body">
+      <p>@confirmationMessage</p>
+    </div>
+    <div class="modal-footer">
+      <form id="delete-event-form" action="" method="POST" class="form-horizontal">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+        <button type="submit" class="btn btn-primary">Confirm</button>
+      </form>
+    </div>
+  </div

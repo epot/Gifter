@@ -62,7 +62,7 @@
           
       <div class="actions">
         <input type="submit" class="btn btn-primary" value="Submit" />
-        <a href="@routes.UserApplication.index">
+        <a href="@routes.Events.event(giftForm("eventid").value.get.toLong)">
           <input type="button" class="btn-danger" value="Cancel">
         </a>
       </div>              

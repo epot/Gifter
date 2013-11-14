@@ -5,6 +5,11 @@
 @import models.gift.Gift
 @import controllers.UserApplication
 
+@urlLinks(urls: List[String]) = @{
+  for ((url, i) <- urls.view.zipWithIndex) yield "<a href=\"" + url + "\" target=\"_blank\">Link " + (i+1) + "</a>"
+}
+
+
 <tr>
   <td>@g.name</td>
   <td>
@@ -15,7 +20,7 @@
       <div class="btn-group">
         <a class="btn" href="@routes.Events.editGift(g.id.get)"><i class="icon-eye-open"></i></a>
         @if(! g.urls.isEmpty) {
-          <a class="btn" data-toggle="popover" data-placement="left" title="Links" data-content="Urls: @g.urls"><i class="icon-download"></i></a>
+          <a class="btn link-button" data-toggle="popover" data-placement="left" title="Links" data-content='Urls: @urlLinks(g.urls)'><i class="icon-download"></i></a>
         }
         @if(g.creator == user) {
           <a class="btn open-delete-modal" data-id="@g.id.get"><i class="icon-remove"></i></a>

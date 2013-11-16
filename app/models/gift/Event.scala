@@ -15,21 +15,27 @@ case class Event(
   id: Pk[Long] = NotAssigned,
   creator: User,
   name: String,
-  date: DateTime
+  date: DateTime,
+  eventtype: Event.Type.Value
   ) {
 
   def isOwner(user: User) = creator == user
 }
 
 object Event {
+  object Type extends Enumeration {
+    val Birthday = Value(1, "Birthday")
+    val Christmas = Value(2, "Christmas")
+  }
 
   val simple =
     get[Pk[Long]]("event.id") ~
     get[Long]("event.creatorid") ~
     get[String]("event.name") ~
-    get[Date]("event.date") map {
-      case id~creatorid~name~date =>
-        Event(id, User.findById(creatorid).get, name, new DateTime(date))
+    get[Date]("event.date") ~ 
+    get[Int]("event.type") map {
+      case id~creatorid~name~date~eventtype =>
+        Event(id, User.findById(creatorid).get, name, new DateTime(date), Type(eventtype))
   }
   def create(event: Event): Event =
   DB.withConnection { implicit connection =>
@@ -41,14 +47,15 @@ object Event {
       SQL(
         """
           insert into event values (
-            {id}, {creatorid}, {name}, {date}
+            {id}, {creatorid}, {name}, {date}, {eventtype}
           )
         """
       ).on(
         'id -> id,
         'creatorid -> event.creator.id,
         'name -> event.name,
-        'date -> event.date.toDate
+        'date -> event.date.toDate,
+        'eventtype -> event.eventtype.id
       ).executeUpdate()
       
       event.copy(id = Id(id))

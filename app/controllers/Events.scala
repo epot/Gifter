@@ -21,16 +21,18 @@ object Events extends Controller with Secured {
       "creatorid" -> longNumber.verifying ("Could not find creator.", id => User.findById(id).isDefined)
       ,"name" -> nonEmptyText
       ,"dateStr" -> date("dd-MM-yyyy")
+      ,"type" -> nonEmptyText
       ).transform(
     {/*apply*/
-      case (creatorid, name, dateStr) => {
-        Event(creator= User.findById(creatorid).get, name=name, date=new DateTime(dateStr))
+      case (creatorid, name, dateStr, eventtype) => {
+        Event(creator= User.findById(creatorid).get, name=name, date=new DateTime(dateStr), eventtype=Event.Type.withName(eventtype))
       }
     },{ /*unapply*/
       event: Event => (
             event.creator.id.get,
             event.name,
-            event.date.toDate)
+            event.date.toDate,
+            event.eventtype.toString)
     })
   )  
   

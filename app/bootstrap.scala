@@ -36,8 +36,8 @@ package bootstrap {
           val manu = User.findByEmail("emmanuel.pot@gmail.com").get
           val bob = User.findByEmail("bob@gmail.com").get
           
-          val noel = Event.create(Event(creator=manu, name="Noel 2013", date=new DateTime()))
-          Event.create(Event(creator=manu, name="Anniversaire nico 2013", date=new DateTime()))
+          val noel = Event.create(Event(creator=manu, name="Noel 2013", date=new DateTime(), eventtype=Event.Type.Christmas))
+          Event.create(Event(creator=manu, name="Anniversaire nico 2013", date=new DateTime(), eventtype=Event.Type.Birthday))
           
           Participant.create(Participant(event=noel, user=manu, role=Participant.Role.Owner))
           Participant.create(Participant(event=noel, user=bob, role=Participant.Role.Reader))

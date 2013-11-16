@@ -23,6 +23,7 @@ create table event (
   creatorid bigint(20) not null,
   name varchar(255) not null,
   date timestamp not null,
+  type int not null,
   foreign key (creatorid) references user(id) on delete cascade
 );
 

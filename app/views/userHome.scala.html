@@ -15,6 +15,7 @@
           <th>Event</th>
           <th>Creator</th>
           <th>Date</th>
+          <th>Type</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -24,6 +25,7 @@
             <td><a href="@routes.Events.event(event.id.get)">@event.name</a></td>
             <td>@event.creator.name</td>
             <td>@event.date.toDate().format("dd/MM/yyyy")</td>
+            <td>@event.eventtype</td>
             <td>
               <div class="btn-toolbar">
                 <div class="btn-group">

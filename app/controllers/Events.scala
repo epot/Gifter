@@ -137,7 +137,7 @@ object Events extends Controller with Secured {
   }
   
   /**
-   * Delete an event.
+   * Delete a gift.
    */
   def postDeleteGift(giftid: Long) = IsCreatorOfGift(giftid) { user => implicit request =>
     Gift.findById(giftid) match {
@@ -189,5 +189,29 @@ object Events extends Controller with Secured {
       }
     )
   }
+  
+  
+  def updateGiftStatus(giftid: Long) = IsAuthenticated { user => implicit request =>
+    Form("status" -> nonEmptyText).bindFromRequest.fold(
+      errors => BadRequest,
+      status => {
+        Gift.findById(giftid) match {
+          case Some(gift) => {
+            val statusValue = Gift.Status.withName(status)
+            
+            val from = statusValue match {
+              case Gift.Status.New => None
+              case _ => Some(user)
+            }
+            
+            Gift.update(gift.copy(status=statusValue, from=from))
+            Redirect(routes.Events.event(gift.event.id.get)).withSession("userId" -> user.id.toString)
+          }
+          case None => BadRequest
+        }
+      }
+    )
+  }
+
 
 }

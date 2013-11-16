@@ -27,9 +27,9 @@ case class Gift(
 object Gift {
   object Status extends Enumeration {
     val New = Value(1, "New")
-    val AboutToBeBought = Value(2, "AboutToBeBought")
+    val AboutToBeBought = Value(2, "About to be bought")
     val Bought = Value(3, "Bought")
-    val MarkedForDeletion = Value(4, "MarkedForDeletion")
+    val MarkedForDeletion = Value(4, "Deleted")
   }
 
   case class GiftContent(
@@ -120,6 +120,7 @@ object Gift {
         case Some(user) => Some(user.id.get)
         case None => None
       }
+    println("slip " + gift.status.id)
 
     SQL("""
         update gift set

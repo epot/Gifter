@@ -30,6 +30,7 @@ GET      /addParticipant            controllers.Events.addParticipant
 GET      /newGift/:eventid          controllers.Events.newGift(eventid: Long)
 POST     /editGift                  controllers.Events.postEditGift
 GET      /editGift/:giftid          controllers.Events.editGift(giftid: Long)
+POST     /updateGiftStatus/:giftid  controllers.Events.updateGiftStatus(giftid: Long)
 POST     /deleteGift/:giftid        controllers.Events.postDeleteGift(giftid: Long)
 
 # Map static resources from the /public folder to the /assets URL path

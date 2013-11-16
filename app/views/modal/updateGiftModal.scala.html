@@ -1,0 +1,36 @@
+@(gift: models.gift.Gift)
+
+@import models.gift.Gift
+
+  <!-- Modal -->
+  <div id="update-gift-status-modal-@gift.id.get" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 id="myModalLabel">Update @gift.name</h3>
+    </div>
+    <form id="update-gift-status-@gift.id.get-form" action="" method="POST" class="form-horizontal">
+    
+    <div class="modal-body">
+          <div class="clearfix  ">
+            <label for="name">Select new status:</label>
+            <select name="status" class="form-control">
+              @for(d <- Gift.Status.values) {
+                @if(d != Gift.Status.MarkedForDeletion) {
+                  <option 
+                  @if(gift.status == d) {
+                    selected
+                  }
+                  >@d</option>
+                }
+              }
+            </select>
+          </div>
+      </div>
+      
+      <div class="modal-footer">
+        
+          <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+          <button type="submit" class="btn btn-primary">Confirm</button>
+      </div>
+    </form>
+  </div

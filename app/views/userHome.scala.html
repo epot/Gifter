@@ -51,5 +51,10 @@
     $(".modal-footer #delete-event-form").attr("action", "/deleteEvent/" + eventid);
     $('#delete-modal').modal('show');
   });
+  $('.open-gift-status-modal').click(function() {
+    var giftid = $(this).data('id');
+    $(".modal-footer #update-gift-status-" + giftid + "-form").attr("action", "/slip/" + giftid);
+    $('#update-gift-status-modal-' + giftid).modal('show');
+  });
 </script>
 

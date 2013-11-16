@@ -59,6 +59,14 @@ trait Secured {
     }
   }
   
+  def IsAllowedToOffer(giftid: Long)(f: => User => Request[AnyContent] => Result) = IsAuthenticated { user => request =>
+    if(Gift.isCreator(giftid, user.id.get)) {
+      f(user)(request)
+    } else {
+      Results.Forbidden
+    }
+  }
+  
   def IsOwnerOf(eventid: Long, userid: Long) = {
     Participant.findByEventIdAndByUserId(eventid, userid) match {
       case Some(p) if p.role == Participant.Role.Owner => true

@@ -90,28 +90,44 @@ object Events extends Controller with Secured {
       ,"eventid" -> longNumber.verifying ("Could not find event. Maybe you deleted it ?", id => Event.findById(id).isDefined)
       ,"name" -> nonEmptyText
       ,"urls" -> list(nonEmptyText)
+      ,"to" -> optional(nonEmptyText).verifying ("Could not gift recipient.", 
+          toid => toid match {
+            case Some(id) => User.findById(id.toLong).isDefined
+            case None => true 
+          })
     ).transform(
     {/*apply*/
-      case (optid, creatorid, eventid, name, urls) => {
+      case (optid, creatorid, eventid, name, urls, toid) => {
         val pkid = optid match {
           case Some(x) => anorm.Id(x)
           case None => NotAssigned
+        }
+        val to = toid match {
+          case Some(id) => User.findById(id.toLong)
+          case None => None
         }
         Gift(
             id=pkid,
             creator=User.findById(creatorid).get, 
             event=Event.findById(eventid).get, 
             name=name, 
-            urls=urls
+            urls=urls,
+            to = to
             )
       }
     },{ /*unapply*/
-      gift: Gift => (
-            gift.id.toOption,
-            gift.creator.id.get,
-            gift.event.id.get,
-            gift.name,
-            gift.urls)
+      gift: Gift => {
+        val toid = gift.to match {
+          case Some(user) => Some(user.id.get.toString)
+          case None => None
+        }
+        ( gift.id.toOption,
+          gift.creator.id.get,
+          gift.event.id.get,
+          gift.name,
+          gift.urls,
+          toid)
+      }
     })
   }
 

@@ -5,7 +5,7 @@
 @import helper._
 @import helper.twitterBootstrap._
 
-@import models.gift.Gift
+@import models.gift._
 
 @urlField(field: Field, className: String = "url") = {
     @input(field, '_label -> "Urls:", '_class -> className) { (id, name, value, _) =>
@@ -51,6 +51,14 @@
           giftForm("urls[x]"),
           className = "url_template"
         )
+        
+        @if(giftForm("eventid").value.isDefined && Event.findById(giftForm("eventid").value.get.toLong).get.eventtype == Event.Type.Christmas) {
+          @select(
+            giftForm("to"),
+            options = (for(p <- Participant.findByEventId(giftForm("eventid").value.get.toLong)) yield (p.user.id.get.toString, p.user.name)).toSeq
+          )
+        }
+        
         
         <div class="clearfix">
           <div class="input">

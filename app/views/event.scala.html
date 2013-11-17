@@ -5,7 +5,7 @@
 @import helper._
 
 @import models.user._
-@import models.gift.Event
+@import models.gift._
 
 @import views.html.participants.participants
 @import views.html.gifts.gifts
@@ -13,14 +13,27 @@
 
 @userHomeTemplate(title = event.name, user = user) {
   <ul class="nav nav-tabs">
-    <li class="active"><a href="#gifts" data-toggle="tab">Gifts</a></li>
+    @if(event.eventtype == Event.Type.Birthday) {
+      <li class="active"><a href="#gifts" data-toggle="tab">Gifts</a></li>
+    } else { 
+      @if(event.eventtype == Event.Type.Christmas) {
+        <li class="dropdown">
+          <a href="#" id="giftsDropdown" class="dropdown-toggle" data-toggle="dropdown">Gifts <b class="caret"></b></a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="giftsDropdown">
+            @for(p <- Participant.findByEventId(event.id.get)) {
+              <li><a href="#dropdownGifts@p.user.id.get" tabindex="-1" data-toggle="tab">@p.user.name</a></li>
+            }
+          </ul>
+        </li>
+      }
+    }
+
     <li><a href="#participants" data-toggle="tab">Participants</a></li>
+    
   </ul>
   
   <div class="tab-content">
-    <div class="tab-pane active" id="gifts">
-      @gifts(user, event)
-    </div>
+    @gifts(user, event)
     <div class="tab-pane" id="participants">
       @participants(user, event)
     </div>
@@ -44,4 +57,6 @@
     $("#update-gift-status-" + giftid + "-form").attr("action", "/updateGiftStatus/" + giftid);
     $('#update-gift-status-modal-' + giftid).modal('show');
   });
+  
+  $('.dropdown-toggle').dropdown()
 </script>

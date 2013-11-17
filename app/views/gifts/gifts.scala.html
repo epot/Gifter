@@ -8,7 +8,26 @@
 @import models.user._
 @import models.gift._
 
-@gifts_table(user, Gift.findByEventId(event.id.get))
+@if(event.eventtype == Event.Type.Birthday) {
+  <div class="tab-pane active" id="gifts">
+ 	@gifts_table(user, Gift.findByEventId(event.id.get))
+  </div>
+} else { 
+  @if(event.eventtype == Event.Type.Christmas) {
+    @for((p, i) <- Participant.findByEventId(event.id.get).view.zipWithIndex) {
+      <div class=
+      @if(i == 0) {
+        "tab-pane active"
+      } else {
+        "tab-pane"
+      }
+      id="dropdownGifts@p.user.id.get">
+        <h4>Gifts for @p.user.name</h4>
+        @gifts_table(user, Gift.findByEventId(event.id.get), Some(p.user))
+      </div>
+    }
+  }
+}
 
 <div id="add-gift-form">
   <a href="@routes.Events.newGift(event.id.get)">

@@ -42,7 +42,8 @@ package bootstrap {
           Participant.create(Participant(event=noel, user=manu, role=Participant.Role.Owner))
           Participant.create(Participant(event=noel, user=bob, role=Participant.Role.Reader))
           
-          Gift.create(Gift(creator=manu, name="slip au camembert", event=noel))
+          Gift.create(Gift(creator=manu, name="slip au camembert", event=noel, to=Some(bob)))
+          Gift.create(Gift(creator=manu, name="slip au phoque", event=noel, to=Some(manu)))
         }
       }
     }

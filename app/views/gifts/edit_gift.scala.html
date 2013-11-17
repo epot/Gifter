@@ -55,7 +55,9 @@
         @if(giftForm("eventid").value.isDefined && Event.findById(giftForm("eventid").value.get.toLong).get.eventtype == Event.Type.Christmas) {
           @select(
             giftForm("to"),
-            options = (for(p <- Participant.findByEventId(giftForm("eventid").value.get.toLong)) yield (p.user.id.get.toString, p.user.name)).toSeq
+            options = (for(p <- Participant.findByEventId(giftForm("eventid").value.get.toLong)) yield (p.user.id.get.toString, p.user.name)).toSeq,
+            '_label -> "Offer this awesome gift to:",
+            '_help -> ""
           )
         }
         

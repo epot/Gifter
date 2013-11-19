@@ -19,17 +19,18 @@ POST     /signIn                    controllers.Application.postSignIn
 # User actions
 GET      /profile                   controllers.UserApplication.profile
 POST     /profile                   controllers.UserApplication.postProfile
-GET      /reset                     controllers.UserApplication.reset
 
 # Events actions
 GET      /newEvent                  controllers.Events.newEvent
 POST     /newEvent                  controllers.Events.postNewEvent
 POST     /deleteEvent/:eventid      controllers.Events.postDeleteEvent(eventid: Long)
 GET      /editEvent/:eventid        controllers.Events.event(eventid: Long)
+GET      /editEvent/:eventid/:userid controllers.Events.eventWithUser(eventid: Long, userid: Long)
 GET      /addParticipant            controllers.Events.addParticipant
 GET      /newGift/:eventid          controllers.Events.newGift(eventid: Long)
-POST     /editGift                  controllers.Events.postEditGift
+POST     /editGift/:eventid         controllers.Events.postEditGift(eventid: Long)
 GET      /editGift/:giftid          controllers.Events.editGift(giftid: Long)
+GET      /viewGift/:giftid          controllers.Events.viewGift(giftid: Long)
 POST     /updateGiftStatus/:giftid  controllers.Events.updateGiftStatus(giftid: Long)
 POST     /deleteGift/:giftid        controllers.Events.postDeleteGift(giftid: Long)
 

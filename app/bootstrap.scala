@@ -27,6 +27,7 @@ package bootstrap {
       if (User.count == 0) {
         val usersWithIdentity = Map(
           (User(name = "Bob la fouine"), Identity(email="bob@gmail.com", adapter=Identity.Adapter.UserWithPassword, hash="secret")),
+          (User(name = "Jeff"), Identity(email="jeff@gmail.com", adapter=Identity.Adapter.UserWithPassword, hash="secret")),
           (User(name = "Manu"), Identity(email="emmanuel.pot@gmail.com", adapter=Identity.Adapter.Google))
         )
         DB.withTransaction { implicit connection =>

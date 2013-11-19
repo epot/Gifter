@@ -54,8 +54,12 @@ object Events extends Controller with Secured {
     )
   }  
   
-  def event(eventid: Long) = IsAuthenticated { user => implicit request =>
+  def event(eventid: Long) = IsParticipantOf(eventid) { user => implicit request =>
     Ok(views.html.event(user, Event.findById(eventid).get))
+  }
+
+  def eventWithUser(eventid: Long, userid: Long) = IsParticipantOf(eventid) { user => implicit request =>
+    Ok(views.html.event(user, Event.findById(eventid).get, User.findById(userid)))
   }
 
   /**
@@ -134,24 +138,36 @@ object Events extends Controller with Secured {
   def newGift(eventid: Long) = IsAuthenticated { user => implicit request =>
     Ok(views.html.gifts.edit_gift(user, giftForm.fill(Gift(creator=user, event=Event.findById(eventid).get, name=""))))
   }
-  def postEditGift() = IsAuthenticated { user => implicit request =>
+
+  def postEditGift(eventid: Long) = IsParticipantOf(eventid) { user => implicit request =>
     giftForm.bindFromRequest.fold(
       errors => {
         println(errors)
         BadRequest(views.html.gifts.edit_gift(user, errors))
       },
       gift => {
-        gift.id.toOption match {
-          case Some(x) => Gift.update(gift)
+        val newGift = gift.id.toOption match {
+          case Some(id) => { 
+            History.create(History(objectid=id, user=user, category="Gift", content="Update gift from " + Gift.findById(id) + " to " +  gift))
+            Gift.update(gift)
+          }
           case None => Gift.create(gift)
         }
-        Redirect(routes.Events.event(gift.event.id.get)).withSession("userId" -> user.id.toString)
+        
+        newGift.to match {
+          case Some(user_to) => Redirect(routes.Events.eventWithUser(newGift.event.id.get, user_to.id.get)).withSession("userId" -> user.id.toString)
+          case _ => Redirect(routes.Events.event(newGift.event.id.get)).withSession("userId" -> user.id.toString)
+        }
       }
     )
   }  
   
-  def editGift(giftid: Long) = IsAuthenticated { user => implicit request =>
+  def editGift(giftid: Long) = IsParticipantOfWithGift(giftid) { user => implicit request =>
     Ok(views.html.gifts.edit_gift(user, giftForm.fill(Gift.findById(giftid).get)))
+  }
+  
+  def viewGift(giftid: Long) = IsParticipantOfWithGift(giftid) { user => implicit request =>
+    Ok(views.html.gifts.view_gift(user, Gift.findById(giftid).get))
   }
   
   /**
@@ -209,21 +225,42 @@ object Events extends Controller with Secured {
   }
   
   
-  def updateGiftStatus(giftid: Long) = IsAuthenticated { user => implicit request =>
+  def updateGiftStatus(giftid: Long) = IsParticipantOfWithGift(giftid) { user => implicit request =>
     Form("status" -> nonEmptyText).bindFromRequest.fold(
-      errors => BadRequest,
+      errors => {
+        
+        println("errooors " + errors)
+        BadRequest
+      },
       status => {
         Gift.findById(giftid) match {
           case Some(gift) => {
-            val statusValue = Gift.Status.withName(status)
             
-            val from = statusValue match {
-              case Gift.Status.New => None
-              case _ => Some(user)
+            gift.from match {
+              case Some(x) if x != user => BadRequest
+              case _ => {
+                val statusValue = Gift.Status.withName(status)
+
+                val from = statusValue match {
+                  case Gift.Status.New => None
+                  case _ => Some(user)
+                }
+                
+                History.create(History(objectid=giftid, user=user, category="Gift", content="Update gift status from " + gift.status + " to " +  status))
+                val newGift = Gift.update(gift.copy(status=statusValue, from=from))
+                
+                
+                    println("fucker to " + newGift)
+                
+                newGift.to match {
+                  case Some(user_to) => {
+                    println("fucker to " + user_to)
+                    Redirect(routes.Events.eventWithUser(newGift.event.id.get, user_to.id.get)).withSession("userId" -> user.id.toString)
+                  }
+                  case _ => Redirect(routes.Events.event(newGift.event.id.get)).withSession("userId" -> user.id.toString)
+                }
+              }
             }
-            
-            Gift.update(gift.copy(status=statusValue, from=from))
-            Redirect(routes.Events.event(gift.event.id.get)).withSession("userId" -> user.id.toString)
           }
           case None => BadRequest
         }

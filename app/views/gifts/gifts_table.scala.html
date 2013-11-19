@@ -7,13 +7,16 @@
   <thead>
     <tr>
       <th>Name</th>
-      <th>Status</th>
+      @if(filterTo != Some(user)) {
+        <th>Status</th>
+      }
+      <th>Links</th>
       <th>Actions</th>
     </tr>
   </thead>
   <tbody>
     @for(g <- gifts if (g.to == filterTo)) {
-      @gift_row(user, g)
+      @gift_row(user, g, filterTo != Some(user))
     }
   </tbody>
 </table>

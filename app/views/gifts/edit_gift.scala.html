@@ -18,7 +18,7 @@
 
   <hr/>
 
-  @helper.form(action = routes.Events.postEditGift, args = 'class -> "form-horizontal") {
+  @helper.form(action = routes.Events.postEditGift(giftForm("eventid").value.get.toLong), args = 'class -> "form-horizontal") {
     @giftForm.globalError.map { error =>
       <div class="alert error">
         <p>@error.message</p>
@@ -31,6 +31,7 @@
     }
     <div class="well new-gift">
 
+      <input type="hidden" id="id" name="id" value="@giftForm("id").value" >
       <input type="hidden" id="creatorid" name="creatorid" value="@giftForm("creatorid").value" >
       <input type="hidden" id="eventid" name="eventid" value="@giftForm("eventid").value"> 
       @inputText(

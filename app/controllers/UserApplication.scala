@@ -85,31 +85,37 @@ trait Secured {
       Results.Forbidden
     }
   }
+  
+  /**
+   * Check if the connected user is a participant of this event.
+   */
+  def IsParticipantOf(eventid: Long)(f: => User => Request[AnyContent] => Result): play.api.mvc.EssentialAction = IsAuthenticated { user => request =>
+    Participant.findByEventIdAndByUserId(eventid, user.id.get) match {
+      case Some(p) => f(user)(request)
+      case _ => Results.Forbidden
+    }
+  }
+  
+  /**
+   * Check if the connected user is a participant of an event (from a gift id)
+   */
+  def IsParticipantOfWithGift(giftid: Long)(f: => User => Request[AnyContent] => Result): play.api.mvc.EssentialAction = IsAuthenticated { user => request =>
+    Gift.findById(giftid) match {
+      case Some(gift) => {
+        Participant.findByEventIdAndByUserId(gift.event.id.get, user.id.get) match {
+          case Some(p) => f(user)(request)
+          case _ => Results.Forbidden
+        }
+      }
+      case _ => Results.Forbidden
+    }
+  }
 }
 
 object UserApplication extends Controller with Secured {
 
   def index = IsAuthenticated { user => implicit request =>
     Ok(views.html.userHome(user))
-  }
-  
-  /** temporary method to reset the bootstrap data */
-  def reset = IsAuthenticated { user => implicit request =>
-    Logger.info("!!! resetting data !!!")
-    DB.withConnection { implicit connection =>
-      val api = current.plugin[DBPlugin].map(_.api).getOrElse(throw new Exception(
-        "there should be a database plugin registered at this point but looks like it's not available, so evolution won't work. Please make sure you register a db plugin properly"))
-      api.datasources.foreach {
-        case (ds, db) => {
-          val database = Evolutions.databaseEvolutions(api, db)
-          SQL(database(0).sql_down).executeUpdate()
-          SQL(database(0).sql_up).executeUpdate()
-        }
-      }
-    }
-
-    bootstrap.InitialData.addTestData()
-    Redirect(routes.UserApplication.index)
   }
 
   val profileForm = Form[String](

@@ -1,0 +1,52 @@
+@(user: models.user.User,
+  gift: models.gift.Gift
+)
+
+@import helper._
+@import helper.twitterBootstrap._
+
+@import org.joda.time.format.DateTimeFormat
+
+@import models.gift._
+
+@userHomeTemplate(title= "View Gift", user = user) {
+
+  <hr/>
+
+    <h6>Name:</h6>
+    <p>@gift.name</p>
+    @if(gift.to != Some(user)) {
+      <h6>Status:</h6>
+      <p>@gift.status</p>
+    }
+    
+    @if(gift.to.isDefined) {
+      <h6>To:</h6>
+      <p>@gift.to.get.name</p>  
+    }
+    @if(gift.from.isDefined && gift.to != Some(user)) {
+      <h6>From:</h6>
+      <p>@gift.from.get.name</p>  
+    }
+    
+    @if(gift.to != Some(user)) {
+      <table class="table table-striped table-hover table-bordered">
+        <thead>
+          <tr>
+            <th>Who</th>
+            <th>When</th>
+            <th>What</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(h <- History.findByCategoryAndId("Gift", gift.id.get)) {
+            <tr>
+              <td>@h.user.name</td>
+              <td>@DateTimeFormat.forPattern("HH:mm dd MMMM yyyy").print(h.creationDate)</td>
+              <td>@h.content</td>
+            </tr>
+          }
+        </tbody>
+      </table>    
+    }
+}

@@ -1,5 +1,6 @@
 @(user: models.user.User,
-  event: models.gift.Event
+  event: models.gift.Event,
+  to: Option[models.user.User] = None
 )
 
 @import helper._
@@ -33,7 +34,7 @@
   </ul>
   
   <div class="tab-content">
-    @gifts(user, event)
+    @gifts(user, event, to)
     <div class="tab-pane" id="participants">
       @participants(user, event)
     </div>

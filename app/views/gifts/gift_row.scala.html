@@ -1,30 +1,37 @@
 @(user: models.user.User,
-  g:models.gift.Gift
-)
+  g:models.gift.Gift,
+  showStatusColumn: Boolean)
 
 @import models.gift.Gift
 @import controllers.UserApplication
 @import views.html.modal.updateGiftModal
 
-@urlLinks(urls: List[String]) = @{
-  for ((url, i) <- urls.view.zipWithIndex) yield "<a href=\"" + url + "\" target=\"_blank\">Link " + (i+1) + "</a>"
+@urlLinks(urls: List[String]) = {
+  @for((url, i) <- urls.view.zipWithIndex) { 
+    <a href="@url" target="_blank\">Link @(i+1)</a>
+  }
 }
 
 
 <tr>
   <td>@g.name</td>
+  @if(showStatusColumn) {
+    <td>
+      @g.status
+    </td>
+  }
   <td>
-    @g.status
+    @urlLinks(g.urls)
   </td>
   <td>
     <div class="btn-toolbar">
       <div class="btn-group">
-        <a class="btn" href="@routes.Events.editGift(g.id.get)"><i class="icon-eye-open"></i></a>
-        @if(! g.urls.isEmpty) {
-          <a class="btn link-button" data-toggle="popover" data-placement="left" title="Links" data-content='Urls: @urlLinks(g.urls)'><i class="icon-download"></i></a>
-        }
-        @if(!g.from.isDefined || g.from.get == user) {
-          <a class="btn open-gift-status-modal" data-id="@g.id.get"><i class="icon-check"></i></a>
+        <a class="btn" href="@routes.Events.viewGift(g.id.get)"><i class="icon-eye-open"></i></a>
+        <a class="btn" href="@routes.Events.editGift(g.id.get)"><i class="icon-edit"></i></a>
+        @if(g.to != Some(user)) {
+          @if(!g.from.isDefined || g.from.get == user) {
+            <a class="btn open-gift-status-modal" data-id="@g.id.get"><i class="icon-check"></i></a>
+          }
         }
         @if(g.creator == user) {
           <a class="btn open-delete-modal" data-id="@g.id.get"><i class="icon-remove"></i></a>

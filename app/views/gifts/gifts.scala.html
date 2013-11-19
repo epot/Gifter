@@ -1,5 +1,6 @@
 @(user: models.user.User,
-  event: models.gift.Event
+  event: models.gift.Event,
+  to: Option[models.user.User]
 )
 
 @import helper._
@@ -16,7 +17,7 @@
   @if(event.eventtype == Event.Type.Christmas) {
     @for((p, i) <- Participant.findByEventId(event.id.get).view.zipWithIndex) {
       <div class=
-      @if(i == 0) {
+      @if( (!to.isDefined && i == 0) || (to.isDefined && to.get == p.user)) {
         "tab-pane active"
       } else {
         "tab-pane"

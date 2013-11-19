@@ -109,7 +109,7 @@ object Gift {
       gift.copy(id = baseGift.id)
   }
   
-  def update(gift: Gift) = 
+  def update(gift: Gift): Gift = 
   DB.withConnection{ implicit connectin =>
       val toid = gift.to match {
         case Some(user) => Some(user.id.get)
@@ -120,7 +120,6 @@ object Gift {
         case Some(user) => Some(user.id.get)
         case None => None
       }
-    println("slip " + gift.status.id)
 
     SQL("""
         update gift set
@@ -130,6 +129,9 @@ object Gift {
         'id -> gift.id.get,
         'content -> GiftContentWrites.writes(GiftContent(gift.name, gift.status.id, toid, fromid, gift.urls)).toString()
       ).executeUpdate()
+      
+      
+    Gift.findById(gift.id.get).get
   }
 
   

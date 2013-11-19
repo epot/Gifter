@@ -60,6 +60,19 @@ create table comment (
 );
 create sequence comment_seq;
 
+create table history (
+  id bigint(20) not null primary key,
+  objectid bigint(20) not null,
+  userid bigint(20) not null,
+  creationdate timestamp not null,
+  category varchar(255) not null,
+  content varchar(4000) not null,
+  foreign key (userid) references user(id) on delete cascade
+);
+
+create sequence history_seq;
+
+
 # --- !Downs
 
 drop table if exists user;
@@ -73,3 +86,5 @@ drop table if exists gift;
 drop sequence if exists gift_seq;
 drop table if exists comment;
 drop sequence if exists comment_seq;
+drop table if exists history;
+drop sequence if exists history_seq;

@@ -41,7 +41,7 @@ object Event {
   DB.withConnection { implicit connection =>
       // Get the user id
       val id: Long = event.id.getOrElse {
-        SQL("select next value for event_seq").as(scalar[Long].single)
+        SQL("select nextval('event_seq')").as(scalar[Long].single)
       }
       
       SQL(

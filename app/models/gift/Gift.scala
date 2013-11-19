@@ -64,7 +64,7 @@ object Gift {
     def create(gift: BaseGift) =
       DB.withConnection { implicit connection =>
         val id = gift.id.getOrElse{
-            SQL("select next value for gift_seq").as(scalar[Long].single)
+            SQL("select nextval('gift_seq')").as(scalar[Long].single)
         }
         
         SQL(

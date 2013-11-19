@@ -17,7 +17,7 @@ object Identity {
       val user = SQL(
         """
          select u.* from identity iden
-         join user u on iden.userid = u.id
+         join user_table u on iden.userid = u.id
          where iden.adapter = {adapter} and
          iden.email = {email} and iden.hash = {password}
         """

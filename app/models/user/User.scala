@@ -19,9 +19,9 @@ case class User(
 object User {
 
   val simple =
-    get[Pk[Long]]("user.id") ~
-    get[String]("user.name") ~
-    get[Boolean]("user.isNotMember") map {
+    get[Pk[Long]]("user_table.id") ~
+    get[String]("user_table.name") ~
+    get[Boolean]("user_table.isNotMember") map {
       case id~name~isNotMember => 
         User(id, name, isNotMember)
     }
@@ -30,12 +30,12 @@ object User {
     DB.withConnection { implicit connection =>
       // Get the user id
       val id: Long = user.id.getOrElse {
-        SQL("select next value for user_seq").as(scalar[Long].single)
+        SQL("select nextval('user_seq')").as(scalar[Long].single)
       }
       
       SQL(
         """
-          insert into user values (
+          insert into user_table values (
             {id}, {name}, {isNotMember}
           )
         """
@@ -66,7 +66,7 @@ object User {
   def update(userId: Long, user: User) = 
   DB.withConnection{ implicit connectin =>
     SQL("""
-        update user set 
+        update user_table set 
         name = {name}, isNotMember = {isNotMember}
         where id = {id}
         """).on(
@@ -81,7 +81,7 @@ object User {
       SQL(
         """
          select u.* from identity iden
-         join user u on iden.userId = u.id
+         join user_table u on iden.userId = u.id
          where iden.email = {email}
         """
       ).on(
@@ -91,25 +91,25 @@ object User {
   
   def findById(id: Long): Option[User] =
   DB.withConnection{ implicit connection =>
-    SQL("select * from user where id = {id}")
+    SQL("select * from user_table where id = {id}")
       .on('id -> id)
       .as(User.simple.singleOpt)
   }
   
   def findByIds(ids: List[Long]): List[User] =
   DB.withConnection{ implicit connection =>
-    SQL("select * from user where id in (" + ids.mkString(",") + ")")
+    SQL("select * from user_table where id in (" + ids.mkString(",") + ")")
       .as(User.simple *)
   }
   
   def findAll: List[User] =
   DB.withConnection{ implicit connection =>
-    SQL("select * from user")
+    SQL("select * from user_table")
       .as(User.simple *)    
   }
   
   def count: Long = 
   DB.withConnection{ implicit connection =>
-    SQL("select count(*) as c from user").as(scalar[Long].single)
+    SQL("select count(*) as c from user_table").as(scalar[Long].single)
   }
 }

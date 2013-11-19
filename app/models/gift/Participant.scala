@@ -31,7 +31,7 @@ object Participant {
       get[Pk[Long]]("participant.id") ~
       get[Long]("participant.userid") ~
       get[Long]("participant.eventid") ~
-      get[Int]("participant.role") map {
+      get[Int]("participant.participant_role") map {
         case id~userid~eventid~role =>
           BaseParticipant(id, userid, eventid, role)
     }    
@@ -40,7 +40,7 @@ object Participant {
     def create(participant: BaseParticipant) =
       DB.withConnection { implicit connection =>
         val id = participant.id.getOrElse{
-            SQL("select next value for participant_seq").as(scalar[Long].single)
+            SQL("select nextval('participant_seq')").as(scalar[Long].single)
         }
         
         SQL(
@@ -77,7 +77,7 @@ object Participant {
         SQL(
         """
             update participant set 
-              role = {role}
+              participant_role = {role}
               where id={id}
         """    
         ).on(

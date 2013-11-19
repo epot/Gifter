@@ -37,7 +37,7 @@ object History {
   def create(history: History) =
     DB.withConnection { implicit connection =>
       val id = history.id.getOrElse{
-          SQL("select next value for history_seq").as(scalar[Long].single)
+          SQL("select nextval('history_seq')").as(scalar[Long].single)
       }
       
       SQL(

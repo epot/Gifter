@@ -29,7 +29,7 @@
             <td>
               <div class="btn-toolbar">
                 <div class="btn-group">
-                  <a class="btn" href="@routes.Events.event(event.id.get)"><i class="icon-eye-open"></i></a>
+                  <a class="btn" href="@routes.Events.event(event.id.get)"><i class="icon-eye-open button-tooltip" data-toggle="tooltip" title="View details"></i></a>
                   @if(event.creator == user) {
                     <a class="btn open-delete-modal" data-id="@event.id.get"><i class="icon-remove"></i></a>
                   }
@@ -41,22 +41,5 @@
       </tbody>
     </table>
   </div>
-  
-  @deleteModal("Confirm deletion",
-    "If you delete this event, you will make tons of users unhappy. Are you sure you want to do that ?")
 }
-
-
-<script type="text/javascript">
-  $('.open-delete-modal').click(function() {
-    var eventid = $(this).data('id');
-    $(".modal-footer #delete-event-form").attr("action", "/deleteEvent/" + eventid);
-    $('#delete-modal').modal('show');
-  });
-  $('.open-gift-status-modal').click(function() {
-    var giftid = $(this).data('id');
-    $(".modal-footer #update-gift-status-" + giftid + "-form").attr("action", "/slip/" + giftid);
-    $('#update-gift-status-modal-' + giftid).modal('show');
-  });
-</script>
 

@@ -48,7 +48,8 @@ object Events extends Controller with Secured {
         BadRequest(views.html.newEvent(user, errors))
       },
       event => {
-        Event.create(event)
+        val new_event = Event.create(event)
+        Participant.create(Participant(event=new_event, user=user, role=Participant.Role.Owner))
         Redirect(routes.UserApplication.index).withSession("userId" -> user.id.toString)
       }
     )

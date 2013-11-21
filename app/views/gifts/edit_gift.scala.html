@@ -12,7 +12,7 @@
       <div class="input input-group">
         <input type="text" class="form-control" name="@name" value="@value"> 
         <span class="input-group-btn">
-          <button class="removeUrlFuck btn btn-default" type="button"><i class="glyphicon glyphicon-remove"></i></button>
+          <button class="removeUrl btn btn-default" type="button"><i class="glyphicon glyphicon-remove"></i></button>
         </span>
       </div>
     }
@@ -91,7 +91,8 @@
 
 <script type="text/javascript" charset="utf-8">
     
-    $('.removeUrlFuck').on('click', function() {
+	$(document.body).on('click', '.removeUrl' ,function(){
+      alert("gna")
       var urls = $(this).parents('.urls')
       $(this).parents('.url').remove()
       renumber(urls)

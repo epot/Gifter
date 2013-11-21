@@ -17,18 +17,15 @@
         <script src="@routes.Assets.at("javascripts/main.js")"></script>
     </head>
     <body>
-      <div id="top" class="navbar navbar-inverse navbar-fixed-top">
-        <div class="navbar-inner">
-          <div class="container">
-            <ul class="nav">
-              <li
-              @if(screen == "home"){
-                class="active"
-              }
-              ><a href="@routes.UserApplication.index">Home</a></li>
-            </ul>
+      <div id="top" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+                <a class="navbar-brand" href="@routes.UserApplication.index">Home</a>
+          </div>
+          
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-6">
             @if(connected.isDefined) {
-              <ul class="span2 nav right">  
+              <ul class="navbar-nav nav right">  
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown">@connected.get.name<b class="caret"></b></a>
                     <ul class="dropdown-menu">
@@ -39,7 +36,7 @@
                   </li>
               </ul>
             }
-          </div>
+          </div><!-- /.navbar-collapse --> 
         </div>
       </div>
       <div class="container">

@@ -23,10 +23,9 @@ trait Secured {
 
   /**
    * Redirect to login if the user in not authorized.
-   */
-  def onUnauthorized() = Results.Redirect(routes.Application.index)
-  // the one below is just to comply to the signature asked by Security.Authenticated
-  def onUnauthorized(request: RequestHeader): Result = onUnauthorized()
+   */  
+  private def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.Application.index)
+
 
   /**
    * Action for authenticated users. The bodyParser argument is to be able to specify, for example, a json parser.
@@ -34,7 +33,7 @@ trait Secured {
   def IsAuthenticated[A](bodyParser: BodyParser[A])(f: => User => Request[A] => Result) = Security.Authenticated(userId, onUnauthorized) { userId =>
     User.findById(userId.toLong) match {
       case Some(user) => Action(bodyParser)(request => f(user)(request))
-      case _ => Action(bodyParser)(request => onUnauthorized())
+      case _ => Action(bodyParser)(request => onUnauthorized(request))
     }
   }
   def IsAuthenticated(f: => User => Request[AnyContent] => Result): play.api.mvc.EssentialAction =

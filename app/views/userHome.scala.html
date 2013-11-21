@@ -29,9 +29,9 @@
             <td>
               <div class="btn-toolbar">
                 <div class="btn-group">
-                  <a class="btn" href="@routes.Events.event(event.id.get)"><i class="icon-eye-open button-tooltip" data-toggle="tooltip" title="View details"></i></a>
+                  <a class="btn btn-default" href="@routes.Events.event(event.id.get)"><i class="glyphicon glyphicon-eye-open button-tooltip" data-toggle="tooltip" title="View details"></i></a>
                   @if(event.creator == user) {
-                    <a class="btn open-delete-modal" data-id="@event.id.get"><i class="icon-remove"></i></a>
+                    <a class="btn btn-default open-delete-modal" data-id="@event.id.get"><i class="glyphicon glyphicon-remove"></i></a>
                   }
                 </div>
               </div>
@@ -41,5 +41,8 @@
       </tbody>
     </table>
   </div>
+  
+  @deleteModal("Confirm deletion",
+    "If you delete this event, you will make tons of users unhappy. Are you sure you want to do that ?")
 }
 

@@ -45,23 +45,4 @@
 }
 
 
-<script type="text/javascript">
-  $('.open-delete-modal').click(function() {
-    var giftid = $(this).data('id');
-    $(".modal-footer #delete-event-form").attr("action", "/deleteGift/" + giftid);
-    $('#delete-modal').modal('show');
-  });
-  
 
-  $('.open-gift-status-modal').click(function() {
-    var giftid = $(this).data('id');
-    $("#update-gift-status-" + giftid + "-form").attr("action", "/updateGiftStatus/" + giftid);
-    $('#update-gift-status-modal-' + giftid).modal('show');
-  });
-  
-  $('.dropdown-toggle').dropdown()
-  
-  $(document).ready(function() {
-    $('.button-tooltip').tooltip();
-  });
-</script>

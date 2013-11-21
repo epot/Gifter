@@ -1,7 +1,7 @@
 @(loginForm: Form[(String, String)])
 
 @import helper._
-@import helper.twitterBootstrap._
+@implicitFieldConstructor = @{ FieldConstructor(helpers.bootstrapFieldConstructor.f) }
 
 @main(title = "Home") {
   <div class="page-header">
@@ -22,13 +22,15 @@
             loginForm("email"),
             '_label -> "Email",
             '_help -> "",
-            '_error -> loginForm.error("email")
+            '_error -> loginForm.error("email"),
+            'class -> "form-control"
           )
 
           @inputPassword(
             loginForm("password"),
             '_label -> "Password",
-            '_error -> loginForm.error("password")
+            '_error -> loginForm.error("password"),
+            'class -> "form-control"
           )
         </fieldset>
 

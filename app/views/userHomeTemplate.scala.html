@@ -29,7 +29,8 @@ title:String = "Gifter home")(body: Html)
 <script type="text/javascript">
   $('.open-delete-modal').click(function() {
     var giftid = $(this).data('id');
-    $(".modal-footer #delete-event-form").attr("action", "/deleteGift/" + giftid);
+    var action = $(this).data('action');
+    $(".modal-footer #delete-event-form").attr("action", "/" + action + "/" + giftid);
     $('#delete-modal').modal('show');
   });
   

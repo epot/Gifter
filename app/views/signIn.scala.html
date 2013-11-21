@@ -1,7 +1,7 @@
 @(userForm: Form[(models.user.User, models.user.Identity)])
 
 @import helper._
-@import helper.twitterBootstrap._
+@implicitFieldConstructor = @{ FieldConstructor(helpers.bootstrapFieldConstructor.f) }
 
 @main(title = "Sign in") {
   <div class="container">
@@ -17,25 +17,27 @@
             </div>
           }
           <fieldset>
-            @inputText(userForm("name"), '_label -> "Name", '_help -> "")
-            @inputText(userForm("email"), '_label -> "Email", '_help -> "")
+            @inputText(userForm("name"), '_label -> "Name", '_help -> "", 'class -> "form-control")
+            @inputText(userForm("email"), '_label -> "Email", '_help -> "", 'class -> "form-control")
 
             @inputPassword(
               userForm("password.main"),
               '_label -> "Password",
-              '_help -> ""
+              '_help -> "",
+              'class -> "form-control"
             )
 
             @inputPassword(
               userForm("password.confirm"),
               '_label -> "Repeat password",
-              '_error -> userForm.error("password")
+              '_error -> userForm.error("password"),
+              'class -> "form-control"  
             )
           </fieldset>
           <div class="actions">
             <input type="submit" value="Submit" class="btn btn-primary"/>
             <a href="@routes.Application.index">
-              <input type="button" class="btn" value="Cancel">
+              <input type="button" class="btn btn-default" value="Cancel">
             </a>
           </div>
         }

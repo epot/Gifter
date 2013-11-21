@@ -3,7 +3,7 @@
 )
 
 @import helper._
-@import helper.twitterBootstrap._
+@implicitFieldConstructor = @{ FieldConstructor(helpers.bootstrapFieldConstructor.f) }
 
 @import models.user._
 @import models.gift.Event
@@ -25,17 +25,20 @@
       @inputText(
           eventForm("name"),
           '_label -> "Name:",
-          '_help -> "")      
+          '_help -> "",
+          'class -> "form-control")      
           
-      @input(eventForm("dateStr"), '_label -> "When:", '_help -> "") { (id, name, value, _) =>
-        <input type="text" id="datepicker" name="@name" value="@value"/>
+      @input(eventForm("dateStr"), '_label -> "When:", '_help -> "",
+          'class -> "form-control") { (id, name, value, _) =>
+        <input type="text" class ="form-control" id="datepicker" name="@name" value="@value"/>
       }
-      @select(eventForm("type"), options = options(Event.Type.values.toList.map(_.toString)), '_label -> "Type:", '_help -> "")
+      @select(eventForm("type"), options = options(Event.Type.values.toList.map(_.toString)), '_label -> "Type:", '_help -> "",
+          'class -> "form-control")
           
       <div class="actions">
         <input type="submit" class="btn btn-primary" value="Submit" />
         <a href="@routes.UserApplication.index">
-          <input type="button" class="btn-danger" value="Cancel">
+          <input type="button" class="btn btn-danger" value="Cancel">
         </a>
       </div>              
     </div>

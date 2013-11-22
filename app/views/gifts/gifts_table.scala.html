@@ -1,4 +1,5 @@
 @(user: models.user.User,
+  event: models.gift.Event,
   gifts:List[models.gift.Gift],
   filterTo: Option[models.user.User] = None
 )
@@ -20,4 +21,10 @@
     }
   </tbody>
 </table>
+
+<div id="add-gift-form">
+  <a href="@routes.Events.newGift(event.id.get)">
+    <input type="button" class="btn btn-primary" value="Add a gift idea">
+  </a>
+</div>
 

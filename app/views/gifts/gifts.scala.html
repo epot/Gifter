@@ -11,7 +11,7 @@
 
 @if(event.eventtype == Event.Type.Birthday) {
   <div class="tab-pane active" id="gifts">
- 	@gifts_table(user, Gift.findByEventId(event.id.get))
+ 	@gifts_table(user, event, Gift.findByEventId(event.id.get))
   </div>
 } else { 
   @if(event.eventtype == Event.Type.Christmas) {
@@ -24,17 +24,11 @@
       }
       id="dropdownGifts@p.user.id.get">
         <h4>Gifts for @p.user.name</h4>
-        @gifts_table(user, Gift.findByEventId(event.id.get), Some(p.user))
+        @gifts_table(user, event, Gift.findByEventId(event.id.get), Some(p.user))
       </div>
     }
   }
 }
-
-<div id="add-gift-form">
-  <a href="@routes.Events.newGift(event.id.get)">
-          <input type="button" class="btn btn-primary" value="Add gift">
-  </a>
-</div>
 
 
 <script type="text/javascript">

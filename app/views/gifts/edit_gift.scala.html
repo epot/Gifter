@@ -48,7 +48,7 @@
           @select(
             giftForm("to"),
             options = (for(p <- Participant.findByEventId(giftForm("eventid").value.get.toLong)) yield (p.user.id.get.toString, p.user.name)).toSeq,
-            '_label -> "Intented for:",
+            '_label -> "Intended for:",
             '_help -> "",
             'class -> "form-control"
           )

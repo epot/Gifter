@@ -14,17 +14,23 @@
 
 
 <tr>
-  <td>@g.name</td>
-  <td>@g.creator.name</td>
+  <td class=
+    @if(showStatusColumn) {
+      "col-md-4"
+    } else {
+      "col-md-6"
+    }
+    >@g.name</td>
+  <td class="col-md-1">@g.creator.name</td>
   @if(showStatusColumn) {
-    <td>
+    <td class="col-md-2">
       @g.status
     </td>
   }
-  <td>
+  <td class="col-md-1">
     @urlLinks(g.urls)
   </td>
-  <td>
+  <td class="col-md-4">
     <div class="btn-toolbar">
       <div class="btn-group">
         <a class="btn btn-default" href="@routes.Events.viewGift(g.id.get)"><i class="glyphicon glyphicon-eye-open button-tooltip" data-toggle="tooltip" title="View details"></i></a>

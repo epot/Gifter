@@ -117,12 +117,20 @@ object UserApplication extends Controller with Secured {
     Ok(views.html.userHome(user))
   }
 
-  val profileForm = Form[String](
-   "name" -> nonEmptyText
-  )
+  val profileForm = Form {
+   tuple("name" -> nonEmptyText,
+         "password" -> tuple(
+                  "main" -> optional(nonEmptyText),
+                  "confirm" -> optional(nonEmptyText)
+                ).verifying(
+                  // Add an additional constraint: both passwords must match
+                  "Passwords don't match", passwords => passwords._1 == passwords._2
+            )
+        )
+  }
 
   def profile = IsAuthenticated{ user => implicit request =>
-    Ok(views.html.profile(user, profileForm.fill(user.name)))
+    Ok(views.html.profile(user, profileForm.fill((user.name, (None, None)))))
   }
 
   def postProfile() = IsAuthenticated { user => implicit request =>
@@ -131,8 +139,16 @@ object UserApplication extends Controller with Secured {
         println(errors)
         BadRequest(views.html.profile(user, errors))
       },
-      name => {
-        val userUpdated = User.update(user.id.get, User(name=name))
+      profile_tuple => {
+        User.update(user.id.get, User(name=profile_tuple._1))
+        
+        profile_tuple._2._1 match {
+          case Some(password) => {
+            Identity.updatePassword(user.id.get, password)
+          }
+          case _ =>
+        }
+        
         val userInDb = User.findById(user.id.get).get
         Ok(views.html.userHome(userInDb))
       }

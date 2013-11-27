@@ -1,4 +1,4 @@
-  @(user: models.user.User, profileForm:Form[String])(
+@(user: models.user.User, profileForm:Form[(String, (Option[String], Option[String]))])(
   implicit
   flash: Flash
 )
@@ -20,7 +20,25 @@
 
           @form(routes.UserApplication.postProfile, args = 'class -> "form-horizontal") {
             <fieldset>
-              @inputText(profileForm("name"), '_label -> "Name", '_help -> "")
+              @inputText(
+                profileForm("name"), 
+                '_label -> "Name", 
+                '_help -> "",
+                'class -> "form-control")
+            
+              @inputPassword(
+                profileForm("password.main"),
+                '_label -> "Password",
+                '_help -> "",
+                'class -> "form-control"
+              )
+  
+              @inputPassword(
+                profileForm("password.confirm"),
+                '_label -> "Repeat password",
+                '_error -> profileForm.error("password"),
+                'class -> "form-control"  
+              )
             </fieldset>
             <div class="actions">
               <input type="submit" value="Submit" class="btn btn-primary"/>

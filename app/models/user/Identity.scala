@@ -29,6 +29,24 @@ object Identity {
         user
     }  
 
+  def updatePassword(userid: Long, password: String) =
+    DB.withConnection { implicit connection =>
+      val user = SQL(
+        """
+         update identity set 
+         hash = {password}
+         from user_table
+         where user_table.id = identity.userid 
+           and identity.adapter = {adapter}
+           and user_table.id = {userid}
+        """
+      ).on(
+          'password -> password,
+          'userid -> userid,
+          'adapter -> Adapter.UserWithPassword.id) 
+        .executeUpdate()
+    }  
+
   /** Below are data added during bootstrap as mandatory DB startup data.
    */
   object Adapter extends Enumeration {

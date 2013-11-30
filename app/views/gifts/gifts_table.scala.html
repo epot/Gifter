@@ -1,24 +1,26 @@
 @(user: models.user.User,
   event: models.gift.Event,
-  gifts:List[models.gift.Gift],
-  filterTo: Option[models.user.User] = None
+  gifts:List[models.gift.Gift]
 )
 
-<table id="gifts-table" class="table table-striped table-hover table-bordered">
+@import models.gift._
+
+<table id="gifts-table" class="table table-striped table-hover table-bordered tablesorter">
   <thead>
     <tr>
       <th>Name</th>
-      <th>Idea from</th>
-      @if(filterTo != Some(user)) {
-        <th>Status</th>
+      <th class="filter-select filter-exact" data-placeholder="Select name">Idea from</th>
+      @if(event.eventtype == Event.Type.Christmas) {
+        <th class="filter-select filter-exact" data-placeholder="Select name">To</th>
       }
+      <th class="filter-select filter-exact" data-placeholder="Select status">Status</th>
       <th>Links</th>
       <th>Actions</th>
     </tr>
   </thead>
   <tbody>
-    @for(g <- gifts if (g.to == filterTo)) {
-      @gift_row(user, g, filterTo != Some(user))
+    @for(g <- gifts) {
+      @gift_row(user, g)
     }
   </tbody>
 </table>

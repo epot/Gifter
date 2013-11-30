@@ -1,6 +1,5 @@
 @(user: models.user.User,
-  g:models.gift.Gift,
-  showStatusColumn: Boolean)
+  g:models.gift.Gift)
 
 @import models.gift.Gift
 @import controllers.UserApplication
@@ -14,34 +13,36 @@
 
 
 <tr>
-  <td class=
-    @if(showStatusColumn) {
-      "col-md-4"
-    } else {
-      "col-md-6"
-    }
-    >@g.name</td>
+  <td class="col-md-7">@g.name</td>
   <td class="col-md-1">@g.creator.name</td>
-  @if(showStatusColumn) {
-    <td class="col-md-2">
+  <td class="col-md-1">
+    @if(g.to.isDefined) {
+      @g.to.get.name
+    }
+  </td>
+  <td class="col-md-1">
+    @if(g.to != Some(user)) {
       @g.status
-    </td>
-  }
+      @if(g.from.isDefined) {
+        (@g.from.get.name)
+      }
+    }
+  </td>
   <td class="col-md-1">
     @urlLinks(g.urls)
   </td>
-  <td class="col-md-4">
+  <td class="col-md-1">
     <div class="btn-toolbar">
       <div class="btn-group">
-        <a class="btn btn-default" href="@routes.Events.viewGift(g.id.get)"><i class="glyphicon glyphicon-eye-open button-tooltip" data-toggle="tooltip" title="View details"></i></a>
-        <a class="btn btn-default" href="@routes.Events.editGift(g.id.get)"><i class="glyphicon glyphicon-edit button-tooltip" data-toggle="tooltip" title="Edit"></i></a>
+        <a class="btn btn-default btn-sm" href="@routes.Events.viewGift(g.id.get)"><i class="glyphicon glyphicon-eye-open button-tooltip" data-toggle="tooltip" title="View details"></i></a>
+        <a class="btn btn-default btn-sm" href="@routes.Events.editGift(g.id.get)"><i class="glyphicon glyphicon-edit button-tooltip" data-toggle="tooltip" title="Edit"></i></a>
         @if(g.to != Some(user)) {
           @if(!g.from.isDefined || g.from.get == user) {
-            <a class="btn btn-default open-gift-status-modal" data-id="@g.id.get"><i class="glyphicon glyphicon-credit-card button-tooltip" data-toggle="tooltip" title="Buy"></i></a>
+            <a class="btn btn-default btn-sm open-gift-status-modal" data-id="@g.id.get"><i class="glyphicon glyphicon-credit-card button-tooltip" data-toggle="tooltip" title="Buy"></i></a>
           }
         }
         @if(g.creator == user) {
-          <a class="btn btn-default open-delete-modal" data-id="@g.id.get" data-action="deleteGift"><i class="glyphicon glyphicon-remove"></i></a>
+          <a class="btn btn-default btn-sm open-delete-modal" data-id="@g.id.get" data-action="deleteGift"><i class="glyphicon glyphicon-remove"></i></a>
         }
       </div>
     </div>

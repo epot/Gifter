@@ -29,9 +29,9 @@
             <td>
               <div class="btn-toolbar">
                 <div class="btn-group">
-                  <a class="btn btn-default" href="@routes.Events.event(event.id.get)"><i class="glyphicon glyphicon-eye-open button-tooltip" data-toggle="tooltip" title="View details"></i></a>
+                  <a class="btn btn-default btn-sm" href="@routes.Events.event(event.id.get)"><i class="glyphicon glyphicon-eye-open button-tooltip" data-toggle="tooltip" title="View details"></i></a>
                   @if(event.creator == user) {
-                    <a class="btn btn-default open-delete-modal" data-id="@event.id.get" data-action="deleteEvent"><i class="glyphicon glyphicon-remove"></i></a>
+                    <a class="btn btn-default btn-sm open-delete-modal" data-id="@event.id.get" data-action="deleteEvent"><i class="glyphicon glyphicon-remove"></i></a>
                   }
                 </div>
               </div>

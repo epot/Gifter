@@ -22,9 +22,10 @@
   </td>
   <td class="col-md-1">
     @if(g.to != Some(user)) {
-      @g.status
       @if(g.from.isDefined) {
-        (@g.from.get.name)
+        <span class="button-tooltip" data-toggle="tooltip" title="by @g.from.get.name">@g.status</span>
+      } else {
+        @g.status
       }
     }
   </td>

@@ -2,13 +2,15 @@
   giftForm: Form[models.gift.Gift]
 )
 
+@import play.i18n.Messages
+
 @import helper._
 @implicitFieldConstructor = @{ FieldConstructor(helpers.bootstrapFieldConstructor.f) }
 
 @import models.gift._
 
 @urlField(field: Field, className: String = "url") = {
-    @input(field, '_label -> "Urls:", '_class -> className) { (id, name, value, _) =>
+    @input(field, '_label -> "Liens:", '_class -> className) { (id, name, value, _) =>
       <div class="input input-group">
         <input type="text" class="form-control" name="@name" value="@value"> 
         <span class="input-group-btn">
@@ -18,7 +20,7 @@
     }
 }
 
-@userHomeTemplate(title= "Gifter new gift", user = user) {
+@userHomeTemplate(title= "Gifter nouvelle idée de cadeau", user = user) {
 
   <hr/>
 
@@ -30,7 +32,7 @@
     }
     @if(giftForm.hasErrors) {
         <div class="alert error">
-            <p><strong>Oops</strong> Please fix all errors</p>
+            <p><strong>Oops</strong> Corrigez toutes les erreurs</p>
         </div>
     }
     <div class="well new-gift">
@@ -40,7 +42,7 @@
       <input type="hidden" id="eventid" name="eventid" value="@giftForm("eventid").value"> 
       @inputText(
           giftForm("name"),
-          '_label -> "Name:",
+          '_label -> "Description du cadeau:",
           '_help -> "",
           'class -> "form-control")      
           
@@ -48,7 +50,7 @@
           @select(
             giftForm("to"),
             options = (for(p <- Participant.findByEventId(giftForm("eventid").value.get.toLong)) yield (p.user.id.get.toString, p.user.name)).toSeq,
-            '_label -> "Intended for:",
+            '_label -> Messages.get("gift.to"),
             '_help -> "",
             'class -> "form-control"
           )
@@ -71,7 +73,7 @@
         
         <div class="clearfix">
           <div class="input">
-            <a class="addUrl btn btn-success">Add an URL</a>
+            <a class="addUrl btn btn-success">Ajouter un lien</a>
           </div>
         </div
       </div>
@@ -80,9 +82,9 @@
       <hr/>
           
       <div class="actions">
-        <input type="submit" class="btn btn-primary" value="Submit" />
+        <input type="submit" class="btn btn-primary" value="Soumettre" />
         <a href="@routes.Events.event(giftForm("eventid").value.get.toLong)">
-          <input type="button" class="btn btn-danger" value="Cancel">
+          <input type="button" class="btn btn-danger" value="Annuler">
         </a>
       </div>              
     </div>

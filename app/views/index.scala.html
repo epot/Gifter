@@ -5,7 +5,7 @@
 
 @main(title = "Home") {
   <div class="page-header">
-    <h1>Login <small><a href="@routes.Application.signIn">Or create a new account</a></small></h1>
+    <h1>Connexion <small><a href="@routes.Application.signIn">Ou creer un nouveau compte</a></small></h1>
   </div>
   <div class="row">
     <div class="span14">
@@ -28,17 +28,17 @@
 
           @inputPassword(
             loginForm("password"),
-            '_label -> "Password",
+            '_label -> "Mot de passe",
             '_error -> loginForm.error("password"),
             'class -> "form-control"
           )
         </fieldset>
 
         <div class="actions">
-          <input type="submit" class="btn btn-primary" value="Login">
+          <input type="submit" class="btn btn-primary" value="Connexion">
         </div>
       }
-      <h3>Or use one of your following account:</h3>
+      <h3>Ou utiliser l'un de vos comptes suivant:</h3>
       <a href="@routes.Application.googleLogin"> <img src="@routes.Assets.at("images/providers/google.png")"/></a>
       <a href="@routes.Application.yahooLogin"> <img src="@routes.Assets.at("images/providers/yahoo.png")"/></a>
     </div>

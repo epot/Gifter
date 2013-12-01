@@ -13,6 +13,8 @@ import play.api.libs.functional.syntax._
 import org.joda.time.DateTime
 import java.sql.Clob
 
+import play.i18n.Messages
+
 case class Gift(
   id: Pk[Long] = NotAssigned,
   creator: User,
@@ -26,10 +28,10 @@ case class Gift(
 
 object Gift {
   object Status extends Enumeration {
-    val New = Value(1, "New")
-    val AboutToBeBought = Value(2, "About to be bought")
-    val Bought = Value(3, "Bought")
-    val MarkedForDeletion = Value(4, "Deleted")
+    val New = Value(1, Messages.get("gift.statut.new"))
+    val AboutToBeBought = Value(2, Messages.get("gift.statut.abouttobebought"))
+    val Bought = Value(3, Messages.get("gift.statut.bought"))
+    val MarkedForDeletion = Value(4, Messages.get("gift.statut.markedfordeletion"))
   }
 
   case class GiftContent(

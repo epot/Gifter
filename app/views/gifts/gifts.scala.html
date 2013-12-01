@@ -56,7 +56,7 @@
       
       initialized: function (table) {
         @if(to.isDefined) {
-          $.tablesorter.setFilters( table, ['', '', '@to.get.name'], true);
+          $.tablesorter.setFilters( table, ['', '@to.get.name'], true);
         }
       },
       headers: {

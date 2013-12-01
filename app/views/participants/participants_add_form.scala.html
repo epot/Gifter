@@ -24,8 +24,8 @@
     <div class="well">
   
       <input type="hidden" name="eventid" value="@addParticipantForm("eventid").value">
-      <input type="text" class="input-medium search-query" name="email" value="@addParticipantForm("email").value" placeholder="Enter an email address...">
-      
+      <input type="text" class="input-medium search-query" name="email" value="@addParticipantForm("email").value" placeholder="@play.i18n.Messages.get("participant.addemail")">
+     
       <select name="role">
         @for(role <- Participant.Role.values) {
             <option
@@ -36,9 +36,7 @@
         }
       </select>
   
-      <!--input type="text" class="input-medium search-query" name="email" value="" placeholder=""-->
-  
-      <button type="button" class="btn btn-primary add-participant-btn">Add</button>
+      <button type="button" class="btn btn-primary add-participant-btn">Ajouter</button>
     </div>
 </form>
 <script type="text/javascript">

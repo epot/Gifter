@@ -2,6 +2,7 @@
   gift: models.gift.Gift
 )
 
+@import play.i18n.Messages
 @import helper._
 @implicitFieldConstructor = @{ FieldConstructor(helpers.bootstrapFieldConstructor.f) }
 
@@ -9,23 +10,26 @@
 
 @import models.gift._
 
-@userHomeTemplate(title= "View Gift", user = user) {
+@userHomeTemplate(title = Messages.get("gift.view"), user = user) {
 
   <hr/>
 
-    <h6>Name:</h6>
+    <h6>Description:</h6>
     <p>@gift.name</p>
     @if(gift.to != Some(user)) {
-      <h6>Status:</h6>
+      <h6>Statut:</h6>
       <p>@gift.status</p>
     }
     
+    <h6>Messages.get("gift.creator")</h6>
+    <p>@gift.creator.name</p>  
+
     @if(gift.to.isDefined) {
-      <h6>To:</h6>
+      <h6>Pour:</h6>
       <p>@gift.to.get.name</p>  
     }
     @if(gift.from.isDefined && gift.to != Some(user)) {
-      <h6>From:</h6>
+      <h6>Offert par:</h6>
       <p>@gift.from.get.name</p>  
     }
     

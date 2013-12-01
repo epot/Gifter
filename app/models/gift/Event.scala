@@ -6,6 +6,7 @@ import anorm._
 import anorm.SqlParser._
 import play.api.db._
 import play.api.Play.current
+import play.i18n.Messages
 import java.text.SimpleDateFormat
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
@@ -24,8 +25,8 @@ case class Event(
 
 object Event {
   object Type extends Enumeration {
-    val Birthday = Value(1, "Birthday")
-    val Christmas = Value(2, "Christmas")
+    val Birthday = Value(1, Messages.get("event.type.birthday"))
+    val Christmas = Value(2, Messages.get("event.type.christmas"))
   }
 
   val simple =

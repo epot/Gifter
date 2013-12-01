@@ -2,13 +2,15 @@
   eventForm: Form[models.gift.Event]
 )
 
+@import play.i18n.Messages
+
 @import helper._
 @implicitFieldConstructor = @{ FieldConstructor(helpers.bootstrapFieldConstructor.f) }
 
 @import models.user._
 @import models.gift.Event
 
-@userHomeTemplate(title= "Gifter new event", user = user) {
+@userHomeTemplate(title= "Gifter nouvel événement", user = user) {
 
   <hr/>
 
@@ -24,11 +26,11 @@
       <input type="hidden" id="creatorid" name="creatorid" value="@user.id.get" >
       @inputText(
           eventForm("name"),
-          '_label -> "Name:",
+          '_label -> Messages.get("event.name"),
           '_help -> "",
           'class -> "form-control")      
           
-      @input(eventForm("dateStr"), '_label -> "When:", '_help -> "",
+      @input(eventForm("dateStr"), '_label -> "Date:", '_help -> "",
           'class -> "form-control") { (id, name, value, _) =>
         <input type="text" class ="form-control" id="datepicker" name="@name" value="@value"/>
       }
@@ -36,9 +38,9 @@
           'class -> "form-control")
           
       <div class="actions">
-        <input type="submit" class="btn btn-primary" value="Submit" />
+        <input type="submit" class="btn btn-primary" value="@Messages.get("event.create")" />
         <a href="@routes.UserApplication.index">
-          <input type="button" class="btn btn-danger" value="Cancel">
+          <input type="button" class="btn btn-danger" value="Annuler">
         </a>
       </div>              
     </div>

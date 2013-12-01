@@ -5,6 +5,7 @@
 
 @import helper._
 
+@import play.i18n.Messages
 @import models.user._
 @import models.gift._
 
@@ -14,7 +15,7 @@
 
 @userHomeTemplate(title = event.name, user = user) {
   <ul class="nav nav-tabs">
-    <li class="active"><a href="#gifts" data-toggle="tab">Gifts</a></li>
+    <li class="active"><a href="#gifts" data-toggle="tab">Cadeaux</a></li>
 
     <li><a href="#participants" data-toggle="tab">Participants</a></li>
     
@@ -27,8 +28,7 @@
     </div>
   </div>
   
-  @deleteModal("Confirm deletion",
-    "If you delete this gift, you will make tons of users unhappy. Are you sure you want to do that ?")
+  @deleteModal(Messages.get("gift.delete.confirm.title"), Messages.get("gift.delete.confirm.message"))
 }
 
 

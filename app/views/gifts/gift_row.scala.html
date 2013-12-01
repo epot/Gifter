@@ -13,8 +13,7 @@
 
 
 <tr>
-  <td class="col-md-7">@g.name</td>
-  <td class="col-md-1">@g.creator.name</td>
+  <td class="col-md-4">@g.name</td>
   <td class="col-md-1">
     @if(g.to.isDefined) {
       @g.to.get.name
@@ -23,7 +22,7 @@
   <td class="col-md-1">
     @if(g.to != Some(user)) {
       @if(g.from.isDefined) {
-        <span class="button-tooltip" data-toggle="tooltip" title="by @g.from.get.name">@g.status</span>
+        <span class="button-tooltip" data-toggle="tooltip" title="offert par @g.from.get.name">@g.status</span>
       } else {
         @g.status
       }
@@ -32,14 +31,14 @@
   <td class="col-md-1">
     @urlLinks(g.urls)
   </td>
-  <td class="col-md-1">
+  <td class="col-md-5">
     <div class="btn-toolbar">
       <div class="btn-group">
-        <a class="btn btn-default btn-sm" href="@routes.Events.viewGift(g.id.get)"><i class="glyphicon glyphicon-eye-open button-tooltip" data-toggle="tooltip" title="View details"></i></a>
-        <a class="btn btn-default btn-sm" href="@routes.Events.editGift(g.id.get)"><i class="glyphicon glyphicon-edit button-tooltip" data-toggle="tooltip" title="Edit"></i></a>
+        <a class="btn btn-default btn-sm" href="@routes.Events.viewGift(g.id.get)"><i class="glyphicon glyphicon-eye-open button-tooltip" data-toggle="tooltip" title="Voir détails"></i></a>
+        <a class="btn btn-default btn-sm" href="@routes.Events.editGift(g.id.get)"><i class="glyphicon glyphicon-edit button-tooltip" data-toggle="tooltip" title="Modifier"></i></a>
         @if(g.to != Some(user)) {
           @if(!g.from.isDefined || g.from.get == user) {
-            <a class="btn btn-default btn-sm open-gift-status-modal" data-id="@g.id.get"><i class="glyphicon glyphicon-credit-card button-tooltip" data-toggle="tooltip" title="Buy"></i></a>
+            <a class="btn btn-default btn-sm open-gift-status-modal" data-id="@g.id.get"><i class="glyphicon glyphicon-credit-card button-tooltip" data-toggle="tooltip" title="Acheter"></i></a>
           }
         }
         @if(g.creator == user) {

@@ -1,6 +1,8 @@
 @(user:models.user.User,
 title:String = "Gifter home")(body: Html)
 
+@import play.i18n.Messages
+
 @main(title, connected = Some(user)){
   <div class="container">
     <div class="content">
@@ -13,10 +15,10 @@ title:String = "Gifter home")(body: Html)
             <li
               @if(title.contains("home")){
                 class="active"
-              }><a href="@routes.UserApplication.index">Events</a></li>
+              }><a href="@routes.UserApplication.index">@Messages.get("event.list")</a></li>
             <li@if(title.contains("new event")){
                 class="active"
-              }><a href="@routes.Events.newEvent">New event</a></li>
+              }><a href="@routes.Events.newEvent">@Messages.get("event.new")</a></li>
           </ul>
         </div>
         <div class="col-md-10">

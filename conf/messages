@@ -1,0 +1,31 @@
+gift.to=Destiné à:
+gift.add=Ajouter une idée de cadeau
+gift.statut.new=Nouveau
+gift.statut.abouttobebought=En cours d''achat
+gift.statut.bought=Acheté
+gift.statut.markedfordeletion=Supprimé
+gift.creator=Idée de:
+gift.view=Détails d'un cadeau
+
+gift.delete.confirm.title=Confirmer la suppression
+gift.delete.confirm.message=Si vous supprimez ce cadeau, tout le monde va être déçu. Etes vous bien sur ?
+
+event.delete.confirm.title=Confirmer la suppression
+event.delete.confirm.message=Si vous supprimez cet événement, tout le monde va être déçu. Etes vous bien sur ?
+
+event.list=Evénements
+event.new=Nouvel événement
+
+event.name=Nom de l''événement:
+event.create=Créer
+
+error.date=Date obligatoire
+
+participant.addemail=Ajouter un email...
+participant.statut.owner=Administrateur
+participant.statut.gifter=Acheteur de cadeaux
+participant.statut.reader=Lecteur
+
+
+event.type.birthday=Annniversaire
+event.type.christmas=Noël

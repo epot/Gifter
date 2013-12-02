@@ -13,44 +13,66 @@
 @userHomeTemplate(title = Messages.get("gift.view"), user = user) {
 
   <hr/>
-
-    <h6>Description:</h6>
-    <p>@gift.name</p>
-    @if(gift.to != Some(user)) {
-      <h6>Statut:</h6>
-      <p>@gift.status</p>
-    }
-    
-    <h6>Messages.get("gift.creator")</h6>
-    <p>@gift.creator.name</p>  
-
-    @if(gift.to.isDefined) {
-      <h6>Pour:</h6>
-      <p>@gift.to.get.name</p>  
-    }
-    @if(gift.from.isDefined && gift.to != Some(user)) {
-      <h6>Offert par:</h6>
-      <p>@gift.from.get.name</p>  
-    }
-    
-    @if(gift.to != Some(user)) {
-      <table class="table table-striped table-hover table-bordered">
-        <thead>
+  
+  <table class="table">
+    <tbody>
+      <tr>
+        <td>
+          <h5 class="text-left">Description:</h5>
+          <h6 class="text-left">@gift.name</h6>
+        </td>
+      </tr>
+      @if(gift.to != Some(user)) {
+        <tr>
+          <td>
+            <h5 class="text-left">Statut:</h5>
+            <h6 class="text-left">@gift.status</h6>
+          </td>
+        </tr>
+      }
+      <tr>
+        <td>
+          <h5 class="text-left">@Messages.get("gift.creator")</h5>
+          <h6 class="text-left">@gift.creator.name</h6>
+        </td>
+      </tr>
+      @if(gift.to.isDefined) {
+        <tr>
+          <td>
+            <h5 class="text-left">Pour:</h5>
+            <h6 class="text-left">@gift.to.get.name</h6>
+          </td>
+        </tr>
+      }
+      @if(gift.from.isDefined && gift.to != Some(user)) {
+        <tr>
+          <td>
+            <h5 class="text-left">Offert par:</h5>
+            <h6 class="text-left">@gift.from.get.name</h6>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+  
+  @if(gift.to != Some(user)) {
+    <table class="table table-striped table-hover table-bordered">
+      <thead>
+        <tr>
+          <th>Who</th>
+          <th>When</th>
+          <th>What</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for(h <- History.findByCategoryAndId("Gift", gift.id.get)) {
           <tr>
-            <th>Who</th>
-            <th>When</th>
-            <th>What</th>
+            <td>@h.user.name</td>
+            <td>@DateTimeFormat.forPattern("HH:mm dd MMMM yyyy").print(h.creationDate)</td>
+            <td>@h.content</td>
           </tr>
-        </thead>
-        <tbody>
-          @for(h <- History.findByCategoryAndId("Gift", gift.id.get)) {
-            <tr>
-              <td>@h.user.name</td>
-              <td>@DateTimeFormat.forPattern("HH:mm dd MMMM yyyy").print(h.creationDate)</td>
-              <td>@h.content</td>
-            </tr>
-          }
-        </tbody>
-      </table>    
-    }
+        }
+      </tbody>
+    </table>    
+  }
 }

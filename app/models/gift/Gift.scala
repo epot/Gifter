@@ -166,7 +166,8 @@ object Gift {
     SQL(
         """
          select * from gift 
-        """+whereClause
+        """+whereClause +
+        """ order by creationDate"""
       ).as(BaseGift.simple *)
       .map(g => {
           val giftContent = GiftContentReads.reads(Json.parse(g.content)).get

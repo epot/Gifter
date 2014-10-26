@@ -17,6 +17,8 @@ import play.api.mvc._
 import play.api.mvc.Results._
 import anorm._
 
+import scala.util.{Try, Success, Failure}
+
 object Application extends Controller {
 
   // -- Actions
@@ -58,80 +60,58 @@ object Application extends Controller {
     Ok(html.index(loginForm))
   }
   
-  def googleLogin = Action { implicit request =>
+  def googleLogin = Action.async { implicit request =>
     val openIdCallbackUrl: String = routes.Application.openIDCallback().absoluteURL()
-    def onRedirected(promise: NotWaiting[String]): Result = {
-      promise match {
-        case Redeemed(url) => Redirect(url)
-        case Thrown(throwable) => Unauthorized("Unable to verify your openid provider.<br>"+throwable.getMessage)
-      }
-    }
-    AsyncResult(
-      OpenID.redirectURL("https://www.google.com/accounts/o8/id", openIdCallbackUrl, REQUIRED_ATTRIBUTES).extend1(onRedirected)
-    )
+    OpenID.redirectURL("https://www.google.com/accounts/o8/id", openIdCallbackUrl, REQUIRED_ATTRIBUTES).map(url => Redirect(url))
+        .recover { case t: Throwable => Redirect(routes.Application.index) }
   }
   
-  def yahooLogin = Action { implicit request =>
+  def yahooLogin = Action.async { implicit request =>
     val openIDCallbackYahoo: String = routes.Application.openIDCallbackYahoo().absoluteURL()
-    def onRedirected(promise: NotWaiting[String]): Result = {
-      promise match {
-        case Redeemed(url) => Redirect(url)
-        case Thrown(throwable) => Unauthorized("Unable to verify your openid provider.<br>"+throwable.getMessage)
-      }
-    }
-    AsyncResult(
-      OpenID.redirectURL("https://me.yahoo.com ", openIDCallbackYahoo, REQUIRED_ATTRIBUTES_yahoo).extend1(onRedirected)
-    )
+    OpenID.redirectURL("https://me.yahoo.com ", openIDCallbackYahoo, REQUIRED_ATTRIBUTES_yahoo).map(url => Redirect(url))
+        .recover { case t: Throwable => Redirect(routes.Application.index) }
   }
   
-  def openIDCallback = Action { implicit request =>
-    def onVerified(promise:NotWaiting[UserInfo]):Result ={
-      promise match {
-        case Redeemed(info) => 
-          val email = info.attributes.get("email").get
-          val user = User.findByEmail(email) match {
-            case Some(user) => user
-            case None => {
-              val user = User.create(
-                  User(name=info.attributes.get("firstname").get), 
-                  Identity(email=email, adapter=Identity.Adapter.Google) )
-              user
-            }
+  def openIDCallback = Action.async { implicit request =>
+    OpenID.verifiedId.map(info => {
+        val email = info.attributes.get("email").get
+        val user = User.findByEmail(email) match {
+          case Some(user) => user
+          case None => {
+            val user = User.create(
+                User(name=info.attributes.get("firstname").get), 
+                Identity(email=email, adapter=Identity.Adapter.Google) )
+            user
           }
-          
-          Redirect(routes.UserApplication.index).withSession("userId" -> user.id.toString)
-          
-        case Thrown(throwable) => Unauthorized("Authorization refused by your openid provider<br>"+throwable.getMessage)
-      }
+        }
+        
+        Redirect(routes.UserApplication.index).withSession("userId" -> user.id.toString)
+      })
+    .recover {
+      case t: Throwable =>
+      Unauthorized("Authorization refused by Google<br>"+t.getMessage)
     }
-    AsyncResult(
-      OpenID.verifiedId.extend1(onVerified)
-    )
   }
 
-  def openIDCallbackYahoo = Action { implicit request =>
-    def onVerified(promise:NotWaiting[UserInfo]):Result ={
-      promise match {
-        case Redeemed(info) => 
-          val email = info.attributes.get("email").get
-          val user = User.findByEmail(email) match {
-            case Some(user) => user
-            case None => {
-              val user = User.create(
-                  User(name=info.attributes.get("nickname").get), 
-                  Identity(email=email, adapter=Identity.Adapter.Yahoo) )
-              user
-            }
+  def openIDCallbackYahoo = Action.async { implicit request =>
+    OpenID.verifiedId.map(info => {
+        val email = info.attributes.get("email").get
+        val user = User.findByEmail(email) match {
+          case Some(user) => user
+          case None => {
+            val user = User.create(
+                User(name=info.attributes.get("nickname").get), 
+                Identity(email=email, adapter=Identity.Adapter.Yahoo) )
+            user
           }
-          
-          Redirect(routes.UserApplication.index).withSession("userId" -> user.id.toString)
-          
-        case Thrown(throwable) => Unauthorized("Authorization refused by your openid provider<br>"+throwable.getMessage)
-      }
+          }
+        
+        Redirect(routes.UserApplication.index).withSession("userId" -> user.id.toString)
+      })
+    .recover {
+      case t: Throwable =>
+      Unauthorized("Authorization refused by Yahoo<br>"+t.getMessage)
     }
-    AsyncResult(
-      OpenID.verifiedId.extend1(onVerified)
-    )
   }
   
   

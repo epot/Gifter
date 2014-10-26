@@ -53,7 +53,7 @@ object Event {
         """
       ).on(
         'id -> id,
-        'creatorid -> event.creator.id,
+        'creatorid -> event.creator.id.get,
         'name -> event.name,
         'date -> event.date.toDate,
         'eventtype -> event.eventtype.id
@@ -90,7 +90,7 @@ object Event {
       left outer join participant on participant.eventid = event.id
       where creatorid = {id} or participant.userid={id}
     """)
-    .on('id -> user.id)
+    .on('id -> user.id.get)
       .as(Event.simple *)
   }
   

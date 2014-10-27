@@ -13,3 +13,5 @@ libraryDependencies ++= Seq(
   ws,
   "postgresql" % "postgresql" % "9.1-901-1.jdbc4"
 )
+includeFilter in (Assets, LessKeys.less) := "*.less"
+excludeFilter in (Assets, LessKeys.less) := "_*.less"

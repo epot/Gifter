@@ -1,7 +1,7 @@
-@(loginForm: Form[(String, String)])
+@(loginForm: Form[(String, String)])(implicit messages: Messages)
 
 @import helper._
-@implicitFieldConstructor = @{ FieldConstructor(helpers.bootstrapFieldConstructor.f) }
+@import b3.vertical.fieldConstructor  // Declares a vertical field constructor as default
 
 @main(title = "Home") {
   <div class="page-header">
@@ -9,7 +9,7 @@
   </div>
   <div class="row">
     <div class="span14">
-      @helper.form(routes.Application.authenticate) {
+      @b3.form(routes.Application.authenticate) {
 
         @loginForm.globalError.map { error =>
           <div class="alert error">
@@ -18,7 +18,7 @@
         }
 
         <fieldset>
-          @inputText(
+          @b3.text(
             loginForm("email"),
             '_label -> "Email",
             '_help -> "",
@@ -26,7 +26,7 @@
             'class -> "form-control"
           )
 
-          @inputPassword(
+          @b3.password(
             loginForm("password"),
             '_label -> "Mot de passe",
             '_error -> loginForm.error("password"),

@@ -1,8 +1,7 @@
-@(user:models.user.User)
+@(user:models.user.User)(implicit messages: Messages)
 
 @import helper._
-@import helper.twitterBootstrap._
-@import play.i18n.Messages
+@import play.api.i18n.Messages	
 
 @import views.html.modal.deleteModal
 
@@ -44,6 +43,6 @@
   </div>
   
   
-  @deleteModal(Messages.get("event.delete.confirm.title"), Messages.get("event.delete.confirm.message"))
+  @deleteModal(Messages("event.delete.confirm.title"), Messages("event.delete.confirm.message"))
 }
 

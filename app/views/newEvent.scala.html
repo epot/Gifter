@@ -1,21 +1,21 @@
 @(user: models.user.User,
   eventForm: Form[models.gift.Event]
-)
+)(implicit messages: Messages)
 
 @import play.i18n.Messages
 
 @import helper._
-@implicitFieldConstructor = @{ FieldConstructor(helpers.bootstrapFieldConstructor.f) }
+@import b3.vertical.fieldConstructor  // Declares a vertical field constructor as default
 
 @import models.user._
 @import models.gift.Event
 
-@userHomeTemplate(title= "Gifter nouvel ŽvŽnement", user = user) {
+@userHomeTemplate(title= "Gifter nouvel ï¿½vï¿½nement", user = user) {
 
   <hr/>
 
 
-  @helper.form(action = routes.Events.postNewEvent, args = 'class -> "form-horizontal") {
+  @b3.form(action = routes.Events.postNewEvent, args = 'class -> "form-horizontal") {
     @eventForm.globalError.map { error =>
       <div class="alert error">
         <p>@error.message</p>
@@ -24,7 +24,7 @@
     <div class="well">
 
       <input type="hidden" id="creatorid" name="creatorid" value="@user.id.get" >
-      @inputText(
+      @b3.text(
           eventForm("name"),
           '_label -> Messages.get("event.name"),
           '_help -> "",
@@ -34,7 +34,7 @@
           'class -> "form-control") { (id, name, value, _) =>
         <input type="text" class ="form-control" id="datepicker" name="@name" value="@value"/>
       }
-      @select(eventForm("type"), options = options(Event.Type.values.toList.map(_.toString)), '_label -> "Type:", '_help -> "",
+      @b3.select(eventForm("type"), options = options(Event.Type.values.toList.map(_.toString)), '_label -> "Type:", '_help -> "",
           'class -> "form-control")
           
       <div class="actions">

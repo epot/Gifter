@@ -1,10 +1,9 @@
 @(user: models.user.User,
   event: models.gift.Event,
   to: Option[models.user.User]
-)
+)(implicit messages: Messages)
 
 @import helper._
-@implicitFieldConstructor = @{ FieldConstructor(helpers.bootstrapFieldConstructor.f) }
 
 @import models.user._
 @import models.gift._

@@ -1,33 +1,33 @@
-@(userForm: Form[(models.user.User, models.user.Identity)])
+@(userForm: Form[(models.user.User, models.user.Identity)])(implicit messages: Messages)
 
 @import helper._
-@implicitFieldConstructor = @{ FieldConstructor(helpers.bootstrapFieldConstructor.f) }
+@import b3.vertical.fieldConstructor  // Declares a vertical field constructor as default
 
 @main(title = "Sign in") {
   <div class="container">
     <div class="content">
       <div class="page-header">
-      <h1>CrŽation de nouveau compte</h1>
+      <h1>Crï¿½ation de nouveau compte</h1>
       </div>
       <div class="row"><div class="span14">
-        @form(routes.Application.postSignIn, args = 'class -> "form-horizontal") {
+        @b3.form(routes.Application.postSignIn, args = 'class -> "form-horizontal") {
           @userForm.globalError.map { error =>
             <div class="alert error">
               <p>@error.message</p>
             </div>
           }
           <fieldset>
-            @inputText(userForm("name"), '_label -> "Nome", '_help -> "", 'class -> "form-control")
-            @inputText(userForm("email"), '_label -> "Email", '_help -> "", 'class -> "form-control")
+            @b3.text(userForm("name"), '_label -> "Nome", '_help -> "", 'class -> "form-control")
+            @b3.text(userForm("email"), '_label -> "Email", '_help -> "", 'class -> "form-control")
 
-            @inputPassword(
+            @b3.password(
               userForm("password.main"),
               '_label -> "Mot de passe",
               '_help -> "",
               'class -> "form-control"
             )
 
-            @inputPassword(
+            @b3.password(
               userForm("password.confirm"),
               '_label -> "Confirmation du mot de passe",
               '_error -> userForm.error("password"),

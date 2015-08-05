@@ -1,10 +1,14 @@
 package controllers
 
+import javax.inject.Inject
+
 import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.libs.openid._
+import play.api.Play.current
+import play.api.i18n.{MessagesApi, I18nSupport}
 
 import models.user._
 import views._
@@ -19,7 +23,8 @@ import anorm._
 
 import scala.util.{Try, Success, Failure}
 
-object Application extends Controller {
+class Application @Inject() (val messagesApi: MessagesApi) 
+  extends Controller with I18nSupport {
 
   // -- Actions
   

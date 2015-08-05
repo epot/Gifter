@@ -1,7 +1,7 @@
 @(user: models.user.User,
   event: models.gift.Event,
   gifts:List[models.gift.Gift]
-)
+)(implicit messages: Messages)
 
 @import play.i18n.Messages
 @import models.gift._

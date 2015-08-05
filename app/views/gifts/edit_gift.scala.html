@@ -1,15 +1,15 @@
 @(user: models.user.User,
   giftForm: Form[models.gift.Gift]
-)
+)(implicit messages: Messages)
 
-@import play.i18n.Messages
+@import play.api.i18n.Messages
 
 @import helper._
-@implicitFieldConstructor = @{ FieldConstructor(helpers.bootstrapFieldConstructor.f) }
+@import b3.vertical.fieldConstructor  // Declares a vertical field constructor as default
 
 @import models.gift._
 
-@urlField(field: Field, className: String = "url") = {
+@urlField(field: Field, className: String = "url")(implicit messages: Messages) = {
     @input(field, '_label -> "Liens:", '_class -> className) { (id, name, value, _) =>
       <div class="input input-group">
         <input type="text" class="form-control" name="@name" value="@value"> 
@@ -20,11 +20,11 @@
     }
 }
 
-@userHomeTemplate(title = Messages.get("gift.new"), user = user) {
+@userHomeTemplate(title = Messages("gift.new"), user = user) {
 
   <hr/>
 
-  @helper.form(action = routes.Events.postEditGift(giftForm("eventid").value.get.toLong)) {
+  @b3.form(action = routes.Events.postEditGift(giftForm("eventid").value.get.toLong)) {
     @giftForm.globalError.map { error =>
       <div class="alert error">
         <p>@error.message</p>
@@ -40,17 +40,17 @@
       <input type="hidden" id="id" name="id" value="@giftForm("id").value" >
       <input type="hidden" id="creatorid" name="creatorid" value="@giftForm("creatorid").value" >
       <input type="hidden" id="eventid" name="eventid" value="@giftForm("eventid").value"> 
-      @inputText(
+      @b3.text(
           giftForm("name"),
           '_label -> "Description du cadeau:",
           '_help -> "",
           'class -> "form-control")      
           
         @if(giftForm("eventid").value.isDefined && Event.findById(giftForm("eventid").value.get.toLong).get.eventtype == Event.Type.Christmas) {
-          @select(
+          @b3.select(
             giftForm("to"),
             options = (for(p <- Participant.findByEventId(giftForm("eventid").value.get.toLong)) yield (p.user.id.get.toString, p.user.name)).toSeq,
-            '_label -> Messages.get("gift.to"),
+            '_label -> Messages("gift.to"),
             '_help -> "",
             'class -> "form-control"
           )

@@ -1,6 +1,6 @@
 @(user: models.user.User,
   participants:List[models.gift.Participant]
-)
+)(implicit messages: Messages)
 
 <table id="participants-table" class="table table-striped table-hover table-bordered">
   <thead>

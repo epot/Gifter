@@ -1,5 +1,7 @@
 package controllers
 
+import javax.inject.Inject
+
 import models.user._
 import models.gift._
 import anorm._
@@ -13,8 +15,11 @@ import play.api.db._
 import play.api.Play.current
 import play.api.db.evolutions.Evolutions
 import org.joda.time.DateTime
+import play.api.i18n.{MessagesApi, I18nSupport}
 
-object Events extends Controller with Secured {
+
+class Events @Inject() (val messagesApi: MessagesApi) 
+  extends Controller with I18nSupport with Secured {
 
   val eventForm = Form[Event](
     tuple(
@@ -76,13 +81,6 @@ object Events extends Controller with Secured {
     }
   }
   
-  val addParticipantForm = Form {
-    tuple(
-      "eventid" -> longNumber.verifying ("Could not find event. Maybe you deleted it ?", id => Event.findById(id).isDefined)
-      ,"email" -> email
-      ,"role" -> nonEmptyText
-    )
-  }
   
   val giftForm = Form[Gift] {
     tuple(
@@ -187,7 +185,7 @@ object Events extends Controller with Secured {
   
   def addParticipant() = IsAuthenticated { user => implicit request =>
     
-    addParticipantForm.bindFromRequest.fold(
+    Events.addParticipantForm.bindFromRequest.fold(
       errors => {
         println(errors)
         BadRequest(views.html.participants.participants_add_form(errors))
@@ -268,6 +266,14 @@ object Events extends Controller with Secured {
       }
     )
   }
+}
 
-
+object Events {
+    val addParticipantForm = Form {
+    tuple(
+      "eventid" -> longNumber.verifying ("Could not find event. Maybe you deleted it ?", id => Event.findById(id).isDefined)
+      ,"email" -> email
+      ,"role" -> nonEmptyText
+    )
+  }
 }

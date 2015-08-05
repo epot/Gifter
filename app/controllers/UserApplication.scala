@@ -1,5 +1,7 @@
 package controllers
 
+import javax.inject.Inject
+
 import models.user._
 import models.gift._
 import anorm._
@@ -13,6 +15,8 @@ import play.api.db._
 import play.api.Play.current
 import play.api.db.evolutions.Evolutions
 import org.joda.time.DateTime
+import play.api.Play.current
+import play.api.i18n.{MessagesApi, I18nSupport}
 
 trait Secured {
 
@@ -66,25 +70,6 @@ trait Secured {
     }
   }
   
-  def IsOwnerOf(eventid: Long, userid: Long) = {
-    Participant.findByEventIdAndByUserId(eventid, userid) match {
-      case Some(p) if p.role == Participant.Role.Owner => true
-      case _ => false
-    }
-  }
-
-  /**
-   * Check if the connected user is a owner of this event.
-   */
-  def IsOwnerOf(eventid: Long)(f: => User => Request[AnyContent] => Result): play.api.mvc.EssentialAction = IsAuthenticated { user => request =>
-    if(IsOwnerOf(eventid, user.id.get)) {
-      f(user)(request)
-    }
-    else {
-      Results.Forbidden
-    }
-  }
-  
   /**
    * Check if the connected user is a participant of this event.
    */
@@ -111,7 +96,10 @@ trait Secured {
   }
 }
 
-object UserApplication extends Controller with Secured {
+
+class UserApplication @Inject() (val messagesApi: MessagesApi) 
+  extends Controller with I18nSupport with Secured {
+  
 
   def index = IsAuthenticated { user => implicit request =>
     Ok(views.html.userHome(user))
@@ -155,4 +143,13 @@ object UserApplication extends Controller with Secured {
     )
   }  
 
+}
+
+object UserApplication {
+  def IsOwnerOf(eventid: Long, userid: Long) = {
+    Participant.findByEventIdAndByUserId(eventid, userid) match {
+      case Some(p) if p.role == Participant.Role.Owner => true
+      case _ => false
+    }
+  }
 }

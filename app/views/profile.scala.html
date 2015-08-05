@@ -1,7 +1,6 @@
 @(user: models.user.User, profileForm:Form[(String, (Option[String], Option[String]))])(
   implicit
-  flash: Flash
-)
+  flash: Flash, messages: Messages)
 
 @import helper._
 

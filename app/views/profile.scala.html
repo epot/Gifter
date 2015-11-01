@@ -1,53 +1,64 @@
-@(user: models.user.User, profileForm:Form[(String, (Option[String], Option[String]))])(
+@(
+  user: models.user.User,
+  profiles: Seq[com.mohiva.play.silhouette.impl.providers.CommonSocialProfile]
+)(
   implicit
   flash: Flash, messages: Messages)
 
 @import helper._
 
-@main(title = "Modifier profil", connected = Some(user), screen = "profile") {
-  @if(flash.get("success")){
-      <p class="success">@flash.get("success")</p>
-  }
-
-  <div class="container">
-    <div class="content">
-      <div class="page-header">
-              <h1>Modifier votre profil</h1>
+@main(title = "Mn profil", connected = Some(user), screen = "profile") {
+  <div class="profile">
+    @if(user.isGuest) {
+      <p>
+        You're playing as a guest. Why not
+        <a href="@controllers.routes.RegistrationController.registrationForm()">register</a> or
+        <a href="@controllers.routes.AuthenticationController.signInForm()">sign in</a>
+        ?
+      </p>
+    } else {
+      @user.username.map { un =>
+        <div class="username">@un</div>
+      }.getOrElse {
+        <div class="username">Guest</div>
+      }
+      <div class="logout">
+        <a class="sign-out-link" href="@controllers.routes.AuthenticationController.signOut">Sign Out</a>
       </div>
-      <div class="row">
-        <div class="span14">
-
-          @form(routes.UserApplication.postProfile, args = 'class -> "form-horizontal") {
-            <fieldset>
-              @inputText(
-                profileForm("name"), 
-                '_label -> "Nom", 
-                '_help -> "",
-                'class -> "form-control")
-            
-              @inputPassword(
-                profileForm("password.main"),
-                '_label -> "Mot de passe",
-                '_help -> "",
-                'class -> "form-control"
-              )
-  
-              @inputPassword(
-                profileForm("password.confirm"),
-                '_label -> "Confirmer mot de passe",
-                '_error -> profileForm.error("password"),
-                'class -> "form-control"  
-              )
-            </fieldset>
-            <div class="actions">
-              <input type="submit" value="Soumettre" class="btn btn-primary"/>
-              <a href="@routes.UserApplication.index">
-                <input type="button" class="btn" value="Annuler">
-              </a>
-            </div>
+      @defining(profiles.find(_.loginInfo.providerID == "credentials")) { credentials =>
+        <div class="profile-detail">
+          @if(credentials.isDefined) {
+            <em>@credentials.get.email</em>
+          } else {
+            <a href="@controllers.routes.RegistrationController.registrationForm()">Create Account</a>
           }
         </div>
-      </div>
-    </div>
+      }
+      @services.user.SocialAuthProviders.providers.map { provider =>
+        @defining(profiles.find(_.loginInfo.providerID == provider._1)) { profile =>
+          <div class="profile-detail">
+            @if(profile.isDefined) {
+              <div class="provider @provider._1">
+                <img src="@routes.Assets.versioned("images/providers/" + provider._1 + ".png")">
+              </div>
+              <div class="profile-links">
+                <strong>@profile.get.fullName</strong><br/>
+                @profile.get.email<br/>
+              </div>
+            } else {
+              @defining(controllers.routes.AuthenticationController.authenticateSocial(provider._1)) { url =>
+                <a href="@url" class="provider @provider._1">
+                  <img src="@routes.Assets.versioned("images/providers/" + provider._1 + ".png")">
+                </a>
+                <div class="profile-links">
+                  <a href="@url">Connect your @provider._2 account</a>
+                </div>
+              }
+            }
+            <div class="clear"></div>
+          </div>
+        }
+      }
+    }
   </div>
 }

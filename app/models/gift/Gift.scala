@@ -1,7 +1,9 @@
 package models.gift
 
 import java.util.Date
+import java.util.UUID
 import models.user._
+import services.user._
 import anorm._
 import anorm.SqlParser._
 import play.api.db._
@@ -37,8 +39,8 @@ object Gift {
   case class GiftContent(
     name: String,
     status: Int,
-    to: Option[Long],
-    from: Option[Long],
+    to: Option[UUID],
+    from: Option[UUID],
     urls: List[String]
     )
     
@@ -47,14 +49,14 @@ object Gift {
 
   private case class BaseGift(
     id: Pk[Long] = NotAssigned,
-    creatorid: Long,
+    creatorid: UUID,
     eventid: Long,
     creationDate: DateTime,
     content: String)
   private object BaseGift {
     val simple =
       get[Pk[Long]]("gift.id") ~
-      get[Long]("gift.creatorid") ~
+      get[UUID]("gift.creatorid") ~
       get[Long]("gift.eventid") ~
       get[Date]("gift.creationDate") ~ 
       get[String]("gift.content") map {
@@ -94,17 +96,17 @@ object Gift {
       // Participant creation done separately again to get the generated Id
       
       val toid = gift.to match {
-        case Some(user) => Some(user.id.get)
+        case Some(user) => Some(user.id)
         case None => None
       }
       
       val fromid = gift.from match {
-        case Some(user) => Some(user.id.get)
+        case Some(user) => Some(user.id)
         case None => None
       }
       
       val baseGift = BaseGift.create(BaseGift(
-          creatorid = gift.creator.id.get,
+          creatorid = gift.creator.id,
           eventid = gift.event.id.get,
           creationDate = gift.creationDate,
           content = GiftContentWrites.writes(GiftContent(gift.name, gift.status.id, toid, fromid, gift.urls)).toString()))
@@ -114,12 +116,12 @@ object Gift {
   def update(gift: Gift): Gift = 
   DB.withConnection{ implicit connectin =>
       val toid = gift.to match {
-        case Some(user) => Some(user.id.get)
+        case Some(user) => Some(user.id)
         case None => None
       }
       
       val fromid = gift.from match {
-        case Some(user) => Some(user.id.get)
+        case Some(user) => Some(user.id)
         case None => None
       }
 
@@ -171,17 +173,19 @@ object Gift {
       ).as(BaseGift.simple *)
       .map(g => {
           val giftContent = GiftContentReads.reads(Json.parse(g.content)).get
+          // ugly way to keep the way event class is designed with the new asynchronous user services
+          
           val to = giftContent.to match {
-            case Some(id) => User.findById(id)
+            case Some(id) => UserSearchService.retrieve(id).value.get.toOption.get
             case None => None
           }
           val from = giftContent.from match {
-            case Some(id) => User.findById(id)
+            case Some(id) => UserSearchService.retrieve(id).value.get.toOption.get
             case None => None
           }
           Gift(
             id=g.id,
-            creator=User.findById(g.creatorid).get,
+            creator=UserSearchService.retrieve(g.creatorid).value.get.toOption.get.get,
             event=Event.findById(g.eventid).get,
             name = giftContent.name,
             creationDate= g.creationDate,
@@ -204,7 +208,7 @@ object Gift {
   /**
    * Check if a user is the creator of this task
    */
-  def isCreator(giftid: Long, userid: Long): Boolean = {
+  def isCreator(giftid: Long, userid: UUID): Boolean = {
     DB.withConnection { implicit connection =>
       SQL(
         """

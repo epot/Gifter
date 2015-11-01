@@ -1,6 +1,8 @@
 package models.gift
 
+import java.util.UUID
 import models.user._
+import services.user._
 import anorm._
 import anorm.SqlParser._
 import play.api.db._
@@ -24,13 +26,13 @@ object Participant {
 
   private case class BaseParticipant(
     id: Pk[Long] = NotAssigned,
-    userid: Long,
+    userid: UUID,
     eventid: Long,
     role: Int)
   private object BaseParticipant {
     val simple =
       get[Pk[Long]]("participant.id") ~
-      get[Long]("participant.userid") ~
+      get[UUID]("participant.userid") ~
       get[Long]("participant.eventid") ~
       get[Int]("participant.participant_role") map {
         case id~userid~eventid~role =>
@@ -68,7 +70,7 @@ object Participant {
       // Participant creation done separately again to get the generated Id
       val baseParticipant = BaseParticipant.create(BaseParticipant(
           eventid = participant.event.id.get, 
-          userid = participant.user.id.get,
+          userid = participant.user.id,
           role = participant.role.id))
       participant.copy(id = baseParticipant.id)
     }
@@ -102,7 +104,7 @@ object Participant {
       ).onParams(eventid).as(BaseParticipant.simple *)
       .map(part => Participant(
           id=part.id,
-          user=User.findById(part.userid).get,
+          user=UserSearchService.retrieve(part.userid).value.get.toOption.get.get,
           event=Event.findById(part.eventid).get,
           role=Participant.Role(part.role)))
   }
@@ -128,7 +130,7 @@ object Participant {
         case Some(part) => {
           Some(Participant(
             id=part.id,
-            user=User.findById(part.userid).get,
+            user=UserSearchService.retrieve(part.userid).value.get.toOption.get.get,
             event=Event.findById(part.eventid).get,
             role=Participant.Role(part.role)))
         }
@@ -141,7 +143,7 @@ object Participant {
    * @param userid
    * @return a participant if given user participates to this event
    */
-  def findByEventIdAndByUserId(eventid: Long, userid: Long): Option[Participant] =
+  def findByEventIdAndByUserId(eventid: Long, userid: UUID): Option[Participant] =
     DB.withConnection { implicit connection =>
 
       SQL(
@@ -157,7 +159,7 @@ object Participant {
         case Some(part) => {
           Some(Participant(
             id=part.id,
-            user=User.findById(part.userid).get,
+            user=UserSearchService.retrieve(part.userid).value.get.toOption.get.get,
             event=Event.findById(part.eventid).get,
             role=Participant.Role(part.role)))
         }

@@ -24,7 +24,7 @@ package bootstrap {
     def addTestData() = {
 
       // Import initial data if the database is empty
-      if (User.count == 0) {
+      /*if (User.searchCount("") == 0) {
         val usersWithIdentity = Map(
           (User(name = "Bob la fouine"), Identity(email="bob@gmail.com", adapter=Identity.Adapter.UserWithPassword, hash="secret")),
           (User(name = "Jeff"), Identity(email="jeff@gmail.com", adapter=Identity.Adapter.UserWithPassword, hash="secret")),
@@ -47,7 +47,7 @@ package bootstrap {
           Gift.create(Gift(creator=manu, name="slip au camembert", event=noel, to=Some(bob)))
           Gift.create(Gift(creator=manu, name="slip au phoque", event=noel, to=Some(manu)))
         }
-      }
+      }*/
     }
   }
 }

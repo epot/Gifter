@@ -1,7 +1,9 @@
 package models.gift
 
 import java.util.Date
+import java.util.UUID
 import models.user._
+import services.user._
 import anorm._
 import anorm.SqlParser._
 import play.api.db._
@@ -25,12 +27,12 @@ object History {
   val simple =
     get[Pk[Long]]("history.id") ~
     get[Long]("history.objectid") ~ 
-    get[Long]("history.userid") ~ 
+    get[UUID]("history.userid") ~ 
     get[Date]("history.creationDate") ~ 
     get[String]("history.category")  ~ 
     get[String]("history.content") map {
       case id~objectid~userid~creationDate~category~content =>
-        History(id, objectid, User.findById(userid).get, new DateTime(creationDate), category, content)
+        History(id, objectid, UserSearchService.retrieve(userid).value.get.toOption.get.get, new DateTime(creationDate), category, content)
   }    
     
     
@@ -49,7 +51,7 @@ object History {
       ).on(
         'id -> id,
         'objectid -> history.objectid,
-        'userid -> history.user.id.get,
+        'userid -> history.user.id,
         'creationDate -> history.creationDate.toDate,
         'category -> history.category,
         'content -> history.content

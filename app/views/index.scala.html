@@ -1,4 +1,4 @@
-@(loginForm: Form[(String, String)])(implicit messages: Messages)
+@(form: Form[com.mohiva.play.silhouette.api.util.Credentials])(implicit messages: Messages)
 
 @import helper._
 @import b3.vertical.fieldConstructor  // Declares a vertical field constructor as default
@@ -11,7 +11,7 @@
     <div class="span14">
       @b3.form(routes.Application.authenticate) {
 
-        @loginForm.globalError.map { error =>
+        @form.globalError.map { error =>
           <div class="alert error">
             <p>@error.message</p>
           </div>
@@ -19,14 +19,14 @@
 
         <fieldset>
           @b3.text(
-            loginForm("email"),
+            form("email"),
             '_label -> "Email",
             '_help -> "",
             '_error -> loginForm.error("email"),
             'class -> "form-control"
           )
 
-          @b3.password(
+          @b3.form(
             loginForm("password"),
             '_label -> "Mot de passe",
             '_error -> loginForm.error("password"),
@@ -38,9 +38,20 @@
           <input type="submit" class="btn btn-primary" value="Connexion">
         </div>
       }
-      <h3>Ou utiliser l'un de vos comptes suivant:</h3>
-      <a href="@routes.Application.googleLogin"> <img src="@routes.Assets.at("images/providers/google.png")"/></a>
-      <a href="@routes.Application.yahooLogin"> <img src="@routes.Assets.at("images/providers/yahoo.png")"/></a>
+      @defining(services.user.SocialAuthProviders.providers) { providers =>
+      @if(providers.nonEmpty) {
+        <div>
+          <p>Or sign in using these providers</p>
+          <div>
+          @for(p <- providers if p._1 != "credentials") {
+            <a title="Sign in with @p._2" href="@controllers.routes.AuthenticationController.authenticateSocial(p._1)" class="provider @p._1">
+              <img src="@routes.Assets.versioned("images/providers/" + p._1 + ".png")">
+            </a>
+          }
+          </div>
+        </div>
+      }
+    }
     </div>
   </div>
 }

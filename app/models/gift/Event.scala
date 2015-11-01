@@ -1,7 +1,9 @@
 package models.gift
 
 import java.util.Date
+import java.util.UUID
 import models.user._
+import services.user._
 import anorm._
 import anorm.SqlParser._
 import play.api.db._
@@ -11,6 +13,7 @@ import java.text.SimpleDateFormat
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.DateTimeFormat
+import scala.concurrent.Future
 
 case class Event(
   id: Pk[Long] = NotAssigned,
@@ -31,12 +34,15 @@ object Event {
 
   val simple =
     get[Pk[Long]]("event.id") ~
-    get[Long]("event.creatorid") ~
+    get[UUID]("event.creatorid") ~
     get[String]("event.name") ~
     get[Date]("event.date") ~ 
     get[Int]("event.type") map {
       case id~creatorid~name~date~eventtype =>
-        Event(id, User.findById(creatorid).get, name, new DateTime(date), Type(eventtype))
+        
+        // ugly way to keep the way event class is designed with the new asynchronous user services
+        val user = UserSearchService.retrieve(creatorid).value.get.toOption.get.get
+        Event(id, user, name, new DateTime(date), Type(eventtype))
   }
   def create(event: Event): Event =
   DB.withConnection { implicit connection =>
@@ -53,7 +59,7 @@ object Event {
         """
       ).on(
         'id -> id,
-        'creatorid -> event.creator.id.get,
+        'creatorid -> event.creator.id,
         'name -> event.name,
         'date -> event.date.toDate,
         'eventtype -> event.eventtype.id
@@ -90,14 +96,14 @@ object Event {
       left outer join participant on participant.eventid = event.id
       where creatorid = {id} or participant.userid={id}
     """)
-    .on('id -> user.id.get)
+    .on('id -> user.id)
       .as(Event.simple *)
   }
   
   /**
    * Check if a user is the creator of this task
    */
-  def isCreator(eventid: Long, userid: Long): Boolean = {
+  def isCreator(eventid: Long, userid: UUID): Boolean = {
     DB.withConnection { implicit connection =>
       SQL(
         """

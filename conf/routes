@@ -3,29 +3,26 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.UserApplication.index
+GET         /                        controllers.HomeController.index
 
 # Login action
-GET      /logout                    controllers.Application.logout
-GET      /openIDCallback            controllers.Application.openIDCallback
-GET      /openIDCallbackYahoo       controllers.Application.openIDCallbackYahoo
-GET      /googleLogin               controllers.Application.googleLogin
-GET      /yahooLogin                controllers.Application.yahooLogin
-GET      /index                     controllers.Application.index
-POST     /login                     controllers.Application.authenticate
-GET      /signIn                    controllers.Application.signIn
-POST     /signIn                    controllers.Application.postSignIn
+GET         /signup                  controllers.RegistrationController.registrationForm
+POST        /signup                  controllers.RegistrationController.register
+GET         /signin                  controllers.AuthenticationController.signInForm
+POST        /signin                  controllers.AuthenticationController.authenticateCredentials
+GET         /signin/:provider        controllers.AuthenticationController.authenticateSocial(provider)
+GET         /signout                 controllers.AuthenticationController.signOut
 
 # User actions
-GET      /profile                   controllers.UserApplication.profile
-POST     /profile                   controllers.UserApplication.postProfile
+#GET      /profile                   controllers.UserApplication.profile
+#POST     /profile                   controllers.UserApplication.postProfile
 
 # Events actions
 GET      /newEvent                  controllers.Events.newEvent
 POST     /newEvent                  controllers.Events.postNewEvent
 POST     /deleteEvent/:eventid      controllers.Events.postDeleteEvent(eventid: Long)
 GET      /editEvent/:eventid        controllers.Events.event(eventid: Long)
-GET      /editEvent/:eventid/:userid controllers.Events.eventWithUser(eventid: Long, userid: Long)
+GET      /editEvent/:eventid/:userid controllers.Events.eventWithUser(eventid: Long, userid: java.util.UUID)
 GET      /addParticipant            controllers.Events.addParticipant
 GET      /newGift/:eventid          controllers.Events.newGift(eventid: Long)
 POST     /editGift/:eventid         controllers.Events.postEditGift(eventid: Long)

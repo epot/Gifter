@@ -49,7 +49,7 @@
         @if(giftForm("eventid").value.isDefined && Event.findById(giftForm("eventid").value.get.toLong).get.eventtype == Event.Type.Christmas) {
           @b3.select(
             giftForm("to"),
-            options = (for(p <- Participant.findByEventId(giftForm("eventid").value.get.toLong)) yield (p.user.id.get.toString, p.user.name)).toSeq,
+            options = (for(p <- Participant.findByEventId(giftForm("eventid").value.get.toLong)) yield (p.user.id.toString, p.user.username.get)).toSeq,
             '_label -> Messages("gift.to"),
             '_help -> "",
             'class -> "form-control"

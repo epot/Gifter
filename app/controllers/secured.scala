@@ -4,6 +4,7 @@ import javax.inject.Inject
 
 import models.user._
 import models.gift._
+import services.user._
 import anorm._
 import play.api.mvc._
 import play.api._
@@ -28,14 +29,14 @@ trait Secured {
   /**
    * Redirect to login if the user in not authorized.
    */  
-  private def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.Application.index)
+  private def onUnauthorized(request: RequestHeader) = Results.Redirect(controllers.routes.HomeController.index())
 
 
   /**
    * Action for authenticated users. The bodyParser argument is to be able to specify, for example, a json parser.
    */
   def IsAuthenticated[A](bodyParser: BodyParser[A])(f: => User => Request[A] => Result) = Security.Authenticated(userId, onUnauthorized) { userId =>
-    User.findById(userId.toLong) match {
+   UserSearchService.retrieve(userId).value.get.toOption.get match {
       case Some(user) => Action(bodyParser)(request => f(user)(request))
       case _ => Action(bodyParser)(request => onUnauthorized(request))
     }
@@ -47,7 +48,7 @@ trait Secured {
    * Check if the connected user is the creator of an event.
    */
   def IsCreatorOf(eventid: Long)(f: => User => Request[AnyContent] => Result) = IsAuthenticated { user => request =>
-    if(Event.isCreator(eventid, user.id.get)) {
+    if(Event.isCreator(eventid, user.id)) {
       f(user)(request)
     } else {
       Results.Forbidden
@@ -55,7 +56,7 @@ trait Secured {
   }
   
   def IsCreatorOfGift(giftid: Long)(f: => User => Request[AnyContent] => Result) = IsAuthenticated { user => request =>
-    if(Gift.isCreator(giftid, user.id.get)) {
+    if(Gift.isCreator(giftid, user.id)) {
       f(user)(request)
     } else {
       Results.Forbidden
@@ -63,7 +64,7 @@ trait Secured {
   }
   
   def IsAllowedToOffer(giftid: Long)(f: => User => Request[AnyContent] => Result) = IsAuthenticated { user => request =>
-    if(Gift.isCreator(giftid, user.id.get)) {
+    if(Gift.isCreator(giftid, user.id)) {
       f(user)(request)
     } else {
       Results.Forbidden
@@ -74,7 +75,7 @@ trait Secured {
    * Check if the connected user is a participant of this event.
    */
   def IsParticipantOf(eventid: Long)(f: => User => Request[AnyContent] => Result): play.api.mvc.EssentialAction = IsAuthenticated { user => request =>
-    Participant.findByEventIdAndByUserId(eventid, user.id.get) match {
+    Participant.findByEventIdAndByUserId(eventid, user.id) match {
       case Some(p) => f(user)(request)
       case _ => Results.Forbidden
     }
@@ -86,70 +87,12 @@ trait Secured {
   def IsParticipantOfWithGift(giftid: Long)(f: => User => Request[AnyContent] => Result): play.api.mvc.EssentialAction = IsAuthenticated { user => request =>
     Gift.findById(giftid) match {
       case Some(gift) => {
-        Participant.findByEventIdAndByUserId(gift.event.id.get, user.id.get) match {
+        Participant.findByEventIdAndByUserId(gift.event.id.get, user.id) match {
           case Some(p) => f(user)(request)
           case _ => Results.Forbidden
         }
       }
       case _ => Results.Forbidden
-    }
-  }
-}
-
-
-class UserApplication @Inject() (val messagesApi: MessagesApi) 
-  extends Controller with I18nSupport with Secured {
-  
-
-  def index = IsAuthenticated { user => implicit request =>
-    Ok(views.html.userHome(user))
-  }
-
-  val profileForm = Form {
-   tuple("name" -> nonEmptyText,
-         "password" -> tuple(
-                  "main" -> optional(nonEmptyText),
-                  "confirm" -> optional(nonEmptyText)
-                ).verifying(
-                  // Add an additional constraint: both passwords must match
-                  "Passwords don't match", passwords => passwords._1 == passwords._2
-            )
-        )
-  }
-
-  def profile = IsAuthenticated{ user => implicit request =>
-    Ok(views.html.profile(user, profileForm.fill((user.name, (None, None)))))
-  }
-
-  def postProfile() = IsAuthenticated { user => implicit request =>
-    profileForm.bindFromRequest.fold(
-      errors => {
-        println(errors)
-        BadRequest(views.html.profile(user, errors))
-      },
-      profile_tuple => {
-        User.update(user.id.get, User(name=profile_tuple._1))
-        
-        profile_tuple._2._1 match {
-          case Some(password) => {
-            Identity.updatePassword(user.id.get, password)
-          }
-          case _ =>
-        }
-        
-        val userInDb = User.findById(user.id.get).get
-        Ok(views.html.userHome(userInDb))
-      }
-    )
-  }  
-
-}
-
-object UserApplication {
-  def IsOwnerOf(eventid: Long, userid: Long) = {
-    Participant.findByEventIdAndByUserId(eventid, userid) match {
-      case Some(p) if p.role == Participant.Role.Owner => true
-      case _ => false
     }
   }
 }

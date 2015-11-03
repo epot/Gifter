@@ -28,20 +28,20 @@ import scala.concurrent.Future
 class Events @Inject() (override val messagesApi: MessagesApi, override val env: AuthenticationEnvironment) 
   extends BaseController with I18nSupport {
 
-  val eventForm = Form[Event](
+  val eventForm = Form[EventSimple](
     tuple(
-      "creatorid" -> nonEmptyText.verifying ("Could not find creator.", id => UserSearchService.retrieve(id).value.get.toOption.get.isDefined)
+      "creatorid" -> nonEmptyText
       ,"name" -> nonEmptyText
       ,"dateStr" -> date("dd-MM-yyyy")
       ,"type" -> nonEmptyText
       ).transform(
     {/*apply*/
       case (creatorid, name, dateStr, eventtype) => {
-        Event(creator= UserSearchService.retrieve(creatorid).value.get.toOption.get.get, name=name, date=new DateTime(dateStr), eventtype=Event.Type.withName(eventtype))
+        EventSimple(creatorid=UUID.fromString(creatorid), name=name, date=new DateTime(dateStr), eventtype=Event.Type.withName(eventtype))
       }
     },{ /*unapply*/
-      event: Event => (
-            event.creator.id.toString(),
+      event: EventSimple => (
+            event.creatorid.toString(),
             event.name,
             event.date.toDate,
             event.eventtype.toString)
@@ -60,9 +60,19 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
         Future.successful(BadRequest(views.html.newEvent(request.identity, errors)))
       },
       event => {
-        val new_event = Event.create(event)
-        Participant.create(Participant(event=new_event, user=request.identity, role=Participant.Role.Owner))
-        Future.successful(Redirect(routes.HomeController.index).withSession("userId" -> request.identity.id.toString))
+        UserSearchService.retrieve(event.creatorid).map {
+          user => user match {
+            case Some(u) => {
+              val new_event = Event.create(Event(creator = u,
+                name= event.name,
+                date= event.date,
+                eventtype= event.eventtype))
+              Participant.create(Participant(event=new_event, user=request.identity, role=Participant.Role.Owner))
+              Redirect(routes.HomeController.index).withSession("userId" -> request.identity.id.toString)
+            }
+            case None => Redirect(controllers.routes.Events.newEvent).flashing(("error", "Could not find creator."))
+          }
+        }
       }
     )
   }  

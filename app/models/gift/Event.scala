@@ -15,6 +15,13 @@ import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.DateTimeFormat
 import scala.concurrent.Future
 
+case class EventSimple(
+  creatorid: UUID,
+  name: String,
+  date: DateTime,
+  eventtype: Event.Type.Value
+)
+
 case class Event(
   id: Pk[Long] = NotAssigned,
   creator: User,
@@ -54,7 +61,7 @@ object Event {
       SQL(
         """
           insert into event values (
-            {id}, null, {name}, {date}, {eventtype}, {creatorid}
+            {id}, null, {name}, {date}, {eventtype}, {creatorid}::uuid
           )
         """
       ).on(

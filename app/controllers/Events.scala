@@ -25,7 +25,7 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 import scala.concurrent.Future
 
-class Events @Inject() (val messagesApi: MessagesApi) 
+class Events @Inject() (override val messagesApi: MessagesApi, override val env: AuthenticationEnvironment) 
   extends BaseController with I18nSupport {
 
   val eventForm = Form[Event](
@@ -72,7 +72,9 @@ class Events @Inject() (val messagesApi: MessagesApi)
   }
 
   def eventWithUser(eventid: Long, userid: UUID) = IsParticipantOf(eventid) { implicit request =>
-    Future.successful(Ok(views.html.event(request.identity, Event.findById(eventid).get, UserSearchService.retrieve(userid).value.get.toOption.get)))
+    UserSearchService.retrieve(userid).map { to =>
+      Ok(views.html.event(request.identity, Event.findById(eventid).get, to))
+    }
   }
 
   /**
@@ -82,7 +84,7 @@ class Events @Inject() (val messagesApi: MessagesApi)
     Event.findById(eventid) match {
       case Some(event) => { 
         Event.delete(eventid)
-        Future.successful(Redirect(routes.HomeController.index).withSession("userId" -> request.identity.id.toString))
+        Future.successful(Redirect(routes.HomeController.index))
       }
       case None => Future.successful(BadRequest)
     }
@@ -96,15 +98,11 @@ class Events @Inject() (val messagesApi: MessagesApi)
             case Some(id) => Gift.findById(id).isDefined
             case None => true 
           })
-      ,"creatorid" -> nonEmptyText.verifying ("Could not find creator.", id => UserSearchService.retrieve(id).value.get.toOption.get.isDefined)
+      ,"creatorid" -> nonEmptyText
       ,"eventid" -> longNumber.verifying ("Could not find event. Maybe you deleted it ?", id => Event.findById(id).isDefined)
       ,"name" -> nonEmptyText
       ,"urls" -> list(nonEmptyText)
-      ,"to" -> optional(nonEmptyText).verifying ("Could not gift recipient.", 
-          toid => toid match {
-            case Some(id) => UserSearchService.retrieve(id).value.get.toOption.get.isDefined
-            case None => true 
-          })
+      ,"to" -> optional(nonEmptyText)
     ).transform(
     {/*apply*/
       case (optid, creatorid, eventid, name, urls, toid) => {
@@ -208,17 +206,15 @@ class Events @Inject() (val messagesApi: MessagesApi)
             Participant.update(participant.id.get, role)
           }
           case None => {
-            val user = UserSearchService.retrieve(LoginInfo(CredentialsProvider.ID, email)).value.get.toOption.get match {
-              case Some(user) => user
-              case None => {
-                BadRequest
+            UserSearchService.retrieve(LoginInfo(CredentialsProvider.ID, email)).map {
+              user => user match {
+                case Some(u) =>  Participant.create(Participant(
+                  user=u,
+                  event=Event.findById(eventid).get,
+                  role=role))
+                case None =>
               }
             }
-            
-            Participant.create(Participant(
-              user=request.identity,
-              event=Event.findById(eventid).get,
-              role=role))
           }
         }
         
@@ -231,8 +227,6 @@ class Events @Inject() (val messagesApi: MessagesApi)
   def updateGiftStatus(giftid: Long) = IsParticipantOfWithGift(giftid) { implicit request =>
     Form("status" -> nonEmptyText).bindFromRequest.fold(
       errors => {
-        
-        println("errooors " + errors)
         Future.successful(BadRequest)
       },
       status => {

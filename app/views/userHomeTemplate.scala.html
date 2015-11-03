@@ -15,7 +15,7 @@ title:String = "Gifter home")(body: Html)(implicit messages: Messages)
             <li
               @if(title.contains("home")){
                 class="active"
-              }><a href="@routes.UserApplication.index">@Messages("event.list")</a></li>
+              }><a href="@routes.HomeController.index">@Messages("event.list")</a></li>
             <li@if(title.contains("new event")){
                 class="active"
               }><a href="@routes.Events.newEvent">@Messages("event.new")</a></li>

@@ -17,6 +17,11 @@ import models.gift._
 
 abstract class BaseController() extends Silhouette[User, CookieAuthenticator] with I18nSupport {
   def env: AuthenticationEnvironment
+  
+  /**
+   * Redirect to login if the user in not authorized.
+   */  
+  private def onUnauthorized = Future.successful(Redirect(controllers.routes.AuthenticationController.signInForm))
 
   def withAdminSession(block: (SecuredRequest[AnyContent]) => Future[Result]) = SecuredAction.async { implicit request =>
     if (request.identity.roles.contains(Role.Admin)) {
@@ -27,33 +32,18 @@ abstract class BaseController() extends Silhouette[User, CookieAuthenticator] wi
   }
 
   def withSession(block: (SecuredRequest[AnyContent]) => Future[Result]) = UserAwareAction.async { implicit request =>
-    val response = request.identity match {
+    println("identity: " + request.identity)
+    request.identity match {
       case Some(user) =>
+        println("dude I am here: "+ user)
         val secured = SecuredRequest(user, request.authenticator.getOrElse(throw new IllegalStateException()), request)
         block(secured).map { r =>
           r
         }
       case None =>
-        val user = User(
-          id = UUID.randomUUID(),
-          username = None,
-          profiles = Nil,
-          created = new LocalDateTime()
-        )
-
-        for {
-          user <- env.userService.save(user)
-          authenticator <- env.authenticatorService.create(LoginInfo("anonymous", user.id.toString))
-          value <- env.authenticatorService.init(authenticator)
-          result <- block(SecuredRequest(user, authenticator, request))
-          authedResponse <- env.authenticatorService.embed(value, result)
-        } yield {
-          env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-          env.eventBus.publish(LoginEvent(user, request, request2Messages))
-          authedResponse
-        }
+        println("dude I am not here")
+        onUnauthorized
     }
-    response
   }
   
   /**
@@ -105,6 +95,15 @@ abstract class BaseController() extends Silhouette[User, CookieAuthenticator] wi
         }
       }
       case _ => Future.successful(NotFound("404 Not Found"))
+    }
+  }
+}
+
+object BaseController {
+  def IsOwnerOf(eventid: Long, userid: UUID) = {
+    Participant.findByEventIdAndByUserId(eventid, userid) match {
+      case Some(p) if p.role == Participant.Role.Owner => true
+      case _ => false
     }
   }
 }

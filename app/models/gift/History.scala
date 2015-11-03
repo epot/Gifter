@@ -45,7 +45,7 @@ object History {
       SQL(
       """
           insert into history values (
-            {id}, {objectid}, {userid}, {creationDate}, {category}, {content}
+            {id}, {objectid}, null, {creationDate}, {category}, {content}, {userid}
           )
       """    
       ).on(
@@ -57,15 +57,13 @@ object History {
         'content -> history.content
       ).executeUpdate()
       
-      println("coinc coin " + history.objectid + ", " + history.category)
-      
       history.copy(id = Id(id))
     }
    
   def findByCategoryAndId(category: String, objectid: Long): List[History] =
   DB.withConnection{ implicit connection =>
     SQL("""
-      select * from history
+      select id, objectid, user_id, creationdate, category, content from history
       where category = {category} and objectid={objectid}
       order by creationdate
     """)

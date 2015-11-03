@@ -22,18 +22,18 @@
       <div id="top" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
           <div class="navbar-header">
-                <a class="navbar-brand" href="@routes.UserApplication.index">Home</a>
+                <a class="navbar-brand" href="@routes.HomeController.index">Home</a>
           </div>
           
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-6">
-            @if(connected.isDefined) {
+            @connected.map { u =>
               <ul class="navbar-nav nav right">  
                 <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown">@connected.get.name<b class="caret"></b></a>
+                    <a class="dropdown-toggle" data-toggle="dropdown">@u.username<b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                      <li><a href="@routes.UserApplication.profile">Profil</a></li>
+                      <li><a href="@routes.ProfileController.profile">Profil</a></li>
                       <li class="divider"></li>
-                      <li><a href="@routes.Application.logout">Déconnexion</a></li>
+                      <li><a href="@routes.AuthenticationController.signOut">Déconnexion</a></li>
                     </ul>
                   </li>
               </ul>

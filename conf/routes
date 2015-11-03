@@ -14,7 +14,7 @@ GET         /signin/:provider        controllers.AuthenticationController.authen
 GET         /signout                 controllers.AuthenticationController.signOut
 
 # User actions
-#GET      /profile                   controllers.UserApplication.profile
+GET         /profile                 controllers.ProfileController.profile
 #POST     /profile                   controllers.UserApplication.postProfile
 
 # Events actions

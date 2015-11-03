@@ -7,11 +7,8 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 scalaVersion := "2.11.7"
 
 libraryDependencies ++= Seq(
-  jdbc,
   cache,
-  ws,
   evolutions,
-  "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
   // anorm is now an external dependency (since play2.4)
   "com.typesafe.play" % "anorm_2.11" % "2.4.0",
   // use http://play-bootstrap3.herokuapp.com/
@@ -19,7 +16,9 @@ libraryDependencies ++= Seq(
   // silouhette to handle google/yahoo authentification dude dude dude
   "com.mohiva" % "play-silhouette_2.11" % "3.0.1",
   // async postgres
-  "com.kyleu" %% "jdub-async" % "1.0"
+  "com.kyleu" %% "jdub-async" % "1.0",
+   jdbc,
+  "postgresql" % "postgresql" % "9.1-901-1.jdbc4"
 )
 
 includeFilter in (Assets, LessKeys.less) := "*.less"

@@ -3,15 +3,15 @@
 )(implicit messages: Messages)
 
 @import models.gift.Participant
-@import controllers.UserApplication
+@import controllers.BaseController
 
 <tr>
-  <td>@p.user.name</td>
+  <td>@p.user.username</td>
   <td>
     @if(
       p.event.creator != p.user &&
       p.user != user && 
-      UserApplication.IsOwnerOf(p.event.id.get, user.id.get) ) {
+      BaseController.IsOwnerOf(p.event.id.get, user.id) ) {
       <select name="role" participantid="@p.id.get">
         @for(role <- Participant.Role.values) {
           <option

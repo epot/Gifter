@@ -1,32 +1,38 @@
-@(form: Form[com.mohiva.play.silhouette.api.util.Credentials])(implicit messages: Messages)
+@(loginForm: Form[com.mohiva.play.silhouette.api.util.Credentials])(implicit messages: Messages, flash: Flash)
 
 @import helper._
 @import b3.vertical.fieldConstructor  // Declares a vertical field constructor as default
 
 @main(title = "Home") {
   <div class="page-header">
-    <h1>Connexion <small><a href="@routes.Application.signIn">Ou creer un nouveau compte</a></small></h1>
+    <h1>Connexion <small><a href="@routes.RegistrationController.registrationForm">Ou creer un nouveau compte</a></small></h1>
   </div>
   <div class="row">
     <div class="span14">
-      @b3.form(routes.Application.authenticate) {
+      @b3.form(routes.AuthenticationController.authenticateCredentials) {
 
-        @form.globalError.map { error =>
-          <div class="alert error">
+        @loginForm.globalError.map { error =>
+          <div class="alert alert-danger" role="alert">
             <p>@error.message</p>
           </div>
+          
         }
+        @flash.get("error").map { e =>
+	      <div class="alert alert-danger" role="alert">
+            <p>@e</p>
+          </div>
+	    }
 
         <fieldset>
           @b3.text(
-            form("email"),
+            loginForm("email"),
             '_label -> "Email",
             '_help -> "",
             '_error -> loginForm.error("email"),
             'class -> "form-control"
           )
 
-          @b3.form(
+          @b3.password(
             loginForm("password"),
             '_label -> "Mot de passe",
             '_error -> loginForm.error("password"),
@@ -41,11 +47,11 @@
       @defining(services.user.SocialAuthProviders.providers) { providers =>
       @if(providers.nonEmpty) {
         <div>
-          <p>Or sign in using these providers</p>
+          <h3>Or sign in using these providers</h3>
           <div>
           @for(p <- providers if p._1 != "credentials") {
             <a title="Sign in with @p._2" href="@controllers.routes.AuthenticationController.authenticateSocial(p._1)" class="provider @p._1">
-              <img src="@routes.Assets.versioned("images/providers/" + p._1 + ".png")">
+              <img src="@routes.Assets.at("images/providers/" + p._1 + ".png")">
             </a>
           }
           </div>

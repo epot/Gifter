@@ -49,7 +49,7 @@ object Participant {
         SQL(
         """
             insert into participant values (
-              {id}, {userid}, {eventid}, {role}
+              {id}, null, {eventid}, {role}, {userid}
             )
         """    
         ).on(
@@ -58,8 +58,6 @@ object Participant {
           'eventid -> participant.eventid,
           'role -> participant.role
         ).executeUpdate()
-        
-        println("added " + id + " to event " + participant.eventid)
         
         participant.copy(id = Id(id))
       }
@@ -98,7 +96,7 @@ object Participant {
 
       SQL(
         """
-         select * from participant 
+         select id, user_id, eventid, participant_role from participant 
          where eventid = {eventid}
       """
       ).onParams(eventid).as(BaseParticipant.simple *)
@@ -118,8 +116,8 @@ object Participant {
 
       SQL(
         """
-         select * from participant
-         join identity on identity.userid = participant.userid
+         select id, user_id, eventid, participant_role from participant
+         join identity on identity.user_id = participant.user_id
          where participant.eventid = {eventid} 
            and identity.email = {email}
       """
@@ -148,9 +146,9 @@ object Participant {
 
       SQL(
         """
-         select * from participant
+         select id, user_id, eventid, participant_role from participant
          where eventid = {eventid} 
-           and userid = {userid}
+           and user_id = {userid}::uuid
       """
       ).on(
           'eventid -> eventid,

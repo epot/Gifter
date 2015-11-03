@@ -15,7 +15,8 @@ object UserForms {
   val registrationForm = Form(
     mapping(
       "username" -> nonEmptyText,
-      "email" -> nonEmptyText,"password" -> tuple(
+      "email" -> nonEmptyText,
+      "password" -> tuple(
           "main" -> nonEmptyText,
           "confirm" -> text
         ).verifying(

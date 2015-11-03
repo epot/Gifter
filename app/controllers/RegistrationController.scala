@@ -1,5 +1,7 @@
 package controllers
 
+import java.util.UUID
+
 import com.mohiva.play.silhouette.api.{ LoginEvent, LoginInfo, SignUpEvent }
 import com.mohiva.play.silhouette.impl.providers.{ CommonSocialProfile, CredentialsProvider }
 import models.user.{ RegistrationData, UserForms }
@@ -7,6 +9,9 @@ import play.api.i18n.{ Messages, MessagesApi }
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc.AnyContent
 import services.user.AuthenticationEnvironment
+import play.api.mvc.Action
+import play.api.mvc.Request
+import models.user.User
 
 import scala.concurrent.Future
 
@@ -16,44 +21,44 @@ class RegistrationController @javax.inject.Inject() (
     override val env: AuthenticationEnvironment
 ) extends BaseController {
 
-  def registrationForm = withSession { implicit request =>
-    Future.successful(Ok(views.html.signIn(request.identity, UserForms.registrationForm)))
+  def registrationForm = UserAwareAction.async { implicit request =>
+    Future.successful(Ok(views.html.signIn(UserForms.registrationForm)))
   }
 
-  def register = withSession { implicit request =>
+  def register = Action.async { implicit request =>
     UserForms.registrationForm.bindFromRequest.fold(
-      form => Future.successful(BadRequest(views.html.signIn(request.identity, form))),
+      form => Future.successful(BadRequest(views.html.signIn(form))),
       data => {
         env.identityService.retrieve(LoginInfo(CredentialsProvider.ID, data.email)).flatMap {
           case Some(user) => Future.successful {
-            Ok(views.html.signIn(request.identity, UserForms.registrationForm.fill(data))).flashing("error" -> "That email address is already taken.")
+            Ok(views.html.signIn(UserForms.registrationForm.fill(data))).flashing("error" -> "That email address is already taken.")
           }
           case None => env.identityService.retrieve(data.username) flatMap {
             case Some(user) => Future.successful {
-              Ok(views.html.signIn(request.identity, UserForms.registrationForm.fill(data))).flashing("error" -> "That username is already taken.")
+              Ok(views.html.signIn(UserForms.registrationForm.fill(data))).flashing("error" -> "That username is already taken.")
             }
-            case None => saveProfile(data)
+            case None => {
+              saveProfile(data)
+            }
           }
         }
       }
     )
   }
 
-  private[this] def saveProfile(data: RegistrationData)(implicit request: SecuredRequest[AnyContent]) = {
-    if (request.identity.profiles.exists(_.providerID == "credentials")) {
-      throw new IllegalStateException("You're already registered.") // TODO Fix?
-    }
-
+  private[this] def saveProfile(data: RegistrationData)(implicit request: Request[AnyContent]) = {
     val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
     val authInfo = env.hasher.hash(data.password._1)
-    val user = request.identity.copy(
-      username = if (data.username.isEmpty) { request.identity.username } else { Some(data.username) },
-      profiles = request.identity.profiles :+ loginInfo
-    )
+    val user = User(
+              id = UUID.randomUUID(),
+              username = Some(data.username),
+              profiles = Seq(loginInfo)
+            )  
     val profile = CommonSocialProfile(
       loginInfo = loginInfo,
       email = Some(data.email)
     )
+    
     val r = Redirect(controllers.routes.HomeController.index())
     for {
       avatar <- env.avatarService.retrieveURL(data.email)

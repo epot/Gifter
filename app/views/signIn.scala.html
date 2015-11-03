@@ -1,4 +1,4 @@
-@(user: models.user.User, form: Form[models.user.RegistrationData])(
+@(userForm: Form[models.user.RegistrationData])(
   implicit request: Request[AnyContent], session: Session, flash: Flash, messages: Messages
 )
 @import helper._
@@ -8,18 +8,25 @@
   <div class="container">
     <div class="content">
       <div class="page-header">
-      <h1>Cr�ation de nouveau compte</h1>
+      <h1>Creation de nouveau compte</h1>
       </div>
+      
       <div class="row"><div class="span14">
-        @b3.form(routes.Application.postSignIn, args = 'class -> "form-horizontal") {
+        @b3.form(routes.RegistrationController.register, args = 'class -> "form-horizontal") {
           @userForm.globalError.map { error =>
-            <div class="alert error">
+            <div class="alert alert-danger" role="alert">
               <p>@error.message</p>
             </div>
           }
+          @flash.get("error").map { e =>
+			<div class="alert alert-danger" role="alert">
+              <p>@e</p>
+            </div>
+	      }
+          
           <fieldset>
-            @b3.text(form("name"), '_label -> "Nome", '_help -> "", 'class -> "form-control")
-            @b3.text(form("email"), '_label -> "Email", '_help -> "", 'class -> "form-control")
+            @b3.text(userForm("username"), '_label -> "Nom", '_help -> "", 'class -> "form-control")
+            @b3.text(userForm("email"), '_label -> "Email", '_help -> "", 'class -> "form-control")
 
             @b3.password(
               userForm("password.main"),
@@ -37,7 +44,7 @@
           </fieldset>
           <div class="actions">
             <input type="submit" value="Soumettre" class="btn btn-primary"/>
-            <a href="@routes.Application.index">
+            <a href="@routes.HomeController.index">
               <input type="button" class="btn btn-default" value="Annuler">
             </a>
           </div>

@@ -74,7 +74,7 @@ object Gift {
         SQL(
         """
             insert into gift values (
-              {id}, {creatorid}, {eventid}, {creationDate}, {content}
+              {id}, null, {eventid}, {creationDate}, {content}, {creatorid}
             )
         """    
         ).on(
@@ -84,8 +84,6 @@ object Gift {
           'creationDate -> gift.creationDate.toDate,
           'content -> gift.content
         ).executeUpdate()
-        
-        println("added " + id + " to event " + gift.eventid)
         
         gift.copy(id = Id(id))
       }
@@ -167,7 +165,7 @@ object Gift {
       
     SQL(
         """
-         select * from gift 
+         select id, creator_id, eventid, creationDate, content from gift 
         """+whereClause +
         """ order by creationDate"""
       ).as(BaseGift.simple *)
@@ -213,7 +211,7 @@ object Gift {
       SQL(
         """
           select count(gift.id) = 1 from gift
-          where gift.id = {giftid} and gift.creatorid = {creatorid}
+          where gift.id = {giftid} and gift.creator_id = {creatorid}::uuid
         """
       ).on(
         'giftid -> giftid,

@@ -33,7 +33,7 @@ object UserService {
           val u = currentUser.copy(
             profiles = currentUser.profiles.filterNot(_.providerID == profile.loginInfo.providerID) :+ profile.loginInfo
           )
-          save(u, update = true)
+          save(u, update = false)
         }
     }
   }

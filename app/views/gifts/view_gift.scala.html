@@ -32,14 +32,14 @@
       <tr>
         <td>
           <h5 class="text-left">@Messages.get("gift.creator")</h5>
-          <h6 class="text-left">@gift.creator.name</h6>
+          <h6 class="text-left">@gift.creator.username</h6>
         </td>
       </tr>
       @if(gift.to.isDefined) {
         <tr>
           <td>
             <h5 class="text-left">Pour:</h5>
-            <h6 class="text-left">@gift.to.get.name</h6>
+            <h6 class="text-left">@gift.to.get.username</h6>
           </td>
         </tr>
       }
@@ -47,7 +47,7 @@
         <tr>
           <td>
             <h5 class="text-left">Offert par:</h5>
-            <h6 class="text-left">@gift.from.get.name</h6>
+            <h6 class="text-left">@gift.from.get.username</h6>
           </td>
         </tr>
       }
@@ -66,7 +66,7 @@
       <tbody>
         @for(h <- History.findByCategoryAndId("Gift", gift.id.get)) {
           <tr>
-            <td>@h.user.name</td>
+            <td>@h.user.username</td>
             <td>@DateTimeFormat.forPattern("HH:mm dd MMMM yyyy").print(h.creationDate)</td>
             <td>@h.content</td>
           </tr>

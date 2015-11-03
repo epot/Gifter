@@ -14,9 +14,9 @@ import scala.concurrent.duration._
 
 object SocialAuthProviders {
   val providers = Seq(
-    "facebook" -> "Facebook",
-    "google" -> "Google",
-    "twitter" -> "Twitter"
+   // "facebook" -> "Facebook",
+    "google" -> "Google"//,
+    //"twitter" -> "Twitter"
   )
 }
 
@@ -47,16 +47,16 @@ class SocialAuthProviders(
     expirationTime = config.getInt("silhouette.oauth2StateProvider.expirationTime").map(_.seconds).getOrElse(throw new IllegalArgumentException())
   ), idGenerator, clock)
 
-  private[this] val facebookSettings = OAuth2Settings(
+  /*private[this] val facebookSettings = OAuth2Settings(
     authorizationURL = config.getString("silhouette.facebook.authorizationUrl"),
     accessTokenURL = config.getString("silhouette.facebook.accessTokenUrl").getOrElse(throw new IllegalArgumentException()),
-    redirectURL = config.getString("silhouette.facebook.redirectURL").getOrElse(throw new IllegalArgumentException()),
+    redirectURL = config.getString("silhouette.facebook.redirectUrl").getOrElse(throw new IllegalArgumentException()),
     clientID = config.getString("silhouette.facebook.clientId").getOrElse(throw new IllegalArgumentException()),
     clientSecret = config.getString("silhouette.facebook.clientSecret").getOrElse(throw new IllegalArgumentException()),
     scope = config.getString("silhouette.facebook.scope")
   )
 
-  private[this] val facebook = new FacebookProvider(httpLayer, oAuth2StateProvider, facebookSettings)
+  private[this] val facebook = new FacebookProvider(httpLayer, oAuth2StateProvider, facebookSettings)*/
 
   private[this] val googleSettings = OAuth2Settings(
     authorizationURL = config.getString("silhouette.google.authorizationUrl"),
@@ -69,7 +69,7 @@ class SocialAuthProviders(
 
   private[this] val google = new GoogleProvider(httpLayer, oAuth2StateProvider, googleSettings)
 
-  private[this] val twitterSettings = OAuth1Settings(
+  /*private[this] val twitterSettings = OAuth1Settings(
     requestTokenURL = config.getString("silhouette.twitter.requestTokenUrl").getOrElse(throw new IllegalArgumentException()),
     accessTokenURL = config.getString("silhouette.twitter.accessTokenUrl").getOrElse(throw new IllegalArgumentException()),
     authorizationURL = config.getString("silhouette.twitter.authorizationUrl").getOrElse(throw new IllegalArgumentException()),
@@ -80,5 +80,6 @@ class SocialAuthProviders(
 
   private[this] val twitter = new TwitterProvider(httpLayer, new PlayOAuth1Service(twitterSettings), oAuth1TokenSecretProvider, twitterSettings)
 
-  val providers = Seq("credentials" -> credentials, "facebook" -> facebook, "google" -> google, "twitter" -> twitter)
+  val providers = Seq("credentials" -> credentials, "facebook" -> facebook, "google" -> google, "twitter" -> twitter)*/
+  val providers = Seq("credentials" -> credentials, "google" -> google)
 }

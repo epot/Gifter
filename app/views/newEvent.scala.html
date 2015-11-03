@@ -23,7 +23,7 @@
     }
     <div class="well">
 
-      <input type="hidden" id="creatorid" name="creatorid" value="@user.id.get" >
+      <input type="hidden" id="creatorid" name="creatorid" value="@user.id" >
       @b3.text(
           eventForm("name"),
           '_label -> Messages.get("event.name"),
@@ -39,7 +39,7 @@
           
       <div class="actions">
         <input type="submit" class="btn btn-primary" value="@Messages.get("event.create")" />
-        <a href="@routes.UserApplication.index">
+        <a href="@routes.HomeController.index">
           <input type="button" class="btn btn-danger" value="Annuler">
         </a>
       </div>              

@@ -34,7 +34,7 @@ object Event {
 
   val simple =
     get[Pk[Long]]("event.id") ~
-    get[UUID]("event.creatorid") ~
+    get[UUID]("event.creator_id") ~
     get[String]("event.name") ~
     get[Date]("event.date") ~ 
     get[Int]("event.type") map {
@@ -54,7 +54,7 @@ object Event {
       SQL(
         """
           insert into event values (
-            {id}, {creatorid}, {name}, {date}, {eventtype}
+            {id}, null, {name}, {date}, {eventtype}, {creatorid}
           )
         """
       ).on(
@@ -81,7 +81,7 @@ object Event {
     
   def findById(id: Long): Option[Event] =
   DB.withConnection{ implicit connection =>
-    SQL("select * from event where id = {id}")
+    SQL("select id, creator_id, name, date, type from event where id = {id}")
       .on('id -> id)
       .as(Event.simple.singleOpt)
   }
@@ -92,9 +92,9 @@ object Event {
   def findByUser(user: User): List[Event] =
   DB.withConnection{ implicit connection =>
     SQL("""
-      select distinct event.* from event
+      select distinct event.id, event.creator_id, event.name, event.date, event.type from event
       left outer join participant on participant.eventid = event.id
-      where creatorid = {id} or participant.userid={id}
+      where creator_id = {id}::uuid or participant.user_id={id}::uuid
     """)
     .on('id -> user.id)
       .as(Event.simple *)
@@ -108,7 +108,7 @@ object Event {
       SQL(
         """
           select count(event.id) = 1 from event
-          where event.id = {eventid} and event.creatorid = {creatorid}
+          where event.id = {eventid} and event.creator_id = {creatorid}::uuid
         """
       ).on(
         'eventid -> eventid,

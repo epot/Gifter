@@ -113,6 +113,16 @@ create index user_profiles_email_idx on user_profiles using btree (email collate
 
 alter table user_profiles add constraint user_profiles_provider_key_idx unique (provider, key);
 
+alter table event add column creator_id uuid;
+alter table event drop constraint event_creatorid_fkey;
+alter table participant add column user_id uuid;
+alter table participant drop constraint participant_userid_fkey;
+alter table gift add column creator_id uuid;
+alter table gift drop constraint gift_creatorid_fkey;
+alter table comment add column creator_id uuid;
+alter table comment drop constraint comment_creatorid_fkey;
+alter table history add column user_id uuid;
+alter table history drop constraint history_userid_fkey;
 
 # --- !Downs
 

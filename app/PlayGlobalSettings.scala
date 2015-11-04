@@ -6,6 +6,8 @@ import jdub.async.Database
 import org.joda.time.DateTimeZone
 import play.api.{ Application, GlobalSettings }
 import services.database.Schema
+import com.github.mauricio.async.db.postgresql.util.URLParser
+import com.github.mauricio.async.db.Configuration.Default
 
 object PlayGlobalSettings extends GlobalSettings {
   override def onStart(app: Application) = {
@@ -13,13 +15,14 @@ object PlayGlobalSettings extends GlobalSettings {
     TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
 
     val cnf = play.api.Play.current.configuration
-    val host = cnf.getString("dbprout.host").getOrElse("127.0.0.1")
-    val port = 5432
-    val database = cnf.getString("dbprout.database")
-    val username = cnf.getString("dbprout.username").getOrElse("silhouette")
-    val password = cnf.getString("dbprout.password")
-
-    Database.open(username, host, port, password, database)
+    val conf = URLParser.parse(cnf.getString("db.default.url").get)
+  
+    if (conf.username == Default.username) {
+      Database.open(conf.copy(username= "epot"))
+    }
+    else {
+      Database.open(conf)
+    }
     Schema.update()
 
     super.onStart(app)

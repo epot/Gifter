@@ -1,10 +1,12 @@
 // Comment to get more information during initialization
 logLevel := Level.Warn
 
-// The Typesafe repository
-resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
-resolvers += "Atlassian Releases" at "https://maven.atlassian.com/public/"
-resolvers += Resolver.jcenterRepo
+// additional repositories
+resolvers ++= Seq(
+  "Atlassian Releases" at "https://maven.atlassian.com/public/",
+  "JCenter repo" at "https://bintray.com/bintray/jcenter/",
+  "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
+)
 
 // Use the Play sbt plugin for Play projects
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.4.2")

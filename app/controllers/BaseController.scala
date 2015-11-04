@@ -35,13 +35,11 @@ abstract class BaseController() extends Silhouette[User, CookieAuthenticator] wi
     println("identity: " + request.identity)
     request.identity match {
       case Some(user) =>
-        println("dude I am here: "+ user)
         val secured = SecuredRequest(user, request.authenticator.getOrElse(throw new IllegalStateException()), request)
         block(secured).map { r =>
           r
         }
       case None =>
-        println("dude I am not here")
         onUnauthorized
     }
   }

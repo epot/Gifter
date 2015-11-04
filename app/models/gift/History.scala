@@ -27,12 +27,12 @@ object History {
   val simple =
     get[Pk[Long]]("history.id") ~
     get[Long]("history.objectid") ~ 
-    get[UUID]("history.userid") ~ 
+    get[UUID]("history.user_id") ~ 
     get[Date]("history.creationDate") ~ 
     get[String]("history.category")  ~ 
     get[String]("history.content") map {
       case id~objectid~userid~creationDate~category~content =>
-        History(id, objectid, UserSearchService.retrieve(userid).value.get.toOption.get.get, new DateTime(creationDate), category, content)
+        History(id, objectid, UserSearchService.blocking_ugly_retrieve(userid), new DateTime(creationDate), category, content)
   }    
     
     
@@ -45,7 +45,7 @@ object History {
       SQL(
       """
           insert into history values (
-            {id}, {objectid}, null, {creationDate}, {category}, {content}, {userid}
+            {id}, {objectid}, 4, {creationDate}, {category}, {content}, {userid}::uuid
           )
       """    
       ).on(

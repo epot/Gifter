@@ -1,5 +1,5 @@
 @(user: models.user.User,
-  giftForm: Form[models.gift.Gift]
+  giftForm: Form[models.gift.GiftSimple]
 )(implicit messages: Messages)
 
 @import play.api.i18n.Messages
@@ -26,12 +26,12 @@
 
   @b3.form(action = routes.Events.postEditGift(giftForm("eventid").value.get.toLong)) {
     @giftForm.globalError.map { error =>
-      <div class="alert error">
+      <div class="alert alert-danger" role="alert">
         <p>@error.message</p>
       </div>
     }
     @if(giftForm.hasErrors) {
-        <div class="alert error">
+        <div class="alert alert-danger" role="alert">
             <p><strong>Oops</strong> Corrigez toutes les erreurs</p>
         </div>
     }
@@ -44,6 +44,7 @@
           giftForm("name"),
           '_label -> "Description du cadeau:",
           '_help -> "",
+            '_error -> giftForm.error("name"),
           'class -> "form-control")      
           
         @if(giftForm("eventid").value.isDefined && Event.findById(giftForm("eventid").value.get.toLong).get.eventtype == Event.Type.Christmas) {

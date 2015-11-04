@@ -13,10 +13,8 @@ import java.text.SimpleDateFormat
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.DateTimeFormat
-import scala.concurrent.Future
 
 case class EventSimple(
-  creatorid: UUID,
   name: String,
   date: DateTime,
   eventtype: Event.Type.Value
@@ -46,10 +44,7 @@ object Event {
     get[Date]("event.date") ~ 
     get[Int]("event.type") map {
       case id~creatorid~name~date~eventtype =>
-        
-        // ugly way to keep the way event class is designed with the new asynchronous user services
-        val user = UserSearchService.retrieve(creatorid).value.get.toOption.get.get
-        Event(id, user, name, new DateTime(date), Type(eventtype))
+        Event(id, UserSearchService.blocking_ugly_retrieve(creatorid), name, new DateTime(date), Type(eventtype))
   }
   def create(event: Event): Event =
   DB.withConnection { implicit connection =>
@@ -61,7 +56,7 @@ object Event {
       SQL(
         """
           insert into event values (
-            {id}, null, {name}, {date}, {eventtype}, {creatorid}::uuid
+            {id}, 3, {name}, {date}, {eventtype}, {creatorid}::uuid
           )
         """
       ).on(

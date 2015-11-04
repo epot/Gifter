@@ -30,18 +30,16 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
 
   val eventForm = Form[EventSimple](
     tuple(
-      "creatorid" -> nonEmptyText
-      ,"name" -> nonEmptyText
+      "name" -> nonEmptyText
       ,"dateStr" -> date("dd-MM-yyyy")
       ,"type" -> nonEmptyText
       ).transform(
     {/*apply*/
-      case (creatorid, name, dateStr, eventtype) => {
-        EventSimple(creatorid=UUID.fromString(creatorid), name=name, date=new DateTime(dateStr), eventtype=Event.Type.withName(eventtype))
+      case (name, dateStr, eventtype) => {
+        EventSimple(name=name, date=new DateTime(dateStr), eventtype=Event.Type.withName(eventtype))
       }
     },{ /*unapply*/
       event: EventSimple => (
-            event.creatorid.toString(),
             event.name,
             event.date.toDate,
             event.eventtype.toString)
@@ -60,19 +58,12 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
         Future.successful(BadRequest(views.html.newEvent(request.identity, errors)))
       },
       event => {
-        UserSearchService.retrieve(event.creatorid).map {
-          user => user match {
-            case Some(u) => {
-              val new_event = Event.create(Event(creator = u,
-                name= event.name,
-                date= event.date,
-                eventtype= event.eventtype))
-              Participant.create(Participant(event=new_event, user=request.identity, role=Participant.Role.Owner))
-              Redirect(routes.HomeController.index).withSession("userId" -> request.identity.id.toString)
-            }
-            case None => Redirect(controllers.routes.Events.newEvent).flashing(("error", "Could not find creator."))
-          }
-        }
+        val new_event = Event.create(Event(creator = request.identity,
+          name= event.name,
+          date= event.date,
+          eventtype= event.eventtype))
+        Participant.create(Participant(event=new_event, user=request.identity, role=Participant.Role.Owner))
+        Future.successful(Redirect(routes.HomeController.index))
       }
     )
   }  
@@ -101,7 +92,7 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
   }
   
   
-  val giftForm = Form[Gift] {
+  val giftForm = Form[GiftSimple] {
     tuple(
       "id" -> optional(longNumber).verifying ("Could not find gift to update.", 
           optid => optid match {
@@ -115,32 +106,34 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
       ,"to" -> optional(nonEmptyText)
     ).transform(
     {/*apply*/
-      case (optid, creatorid, eventid, name, urls, toid) => {
+      case (optid, creatorid, eventid, name, urls, toid) => {        
+        
         val pkid = optid match {
           case Some(x) => anorm.Id(x)
           case None => NotAssigned
         }
-        val to = toid match {
-          case Some(id) => UserSearchService.retrieve(id).value.get.toOption.get
+
+        val toid_uuid = toid match {
+          case Some(id) => Some(UUID.fromString(id))
           case None => None
         }
-        Gift(
-            id=pkid,
-            creator=UserSearchService.retrieve(creatorid).value.get.toOption.get.get, 
+        GiftSimple(
+            id = pkid,
+            creatorid = UUID.fromString(creatorid),
             event=Event.findById(eventid).get, 
             name=name, 
             urls=urls,
-            to = to
+            toid = toid_uuid
             )
       }
     },{ /*unapply*/
-      gift: Gift => {
-        val toid = gift.to match {
-          case Some(user) => Some(user.id.toString)
+      gift: GiftSimple => {
+        val toid = gift.toid match {
+          case Some(id) => Some(id.toString)
           case None => None
         }
         ( gift.id.toOption,
-          gift.creator.id.toString(),
+          gift.creatorid.toString,
           gift.event.id.get,
           gift.name,
           gift.urls,
@@ -150,7 +143,7 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
   }
 
   def newGift(eventid: Long) = withSession { implicit request =>
-    Future.successful(Ok(views.html.gifts.edit_gift(request.identity, giftForm.fill(Gift(creator=request.identity, event=Event.findById(eventid).get, name="")))))
+    Future.successful(Ok(views.html.gifts.edit_gift(request.identity, giftForm.fill(GiftSimple(creatorid=request.identity.id, event=Event.findById(eventid).get, name="")))))
   }
 
   def postEditGift(eventid: Long) = IsParticipantOf(eventid) { implicit request =>
@@ -160,24 +153,59 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
         Future.successful(BadRequest(views.html.gifts.edit_gift(request.identity, errors)))
       },
       gift => {
+        
+        // quickwin
+        
+        val to = gift.toid match {
+          case Some(id) => UserSearchService.blocking_ugly_retrieve_option(id)
+          case None => None
+        }
+        val from = gift.fromid match {
+          case Some(id) => UserSearchService.blocking_ugly_retrieve_option(id)
+          case None => None
+        }
+        
+        val new_gift = Gift(
+          id = gift.id,
+          creator = UserSearchService.blocking_ugly_retrieve(gift.creatorid),
+          event = gift.event,
+          creationDate = gift.creationDate,
+          name = gift.name,
+          status = gift.status,
+          to = to,
+          from = from,
+          urls = gift.urls)
+
+        
         val newGift = gift.id.toOption match {
           case Some(id) => { 
-            History.create(History(objectid=id, user=request.identity, category="Gift", content="Update gift from " + Gift.findById(id) + " to " +  gift))
-            Gift.update(gift)
+            History.create(History(objectid=id, user=request.identity, category="Gift", content="Update gift from " + Gift.findById(id) + " to " +  new_gift))
+            Gift.update(new_gift)
           }
-          case None => Gift.create(gift)
+          case None => Gift.create(new_gift)
         }
         
         newGift.to match {
-          case Some(user_to) => Future.successful(Redirect(routes.Events.eventWithUser(newGift.event.id.get, user_to.id)).withSession("userId" -> request.identity.id.toString))
-          case _ => Future.successful(Redirect(routes.Events.event(newGift.event.id.get)).withSession("userId" -> request.identity.id.toString))
+          case Some(user_to) => Future.successful(Redirect(routes.Events.eventWithUser(newGift.event.id.get, user_to.id)))
+          case _ => Future.successful(Redirect(routes.Events.event(newGift.event.id.get)))
         }
       }
     )
   }  
   
   def editGift(giftid: Long) = IsParticipantOfWithGift(giftid) { implicit request =>
-    Future.successful(Ok(views.html.gifts.edit_gift(request.identity, giftForm.fill(Gift.findById(giftid).get))))
+    val gift = Gift.findById(giftid).get
+    val gift_simple = GiftSimple(
+          id = gift.id,
+          creatorid = gift.creator.id,
+          event = gift.event,
+          creationDate = gift.creationDate,
+          name = gift.name,
+          status = gift.status,
+          toid = gift.to.map{_.id},
+          fromid = gift.from.map{_.id},
+          urls = gift.urls)
+    Future.successful(Ok(views.html.gifts.edit_gift(request.identity, giftForm.fill(gift_simple))))
   }
   
   def viewGift(giftid: Long) = IsParticipantOfWithGift(giftid) { implicit request =>
@@ -211,20 +239,19 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
         val email = tuple._2
         val role = Participant.Role.withName(tuple._3)
         
-        Participant.findByEventIdAndByEmail(eventid, email) match {
-          case Some(participant) => {
-            Participant.update(participant.id.get, role)
-          }
-          case None => {
-            UserSearchService.retrieve(LoginInfo(CredentialsProvider.ID, email)).map {
-              user => user match {
-                case Some(u) =>  Participant.create(Participant(
+        
+        UserSearchService.retrieve(LoginInfo(CredentialsProvider.ID, email)).map {
+          user => user match {
+            case Some(u) =>  {
+              Participant.findByEventIdAndByUserId(eventid, u.id) match {
+                case Some(p) => Participant.update(p.id.get, role)
+                case None => Participant.create(Participant(
                   user=u,
                   event=Event.findById(eventid).get,
                   role=role))
-                case None =>
               }
             }
+            case None =>
           }
         }
         

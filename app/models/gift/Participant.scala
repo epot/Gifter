@@ -32,7 +32,7 @@ object Participant {
   private object BaseParticipant {
     val simple =
       get[Pk[Long]]("participant.id") ~
-      get[UUID]("participant.userid") ~
+      get[UUID]("participant.user_id") ~
       get[Long]("participant.eventid") ~
       get[Int]("participant.participant_role") map {
         case id~userid~eventid~role =>
@@ -49,7 +49,7 @@ object Participant {
         SQL(
         """
             insert into participant values (
-              {id}, null, {eventid}, {role}, {userid}
+              {id}, 1, {eventid}, {role}, {userid}::uuid
             )
         """    
         ).on(
@@ -102,38 +102,9 @@ object Participant {
       ).onParams(eventid).as(BaseParticipant.simple *)
       .map(part => Participant(
           id=part.id,
-          user=UserSearchService.retrieve(part.userid).value.get.toOption.get.get,
+          user=UserSearchService.blocking_ugly_retrieve(part.userid),
           event=Event.findById(part.eventid).get,
           role=Participant.Role(part.role)))
-  }
-  
-  /**
-   * @param evenit
-   * @return a participant if given user participates to this event
-   */
-  def findByEventIdAndByEmail(eventid: Long, email: String): Option[Participant] =
-    DB.withConnection { implicit connection =>
-
-      SQL(
-        """
-         select id, user_id, eventid, participant_role from participant
-         join identity on identity.user_id = participant.user_id
-         where participant.eventid = {eventid} 
-           and identity.email = {email}
-      """
-      ).on(
-          'eventid -> eventid,
-          'email -> email)
-      .as(BaseParticipant.simple.singleOpt) match {
-        case Some(part) => {
-          Some(Participant(
-            id=part.id,
-            user=UserSearchService.retrieve(part.userid).value.get.toOption.get.get,
-            event=Event.findById(part.eventid).get,
-            role=Participant.Role(part.role)))
-        }
-        case None => None
-      }
   }
   
   /**
@@ -154,10 +125,10 @@ object Participant {
           'eventid -> eventid,
           'userid ->  userid)
       .as(BaseParticipant.simple.singleOpt) match {
-        case Some(part) => {
+        case Some(part) => {  
           Some(Participant(
             id=part.id,
-            user=UserSearchService.retrieve(part.userid).value.get.toOption.get.get,
+            user=UserSearchService.blocking_ugly_retrieve(part.userid),
             event=Event.findById(part.eventid).get,
             role=Participant.Role(part.role)))
         }

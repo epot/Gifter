@@ -10,6 +10,9 @@ import models.user.User
 import play.api.Logger
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
+import scala.concurrent.{Future, Await}
+import scala.concurrent.duration.Duration
+
 import scala.concurrent.Future
 
 object UserSearchService extends IdentityService[User] {
@@ -30,5 +33,16 @@ object UserSearchService extends IdentityService[User] {
     }
   } else {
     Database.query(UserQueries.FindUserByProfile(loginInfo))
+  }
+  
+  def blocking_ugly_retrieve(id: UUID) = {
+    val user = retrieve(id)
+     Await.result(user, Duration.Inf)
+     user.value.get.toOption.get.get
+  }
+  def blocking_ugly_retrieve_option(id: UUID) = {
+    val user = retrieve(id)
+     Await.result(user, Duration.Inf)
+     user.value.get.toOption.get
   }
 }

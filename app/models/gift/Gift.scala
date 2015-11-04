@@ -17,6 +17,17 @@ import java.sql.Clob
 
 import play.i18n.Messages
 
+case class GiftSimple(
+  id: Pk[Long] = NotAssigned,
+  creatorid: UUID,
+  event: Event,
+  creationDate: DateTime = DateTime.now,
+  name: String,
+  status: Gift.Status.Value = Gift.Status.New,
+  toid: Option[UUID] = None,
+  fromid: Option[UUID] = None,
+  urls: List[String]=Nil)
+
 case class Gift(
   id: Pk[Long] = NotAssigned,
   creator: User,
@@ -56,7 +67,7 @@ object Gift {
   private object BaseGift {
     val simple =
       get[Pk[Long]]("gift.id") ~
-      get[UUID]("gift.creatorid") ~
+      get[UUID]("gift.creator_id") ~
       get[Long]("gift.eventid") ~
       get[Date]("gift.creationDate") ~ 
       get[String]("gift.content") map {
@@ -74,7 +85,7 @@ object Gift {
         SQL(
         """
             insert into gift values (
-              {id}, null, {eventid}, {creationDate}, {content}, {creatorid}
+              {id}, 2, {eventid}, {creationDate}, {content}, {creatorid}::uuid
             )
         """    
         ).on(
@@ -174,16 +185,17 @@ object Gift {
           // ugly way to keep the way event class is designed with the new asynchronous user services
           
           val to = giftContent.to match {
-            case Some(id) => UserSearchService.retrieve(id).value.get.toOption.get
+            case Some(id) => UserSearchService.blocking_ugly_retrieve_option(id)
             case None => None
           }
           val from = giftContent.from match {
-            case Some(id) => UserSearchService.retrieve(id).value.get.toOption.get
+            case Some(id) => UserSearchService.blocking_ugly_retrieve_option(id)
             case None => None
           }
+          
           Gift(
             id=g.id,
-            creator=UserSearchService.retrieve(g.creatorid).value.get.toOption.get.get,
+            creator=UserSearchService.blocking_ugly_retrieve(g.creatorid),
             event=Event.findById(g.eventid).get,
             name = giftContent.name,
             creationDate= g.creationDate,

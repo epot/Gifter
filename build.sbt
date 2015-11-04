@@ -10,11 +10,11 @@ libraryDependencies ++= Seq(
   cache,
   evolutions,
   // anorm is now an external dependency (since play2.4)
-  "com.typesafe.play" % "anorm_2.11" % "2.4.0",
+  "com.typesafe.play" %% "anorm" % "2.4.0",
   // use http://play-bootstrap3.herokuapp.com/
-  "com.adrianhurt" % "play-bootstrap3_2.11" % "0.4.4-P24",
+  "com.adrianhurt" %% "play-bootstrap3" % "0.4.4-P24",
   // silouhette to handle google/yahoo authentification dude dude dude
-  "com.mohiva" % "play-silhouette_2.11" % "3.0.1",
+  "com.mohiva" %% "play-silhouette" % "3.0.1",
   // async postgres
   "com.kyleu" %% "jdub-async" % "1.0",
    jdbc,

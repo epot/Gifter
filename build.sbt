@@ -6,6 +6,12 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.11.7"
 
+resolvers ++= Seq(
+  "Atlassian Releases" at "https://maven.atlassian.com/public/",
+  "JCenter repo" at "https://bintray.com/bintray/jcenter/",
+  "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
+)
+
 libraryDependencies ++= Seq(
   cache,
   evolutions,

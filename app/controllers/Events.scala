@@ -283,9 +283,6 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
                 History.create(History(objectid=giftid, user=request.identity, category="Gift", content="Update gift status from " + gift.status + " to " +  status))
                 val newGift = Gift.update(gift.copy(status=statusValue, from=from))
                 
-                
-                    println("fucker to " + newGift)
-                
                 newGift.to match {
                   case Some(user_to) => {
                     Future.successful(Redirect(routes.Events.eventWithUser(newGift.event.id.get, user_to.id)).withSession("userId" -> request.identity.id.toString))

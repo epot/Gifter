@@ -32,7 +32,6 @@ abstract class BaseController() extends Silhouette[User, CookieAuthenticator] wi
   }
 
   def withSession(block: (SecuredRequest[AnyContent]) => Future[Result]) = UserAwareAction.async { implicit request =>
-    println("identity: " + request.identity)
     request.identity match {
       case Some(user) =>
         val secured = SecuredRequest(user, request.authenticator.getOrElse(throw new IllegalStateException()), request)

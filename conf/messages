@@ -22,7 +22,7 @@ event.create=Créer
 
 error.date=Date obligatoire
 
-participant.addemail=Ajouter un email...
+participant.addusername=Ajouter un nom d'utilisateur...
 participant.statut.owner=Administrateur
 participant.statut.gifter=Acheteur de cadeaux
 participant.statut.reader=Lecteur

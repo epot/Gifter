@@ -1,7 +1,7 @@
 @(user: models.user.User,
   event: models.gift.Event,
   to: Option[models.user.User] = None
-)(implicit messages: Messages)
+)(implicit messages: Messages, flash: Flash)
 
 @import helper._
 

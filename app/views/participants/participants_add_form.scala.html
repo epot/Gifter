@@ -24,7 +24,7 @@
     <div class="well">
   
       <input type="hidden" name="eventid" value="@addParticipantForm("eventid").value">
-      <input type="text" class="input-medium search-query" name="email" value="@addParticipantForm("email").value" placeholder="@play.i18n.Messages.get("participant.addemail")">
+      <input type="text" class="input-medium search-query" name="username" value="@addParticipantForm("username").value" placeholder="@play.i18n.Messages.get("participant.addusername")">
      
       <select name="role">
         @for(role <- Participant.Role.values) {

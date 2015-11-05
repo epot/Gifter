@@ -1,4 +1,4 @@
-gift.to=Destiné à:
+cgift.to=Destiné à:
 gift.add=Ajouter une idée de cadeau
 gift.statut.new=Nouveau
 gift.statut.abouttobebought=En cours d''achat
@@ -22,7 +22,7 @@ event.create=Créer
 
 error.date=Date obligatoire
 
-participant.addemail=Ajouter un email...
+participant.addusername=Ajouter un nom d'utilisateur...
 participant.statut.owner=Administrateur
 participant.statut.gifter=Acheteur de cadeaux
 participant.statut.reader=Lecteur

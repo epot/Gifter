@@ -20,6 +20,8 @@ import org.joda.time.DateTime
 import play.api.i18n.{MessagesApi, I18nSupport}
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
+import com.mohiva.play.silhouette.impl.providers.oauth2.GoogleProvider
+
 import services.user.AuthenticationEnvironment
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
@@ -236,11 +238,11 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
       tuple => {
         
         val eventid = tuple._1
-        val email = tuple._2
+        val username = tuple._2
         val role = Participant.Role.withName(tuple._3)
         
         
-        UserSearchService.retrieve(LoginInfo(CredentialsProvider.ID, email)).map {
+        UserSearchService.retrieve(username).map {
           user => user match {
             case Some(u) =>  {
               Participant.findByEventIdAndByUserId(eventid, u.id) match {
@@ -248,14 +250,17 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
                 case None => Participant.create(Participant(
                   user=u,
                   event=Event.findById(eventid).get,
-                  role=role))
+                  role=role)) 
               }
+              Ok(views.html.participants.participants_table(request.identity, Participant.findByEventId(eventid)))
             }
-            case None =>
+            case None => {
+              Ok(views.html.participants.participants_table(request.identity, Participant.findByEventId(eventid))).flashing("error" -> "Could not find anyone with this username.")
+            }
           }
         }
         
-        Future.successful(Ok(views.html.participants.participants_table(request.identity, Participant.findByEventId(eventid))))
+        
       }
     )
   }
@@ -303,7 +308,7 @@ object Events {
     val addParticipantForm = Form {
     tuple(
       "eventid" -> longNumber.verifying ("Could not find event. Maybe you deleted it ?", id => Event.findById(id).isDefined)
-      ,"email" -> email
+      ,"username" -> nonEmptyText
       ,"role" -> nonEmptyText
     )
   }

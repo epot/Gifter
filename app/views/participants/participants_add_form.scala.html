@@ -24,8 +24,16 @@
     <div class="well">
   
       <input type="hidden" name="eventid" value="@addParticipantForm("eventid").value">
-      <input type="text" class="input-medium search-query" name="username" value="@addParticipantForm("username").value" placeholder="@play.i18n.Messages.get("participant.addusername")">
-     
+      
+      @if(addParticipantForm.error("username")) {
+        <div class="form-group  has-error" id="username_field">
+       	  <input type="text" class="input-medium search-query" name="username" value="@addParticipantForm("username").value" placeholder="@play.i18n.Messages.get("participant.addusername")">
+			<span id="username_error_0" class="help-block">@addParticipantForm.error("username").get.message</span>
+			<span id="username_info_0" class="help-block"></span>
+        </div>
+      } else {
+      	<input type="text" class="input-medium search-query" name="username" value="@addParticipantForm("username").value" placeholder="@play.i18n.Messages.get("participant.addusername")">
+      }
       <select name="role">
         @for(role <- Participant.Role.values) {
             <option
@@ -47,8 +55,8 @@ $('.add-participant-btn').on('click', function(e) {
     type: 'GET',
     contentType: "application/x-www-form-urlencoded",
     data: $('.add-participant-form').serializeArray(),
-    success: function( response ) {
-      $('#participants-table').html(response);
+    success: function( response, textStatus, xhr ) {
+      $('#participants-table').html(response)
     },
     error: function(jqXHR, textStatus, errorThrown) {
       if(jqXHR.status == 400) {

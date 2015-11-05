@@ -221,7 +221,7 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
     Gift.findById(giftid) match {
       case Some(gift) => { 
         Gift.delete(giftid)
-        Future.successful(Redirect(routes.Events.event(gift.event.id.get)).withSession("userId" -> request.identity.id.toString))
+        Future.successful(Redirect(routes.Events.event(gift.event.id.get)))
       }
       case None => Future.successful(BadRequest)
     }
@@ -232,7 +232,6 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
 
     Events.addParticipantForm.bindFromRequest.fold(
       errors => {
-        println(errors)
         Future.successful(BadRequest(views.html.participants.participants_add_form(errors)))
       },
       tuple => {
@@ -255,12 +254,13 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
               Ok(views.html.participants.participants_table(request.identity, Participant.findByEventId(eventid)))
             }
             case None => {
-              Ok(views.html.participants.participants_table(request.identity, Participant.findByEventId(eventid))).flashing("error" -> "Could not find anyone with this username.")
+              val form = Events.addParticipantForm.fill(tuple)
+              val moncul = form.withError("username","Could not find anyone with this username")
+              println(moncul)
+              BadRequest(views.html.participants.participants_add_form(form.withError("username","User name not found")))
             }
           }
         }
-        
-        
       }
     )
   }

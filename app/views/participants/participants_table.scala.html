@@ -2,12 +2,6 @@
   participants:List[models.gift.Participant]
 )(implicit messages: Messages, flash: Flash)
 
-@flash.get("error").map { e =>
-	<div class="alert alert-danger" role="alert">
-      <p>@e</p>
-    </div>
-  }
-
 <table id="participants-table" class="table table-striped table-hover table-bordered">
   <thead>
     <tr>

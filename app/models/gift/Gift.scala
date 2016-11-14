@@ -3,7 +3,7 @@ package models.gift
 import java.util.Date
 import java.util.UUID
 import models.user._
-import services.user._
+import models.services.user._
 import anorm._
 import anorm.SqlParser._
 import play.api.db._
@@ -18,7 +18,7 @@ import java.sql.Clob
 import play.i18n.Messages
 
 case class GiftSimple(
-  id: Pk[Long] = NotAssigned,
+  id: Option[Long] = None,
   creatorid: UUID,
   event: Event,
   creationDate: DateTime = DateTime.now,
@@ -29,7 +29,7 @@ case class GiftSimple(
   urls: List[String]=Nil)
 
 case class Gift(
-  id: Pk[Long] = NotAssigned,
+  id: Option[Long] = None,
   creator: User,
   event: Event,
   creationDate: DateTime = DateTime.now,
@@ -59,14 +59,14 @@ object Gift {
   implicit val GiftContentWrites = Json.writes[GiftContent]
 
   private case class BaseGift(
-    id: Pk[Long] = NotAssigned,
+    id: Option[Long] = None,
     creatorid: UUID,
     eventid: Long,
     creationDate: DateTime,
     content: String)
   private object BaseGift {
     val simple =
-      get[Pk[Long]]("gift.id") ~
+      get[Option[Long]]("gift.id") ~
       get[UUID]("gift.creator_id") ~
       get[Long]("gift.eventid") ~
       get[Date]("gift.creationDate") ~ 
@@ -96,7 +96,7 @@ object Gift {
           'content -> gift.content
         ).executeUpdate()
         
-        gift.copy(id = Id(id))
+        gift.copy(id = Some(id))
       }
   }
 
@@ -182,7 +182,7 @@ object Gift {
       ).as(BaseGift.simple *)
       .map(g => {
           val giftContent = GiftContentReads.reads(Json.parse(g.content)).get
-          // ugly way to keep the way event class is designed with the new asynchronous user services
+          // ugly way to keep the way event class is designed with the new asynchronous user models.services
           
           val to = giftContent.to match {
             case Some(id) => UserSearchService.blocking_ugly_retrieve_option(id)

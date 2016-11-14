@@ -5,7 +5,7 @@ import java.util.TimeZone
 import jdub.async.Database
 import org.joda.time.DateTimeZone
 import play.api.{ Application, GlobalSettings }
-import services.database.Schema
+import models.services.database.Schema
 import com.github.mauricio.async.db.postgresql.util.URLParser
 import com.github.mauricio.async.db.Configuration.Default
 

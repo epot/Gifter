@@ -1,74 +1,95 @@
 package controllers
 
 import java.util.UUID
+import javax.inject.Inject
 
+import com.mohiva.play.silhouette.api.Authenticator.Implicits._
 import com.mohiva.play.silhouette.api.exceptions.ProviderException
-import com.mohiva.play.silhouette.api.{ LoginEvent, LogoutEvent }
+import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
+import net.ceedubs.ficus.Ficus._
+import play.api.Configuration
+import com.mohiva.play.silhouette.api.util.{Clock, Credentials}
+import com.mohiva.play.silhouette.api.{Logger, LoginEvent, LogoutEvent, Silhouette}
 import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
-import com.mohiva.play.silhouette.impl.providers.{ CommonSocialProfile, CommonSocialProfileBuilder, SocialProvider }
-import models.user.{ User, UserForms }
-import play.api.i18n.MessagesApi
-import services.user.AuthenticationEnvironment
+import com.mohiva.play.silhouette.impl.providers._
+import models.user.{User, UserForms}
+import models.services.user.{UserSearchService, UserService}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.mvc.Action
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.mvc.{Action, Controller}
+import utils.auth.DefaultEnv
 
+import scala.language.postfixOps
 import scala.concurrent.Future
+import scala.concurrent.duration.FiniteDuration
 
 @javax.inject.Singleton
-class AuthenticationController @javax.inject.Inject() (
-    override val messagesApi: MessagesApi,
-    override val env: AuthenticationEnvironment
-) extends BaseController {
-  
-  def signInForm = UserAwareAction.async { implicit request =>
-    request.identity match {
-      case Some(user) => Future.successful(Ok(views.html.userHome(user)))
-      case None => Future.successful(Ok(views.html.index(UserForms.signInForm)))
-    }
+class AuthenticationController @Inject() (
+  val messagesApi: MessagesApi,
+  silhouette: Silhouette[DefaultEnv],
+  credentialsProvider: CredentialsProvider,
+  configuration: Configuration,
+  authInfoRepository: AuthInfoRepository,
+  socialProviderRegistry: SocialProviderRegistry,
+  userService: UserService,
+  clock: Clock) extends Controller with I18nSupport with Logger {
+
+  def signInForm = silhouette.UnsecuredAction.async { implicit request =>
+    Future.successful(Ok(views.html.index(UserForms.signInForm, socialProviderRegistry)))
   }
 
-  def authenticateCredentials = UserAwareAction.async { implicit request =>
+  def authenticateCredentials = silhouette.UnsecuredAction.async { implicit request =>
     UserForms.signInForm.bindFromRequest.fold(
-      form => Future.successful(BadRequest(views.html.index(form))),
-      credentials => env.credentials.authenticate(credentials).flatMap { loginInfo =>
-        val result = Redirect(controllers.routes.HomeController.index())
-        env.identityService.retrieve(loginInfo).flatMap {
-          case Some(user) => env.authenticatorService.create(loginInfo).flatMap { authenticator =>
-            println("authentified " + user)
-            env.eventBus.publish(LoginEvent(user, request, request2Messages))
-            env.authenticatorService.init(authenticator).flatMap(v => env.authenticatorService.embed(v, result))
+      form => Future.successful(BadRequest(views.html.index(form, socialProviderRegistry))),
+      data => {
+        val credentials = Credentials(data.email, data.password)
+        credentialsProvider.authenticate(credentials).flatMap { loginInfo =>
+          val result = Redirect(routes.HomeController.index())
+          UserSearchService.retrieve(loginInfo).flatMap {
+            case Some(user) =>
+              val c = configuration.underlying
+              silhouette.env.authenticatorService.create(loginInfo).map {
+                case authenticator if data.rememberMe =>
+                  authenticator.copy(
+                    expirationDateTime = clock.now + c.as[FiniteDuration]("silhouette.authenticator.rememberMe.authenticatorExpiry"),
+                    idleTimeout = c.getAs[FiniteDuration]("silhouette.authenticator.rememberMe.authenticatorIdleTimeout"),
+                    cookieMaxAge = c.getAs[FiniteDuration]("silhouette.authenticator.rememberMe.cookieMaxAge")
+                  )
+                case authenticator => authenticator
+              }.flatMap { authenticator =>
+                silhouette.env.eventBus.publish(LoginEvent(user, request))
+                silhouette.env.authenticatorService.init(authenticator).flatMap { v =>
+                  silhouette.env.authenticatorService.embed(v, result)
+                }
+              }
+            case None => Future.failed(new IdentityNotFoundException("Couldn't find user"))
           }
-          case None => Future.failed(new IdentityNotFoundException("Couldn't find user."))
+        }.recover {
+          case e: ProviderException =>
+            Redirect(controllers.routes.AuthenticationController.signInForm()).flashing(("error", "Invalid credentials."))
         }
-      }.recover {
-        case e: ProviderException =>
-          Redirect(controllers.routes.AuthenticationController.signInForm()).flashing(("error", "Invalid credentials."))
       }
     )
   }
 
-  def authenticateSocial(provider: String) = UserAwareAction.async { implicit request =>
-    (env.providersMap.get(provider) match {
+  def authenticateSocial(provider: String) = silhouette.UserAwareAction.async { implicit request =>
+    (socialProviderRegistry.get[SocialProvider](provider) match {
       case Some(p: SocialProvider with CommonSocialProfileBuilder) =>
         p.authenticate().flatMap {
-          case Left(result) => {
-            Future.successful(result)
-          }
-          case Right(authInfo) => {
-            for {
-              profile <- p.retrieveProfile(authInfo)
-              user <- env.userService.create(mergeUser(request.identity, profile), profile)
-              authInfo <- env.authInfoService.save(profile.loginInfo, authInfo)
-              authenticator <- env.authenticatorService.create(profile.loginInfo)
-              value <- env.authenticatorService.init(authenticator)
-              result <- env.authenticatorService.embed(value, Redirect(controllers.routes.HomeController.index()))
-            } yield {
-              env.eventBus.publish(LoginEvent(user, request, request2Messages))
-              result
-            }
+          case Left(result) => Future.successful(result)
+          case Right(authInfo) => for {
+            profile <- p.retrieveProfile(authInfo)
+            user <- userService.save(profile)
+            authInfo <- authInfoRepository.save(profile.loginInfo, authInfo)
+            authenticator <- silhouette.env.authenticatorService.create(profile.loginInfo)
+            value <- silhouette.env.authenticatorService.init(authenticator)
+            result <- silhouette.env.authenticatorService.embed(value, Redirect(routes.HomeController.index()))
+          } yield {
+            silhouette.env.eventBus.publish(LoginEvent(user, request))
+            result
           }
         }
-      case _ => Future.failed(new ProviderException("Invalid provider [" + provider + "]."))
+      case _ => Future.failed(new ProviderException(s"Cannot authenticate with unexpected social provider $provider"))
     }).recover {
       case e: ProviderException =>
         logger.error("Unexpected provider error", e)
@@ -76,26 +97,9 @@ class AuthenticationController @javax.inject.Inject() (
     }
   }
 
-  def signOut = SecuredAction.async { implicit request =>
-    val result = Redirect(controllers.routes.HomeController.index())
-    env.eventBus.publish(LogoutEvent(request.identity, request, request2Messages))
-    env.authenticatorService.discard(request.authenticator, result).map(x => result)
-  }
-
-  private[this] def mergeUser(potential_user: Option[User], profile: CommonSocialProfile) = {
-    potential_user match {
-      case Some(user) => {
-        user.copy(
-          username = if (profile.firstName.isDefined && user.username.isEmpty) { profile.firstName } else { user.username }
-        )
-      }
-      case None => {
-        User(
-          id = UUID.randomUUID(),
-          username = profile.firstName,
-          profiles = Nil
-        )
-      }
-    }
+  def signOut = silhouette.SecuredAction.async { implicit request =>
+    val result = Redirect(routes.HomeController.index())
+    silhouette.env.eventBus.publish(LogoutEvent(request.identity, request))
+    silhouette.env.authenticatorService.discard(request.authenticator, result)
   }
 }

@@ -1,4 +1,4 @@
-package services.database
+package models.services.database
 
 import jdub.async.Database
 import models.queries.ddl._

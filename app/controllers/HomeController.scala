@@ -1,18 +1,17 @@
 package controllers
 
-import play.api.i18n.MessagesApi
-import services.user.AuthenticationEnvironment
+import javax.inject.Inject
+
+import com.mohiva.play.silhouette.api.Silhouette
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Controller
+import utils.auth.DefaultEnv
 
 import scala.concurrent.Future
 
-@javax.inject.Singleton
-class HomeController @javax.inject.Inject() (override val messagesApi: MessagesApi, override val env: AuthenticationEnvironment) extends BaseController {
+class HomeController @Inject() (val messagesApi: MessagesApi, silhouette: Silhouette[DefaultEnv]) extends Controller with I18nSupport {
 
-  def index = withSession{ s =>
-    Future.successful(Ok(views.html.userHome(s.identity)))
-  }
-
-  def adminTest = withAdminSession{ s =>
-    Future.successful(Ok(views.html.userHome(s.identity)))
+  def index = silhouette.SecuredAction.async { implicit request =>
+    Future.successful(Ok(views.html.userHome(request.identity)))
   }
 }

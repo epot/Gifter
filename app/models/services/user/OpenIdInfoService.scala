@@ -1,15 +1,15 @@
-package services.user
+package models.services.user
 
 import com.mohiva.play.silhouette.api.LoginInfo
-import com.mohiva.play.silhouette.impl.daos.DelegableAuthInfoDAO
 import com.mohiva.play.silhouette.impl.providers.OpenIDInfo
+import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 import jdub.async.Database
 import models.queries.OpenIdInfoQueries
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 import scala.concurrent.Future
 
-object OpenIdInfoService extends DelegableAuthInfoDAO[OpenIDInfo] {
+class OpenIdInfoService extends DelegableAuthInfoDAO[OpenIDInfo] {
   override def find(loginInfo: LoginInfo) = Database.query(OpenIdInfoQueries.getById(Seq(loginInfo.providerID, loginInfo.providerKey)))
 
   override def save(loginInfo: LoginInfo, authInfo: OpenIDInfo) = {

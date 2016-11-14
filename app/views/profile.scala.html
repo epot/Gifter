@@ -1,6 +1,7 @@
 @(
   user: models.user.User,
-  profiles: Seq[com.mohiva.play.silhouette.impl.providers.CommonSocialProfile]
+  profiles: Seq[com.mohiva.play.silhouette.impl.providers.CommonSocialProfile],
+  socialProviders: com.mohiva.play.silhouette.impl.providers.SocialProviderRegistry
 )(
   implicit
   flash: Flash, messages: Messages)
@@ -45,24 +46,24 @@
 		          }
 		        </div>
 		      }
-		      @services.user.SocialAuthProviders.providers.map { provider =>
-		        @defining(profiles.find(_.loginInfo.providerID == provider._1)) { profile =>
+		      @socialProviders.providers.map { provider =>
+		        @defining(profiles.find(_.loginInfo.providerID == provider.id)) { profile =>
 		          <div class="profile-detail">
 		            @if(profile.isDefined) {
-		              <div class="provider @provider._1">
-		                <img src="@routes.Assets.at("images/providers/" + provider._1 + ".png")">
+		              <div class="provider @provider.id">
+		                <img src="@routes.Assets.at("images/providers/" + provider.id + ".png")">
 		              </div>
 		              <div class="profile-links">
 		                <strong>@profile.get.fullName</strong><br/>
 		                @profile.get.email<br/>
 		              </div>
 		            } else {
-		              @defining(controllers.routes.AuthenticationController.authenticateSocial(provider._1)) { url =>
-		                <a href="@url" class="provider @provider._1">
-		                  <img src="@routes.Assets.at("images/providers/" + provider._1 + ".png")">
+		              @defining(controllers.routes.AuthenticationController.authenticateSocial(provider.id)) { url =>
+		                <a href="@url" class="provider @provider.id">
+		                  <img src="@routes.Assets.at("images/providers/" + provider.id + ".png")">
 		                </a>
 		                <div class="profile-links">
-		                  <a href="@url">Connect your @provider._2 account</a>
+		                  <a href="@url">Connect your @Messages(provider.id) account</a>
 		                </div>
 		              }
 		            }

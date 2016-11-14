@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 import models.user._
 import models.gift._
-import services.user._
+import models.services.user._
 import anorm._
 import play.api.mvc._
 import play.api._

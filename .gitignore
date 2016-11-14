@@ -8,4 +8,5 @@ tmp
 .settings
 .target
 *.class
+.idea/
 /bin/

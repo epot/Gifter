@@ -1,4 +1,4 @@
-@(loginForm: Form[com.mohiva.play.silhouette.api.util.Credentials])(implicit messages: Messages, flash: Flash)
+@(loginForm: Form[models.user.UserForms.Data], socialProviders: com.mohiva.play.silhouette.impl.providers.SocialProviderRegistry)(implicit messages: Messages, flash: Flash)
 
 @import helper._
 @import b3.vertical.fieldConstructor  // Declares a vertical field constructor as default
@@ -44,20 +44,18 @@
           <input type="submit" class="btn btn-primary" value="Connexion">
         </div>
       }
-      @defining(services.user.SocialAuthProviders.providers) { providers =>
-      @if(providers.nonEmpty) {
+      @if(socialProviders.providers.nonEmpty) {
         <div>
           <h3>Or sign in using these providers</h3>
           <div>
-          @for(p <- providers if p._1 != "credentials") {
-            <a title="Sign in with @p._2" href="@controllers.routes.AuthenticationController.authenticateSocial(p._1)" class="provider @p._1">
-              <img src="@routes.Assets.at("images/providers/" + p._1 + ".png")">
+          @for(p <- socialProviders.providers if p.id != "credentials") {
+            <a title="Sign in with @Messages(p.id)" href="@controllers.routes.AuthenticationController.authenticateSocial(p.id)" class="provider @p.id">
+              <img src="@routes.Assets.at("images/providers/" + p.id + ".png")">
             </a>
           }
           </div>
         </div>
       }
-    }
     </div>
   </div>
 }

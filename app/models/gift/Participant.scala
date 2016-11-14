@@ -2,7 +2,7 @@ package models.gift
 
 import java.util.UUID
 import models.user._
-import services.user._
+import models.services.user._
 import anorm._
 import anorm.SqlParser._
 import play.api.db._
@@ -10,7 +10,7 @@ import play.api.Play.current
 import play.i18n.Messages
 
 case class Participant(
-  id: Pk[Long] = NotAssigned,
+  id: Option[Long] = None,
   user: User,
   event: Event,
   role: Participant.Role.Value)
@@ -25,13 +25,13 @@ object Participant {
   }
 
   private case class BaseParticipant(
-    id: Pk[Long] = NotAssigned,
+    id: Option[Long] = None,
     userid: UUID,
     eventid: Long,
     role: Int)
   private object BaseParticipant {
     val simple =
-      get[Pk[Long]]("participant.id") ~
+      get[Option[Long]]("participant.id") ~
       get[UUID]("participant.user_id") ~
       get[Long]("participant.eventid") ~
       get[Int]("participant.participant_role") map {
@@ -59,7 +59,7 @@ object Participant {
           'role -> participant.role
         ).executeUpdate()
         
-        participant.copy(id = Id(id))
+        participant.copy(id = Some(id))
       }
   }
 

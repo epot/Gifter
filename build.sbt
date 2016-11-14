@@ -16,15 +16,20 @@ libraryDependencies ++= Seq(
   cache,
   evolutions,
   // anorm is now an external dependency (since play2.4)
-  "com.typesafe.play" %% "anorm" % "2.4.0",
+  "com.typesafe.play" %% "anorm" % "2.5.2",
   // use http://play-bootstrap3.herokuapp.com/
-  "com.adrianhurt" %% "play-bootstrap3" % "0.4.4-P24",
+  "com.adrianhurt" %% "play-bootstrap" % "1.1-P25-B3",
   // silouhette to handle google/yahoo authentification dude dude dude
-  "com.mohiva" %% "play-silhouette" % "3.0.1",
+  "com.mohiva" %% "play-silhouette" % "4.0.0",
+  "com.mohiva" %% "play-silhouette-persistence" % "4.0.0",
+  "com.mohiva" %% "play-silhouette-crypto-jca" % "4.0.0",
   // async postgres
   "com.kyleu" %% "jdub-async" % "1.0",
    jdbc,
-  "postgresql" % "postgresql" % "9.1-901-1.jdbc4"
+  "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
+  "com.mohiva" %% "play-silhouette-password-bcrypt" % "4.0.0",
+  "com.iheart" %% "ficus" % "1.2.6",
+  "net.codingwell" %% "scala-guice" % "4.0.1"
 )
 
 includeFilter in (Assets, LessKeys.less) := "*.less"

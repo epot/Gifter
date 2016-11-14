@@ -3,32 +3,22 @@ package controllers
 import javax.inject.Inject
 import java.util.UUID
 
-import models.user._
+import play.api.data.Forms._
 import models.gift._
-import services.user._
-import anorm._
+import models.services.user._
 import play.api.mvc._
-import play.api._
 import play.api.data._
 import play.api.data.Forms._
-import play.api.data.format.Formats._
-import play.api.data.validation.Constraints._
-import play.api.db._
-import play.api.Play.current
-import play.api.db.evolutions.Evolutions
 import org.joda.time.DateTime
-import play.api.i18n.{MessagesApi, I18nSupport}
-import com.mohiva.play.silhouette.api.LoginInfo
-import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
-import com.mohiva.play.silhouette.impl.providers.oauth2.GoogleProvider
-
-import services.user.AuthenticationEnvironment
+import play.api.i18n.{I18nSupport, MessagesApi}
+import com.mohiva.play.silhouette.api.Silhouette
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import utils.auth._
 
 import scala.concurrent.Future
 
-class Events @Inject() (override val messagesApi: MessagesApi, override val env: AuthenticationEnvironment) 
-  extends BaseController with I18nSupport {
+class Events @Inject() (val messagesApi: MessagesApi, silhouette: Silhouette[DefaultEnv])
+  extends Controller with I18nSupport {
 
   val eventForm = Form[EventSimple](
     tuple(
@@ -48,12 +38,12 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
     })
   )  
   
-  def newEvent = withSession { s =>
-    Future.successful(Ok(views.html.newEvent(s.identity, eventForm)))
+  def newEvent = silhouette.SecuredAction.async { implicit request =>
+    Future.successful(Ok(views.html.newEvent(request.identity, eventForm)))
   }
 
 
-  def postNewEvent() = withSession { implicit request =>
+  def postNewEvent() = silhouette.SecuredAction.async { implicit request =>
     eventForm.bindFromRequest.fold(
       errors => {
         println(errors)
@@ -70,11 +60,11 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
     )
   }  
   
-  def event(eventid: Long) = IsParticipantOf(eventid) { implicit request =>
+  def event(eventid: Long) = silhouette.SecuredAction(WithParticipantOf[DefaultEnv#A](eventid)).async { implicit request =>
     Future.successful(Ok(views.html.event(request.identity, Event.findById(eventid).get)))
   }
 
-  def eventWithUser(eventid: Long, userid: UUID) = IsParticipantOf(eventid) { implicit request =>
+  def eventWithUser(eventid: Long, userid: UUID) = silhouette.SecuredAction(WithParticipantOf[DefaultEnv#A](eventid)).async { implicit request =>
     UserSearchService.retrieve(userid).map { to =>
       Ok(views.html.event(request.identity, Event.findById(eventid).get, to))
     }
@@ -83,7 +73,7 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
   /**
    * Delete an event.
    */
-  def postDeleteEvent(eventid: Long) = IsCreatorOf(eventid) { implicit request =>
+  def postDeleteEvent(eventid: Long) = silhouette.SecuredAction(WithCreatorOf[DefaultEnv#A](eventid)).async { implicit request =>
     Event.findById(eventid) match {
       case Some(event) => { 
         Event.delete(eventid)
@@ -110,10 +100,7 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
     {/*apply*/
       case (optid, creatorid, eventid, name, urls, toid) => {        
         
-        val pkid = optid match {
-          case Some(x) => anorm.Id(x)
-          case None => NotAssigned
-        }
+        val pkid = optid
 
         val toid_uuid = toid match {
           case Some(id) => Some(UUID.fromString(id))
@@ -134,7 +121,7 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
           case Some(id) => Some(id.toString)
           case None => None
         }
-        ( gift.id.toOption,
+        ( gift.id,
           gift.creatorid.toString,
           gift.event.id.get,
           gift.name,
@@ -144,11 +131,11 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
     })
   }
 
-  def newGift(eventid: Long) = withSession { implicit request =>
+  def newGift(eventid: Long) = silhouette.SecuredAction.async { implicit request =>
     Future.successful(Ok(views.html.gifts.edit_gift(request.identity, giftForm.fill(GiftSimple(creatorid=request.identity.id, event=Event.findById(eventid).get, name="")))))
   }
 
-  def postEditGift(eventid: Long) = IsParticipantOf(eventid) { implicit request =>
+  def postEditGift(eventid: Long) = silhouette.SecuredAction(WithParticipantOf[DefaultEnv#A](eventid)).async { implicit request =>
     giftForm.bindFromRequest.fold(
       errors => {
         println(errors)
@@ -179,7 +166,7 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
           urls = gift.urls)
 
         
-        val newGift = gift.id.toOption match {
+        val newGift = gift.id match {
           case Some(id) => { 
             History.create(History(objectid=id, user=request.identity, category="Gift", content="Update gift from " + Gift.findById(id) + " to " +  new_gift))
             Gift.update(new_gift)
@@ -195,7 +182,7 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
     )
   }  
   
-  def editGift(giftid: Long) = IsParticipantOfWithGift(giftid) { implicit request =>
+  def editGift(giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftid)).async { implicit request =>
     val gift = Gift.findById(giftid).get
     val gift_simple = GiftSimple(
           id = gift.id,
@@ -210,14 +197,14 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
     Future.successful(Ok(views.html.gifts.edit_gift(request.identity, giftForm.fill(gift_simple))))
   }
   
-  def viewGift(giftid: Long) = IsParticipantOfWithGift(giftid) { implicit request =>
+  def viewGift(giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftid)).async { implicit request =>
     Future.successful(Ok(views.html.gifts.view_gift(request.identity, Gift.findById(giftid).get)))
   }
   
   /**
    * Delete a gift.
    */
-  def postDeleteGift(giftid: Long) = IsCreatorOfGift(giftid) { implicit request =>
+  def postDeleteGift(giftid: Long) = silhouette.SecuredAction(WithGiftCreatorOf[DefaultEnv#A](giftid)).async { implicit request =>
     Gift.findById(giftid) match {
       case Some(gift) => { 
         Gift.delete(giftid)
@@ -228,7 +215,7 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
   }
   
   
-  def addParticipant = withSession { implicit request =>
+  def addParticipant = silhouette.SecuredAction.async { implicit request =>
 
     Events.addParticipantForm.bindFromRequest.fold(
       errors => {
@@ -266,7 +253,7 @@ class Events @Inject() (override val messagesApi: MessagesApi, override val env:
   }
   
   
-  def updateGiftStatus(giftid: Long) = IsParticipantOfWithGift(giftid) { implicit request =>
+  def updateGiftStatus(giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftid)).async { implicit request =>
     Form("status" -> nonEmptyText).bindFromRequest.fold(
       errors => {
         Future.successful(BadRequest)

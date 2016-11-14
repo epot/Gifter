@@ -2,17 +2,20 @@ package models.gift
 
 import java.util.Date
 import java.util.UUID
+
 import models.user._
-import services.user._
+import models.services.user._
 import anorm._
 import anorm.SqlParser._
 import play.api.db._
-import play.api.Play.current
 import play.i18n.Messages
 import java.text.SimpleDateFormat
+
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.DateTimeFormat
+import play.api.Play.current
+
 
 case class EventSimple(
   name: String,
@@ -21,7 +24,7 @@ case class EventSimple(
 )
 
 case class Event(
-  id: Pk[Long] = NotAssigned,
+  id: Option[Long] = None,
   creator: User,
   name: String,
   date: DateTime,
@@ -38,7 +41,7 @@ object Event {
   }
 
   val simple =
-    get[Pk[Long]]("event.id") ~
+    get[Option[Long]]("event.id") ~
     get[UUID]("event.creator_id") ~
     get[String]("event.name") ~
     get[Date]("event.date") ~ 
@@ -67,7 +70,7 @@ object Event {
         'eventtype -> event.eventtype.id
       ).executeUpdate()
       
-      event.copy(id = Id(id))
+      event.copy(id = Some(id))
   }
 
   /**

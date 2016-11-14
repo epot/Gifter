@@ -30,3 +30,10 @@ participant.statut.reader=Lecteur
 
 event.type.birthday=Annniversaire
 event.type.christmas=Noël
+
+google = Google
+facebook = Facebook
+twitter = Twitter
+vk = VK
+xing = Xing
+yahoo = Yahoo

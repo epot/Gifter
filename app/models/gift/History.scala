@@ -3,7 +3,7 @@ package models.gift
 import java.util.Date
 import java.util.UUID
 import models.user._
-import services.user._
+import models.services.user._
 import anorm._
 import anorm.SqlParser._
 import play.api.db._
@@ -16,7 +16,7 @@ import org.joda.time.DateTime
 import java.sql.Clob
 
 case class History(
-  id: Pk[Long] = NotAssigned,
+  id: Option[Long] = None,
   objectid: Long,
   user: User,
   creationDate: DateTime = DateTime.now,
@@ -25,7 +25,7 @@ case class History(
 
 object History {
   val simple =
-    get[Pk[Long]]("history.id") ~
+    get[Option[Long]]("history.id") ~
     get[Long]("history.objectid") ~ 
     get[UUID]("history.user_id") ~ 
     get[Date]("history.creationDate") ~ 
@@ -57,7 +57,7 @@ object History {
         'content -> history.content
       ).executeUpdate()
       
-      history.copy(id = Id(id))
+      history.copy(id = Some(id))
     }
    
   def findByCategoryAndId(category: String, objectid: Long): List[History] =

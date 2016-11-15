@@ -35,6 +35,7 @@ reset.email.sent = Nous vous avons envoyé un email a l''adresse entrée. Si vou
 invalid.reset.link = Ce lien n'est plus valide ! Merci de refaire la procédure.
 password.reset = Le mot de passe a bien ete change, merci de vous authentifier avec le nouveau.
 password.changed = Votre mot de passe a bien été changé.
+strong.password.info = Un mot de passe complexe inclue de la ponctuation, des nombres et de la ponctuation.
 
 
 error.date=Date obligatoire

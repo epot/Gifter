@@ -43,6 +43,8 @@ forgot.password = Forgot password
 reset.password = Reset password
 change.password = Change password
 
+strong.password.info = Strong passwords include numbers, letters and punctuation marks.
+
 remember.me = Remember my login on this computer
 forgot.password.info = Please enter your email address and we will send you an email with further instructions to reset your password.
 reset.email.sent = We have sent you an email with further instructions to reset your password, on condition that the address was found in our system. If you do not receive an email within the next 5 minutes, then please recheck your entered email address and try it again.

@@ -1,6 +1,6 @@
 @(user: models.user.User,
   eventForm: Form[models.gift.EventSimple]
-)(implicit messages: Messages)
+)(implicit request: RequestHeader, messages: Messages)
 
 @import play.i18n.Messages
 
@@ -16,6 +16,7 @@
 
 
   @b3.form(action = routes.Events.postNewEvent, args = 'class -> "form-horizontal") {
+    @helper.CSRF.formField
     @eventForm.globalError.map { error =>
       <div class="alert error">
         <p>@error.message</p>

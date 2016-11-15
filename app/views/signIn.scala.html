@@ -1,5 +1,5 @@
 @(userForm: Form[models.user.RegistrationData])(
-  implicit request: Request[AnyContent], session: Session, flash: Flash, messages: Messages
+  implicit request: RequestHeader, session: Session, flash: Flash, messages: Messages
 )
 @import helper._
 @import b3.vertical.fieldConstructor  // Declares a vertical field constructor as default
@@ -13,7 +13,8 @@
       
       <div class="row"><div class="span14">
         @b3.form(routes.RegistrationController.register, args = 'class -> "form-horizontal") {
-          @userForm.globalError.map { error =>
+        @helper.CSRF.formField
+        @userForm.globalError.map { error =>
             <div class="alert alert-danger" role="alert">
               <p>@error.message</p>
             </div>
@@ -41,6 +42,7 @@
               '_error -> userForm.error("password"),
               'class -> "form-control"  
             )
+            @b3.checkbox(userForm("rememberMe"), '_text -> Messages("remember.me"), 'checked -> true)
           </fieldset>
           <div class="actions">
             <input type="submit" value="Soumettre" class="btn btn-primary"/>

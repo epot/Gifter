@@ -1,6 +1,6 @@
 @(user: models.user.User,
   giftForm: Form[models.gift.GiftSimple]
-)(implicit messages: Messages)
+)(implicit request: RequestHeader, messages: Messages)
 
 @import play.api.i18n.Messages
 
@@ -25,6 +25,7 @@
   <hr/>
 
   @b3.form(action = routes.Events.postEditGift(giftForm("eventid").value.get.toLong)) {
+    @helper.CSRF.formField
     @giftForm.globalError.map { error =>
       <div class="alert alert-danger" role="alert">
         <p>@error.message</p>

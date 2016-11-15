@@ -20,6 +20,23 @@ event.new=Nouvel événement
 event.name=Nom de l''événement:
 event.create=Créer
 
+forgot.password.title = Mot de passe oublié
+reset.password.title = Reset mot de passe
+change.password.title = Changement de mot de passe
+
+forgot.your.password = J''ai oublié mon super mot de passe
+forgot.password = Mot de passe oublié
+reset.password = Reset du mot de passe
+change.password = Changement de mot de passe
+
+remember.me = Se souvenir de moi
+forgot.password.info = Merci de rentrer votre adresse email et nous vous enverrons un email avec les instructions pour changer de mot de passe.
+reset.email.sent = Nous vous avons envoyé un email a l''adresse entrée. Si vous n'avez pas recu un email dans les 5 minutes, verifiez que l''email entré était le bon.
+invalid.reset.link = Ce lien n'est plus valide ! Merci de refaire la procédure.
+password.reset = Le mot de passe a bien ete change, merci de vous authentifier avec le nouveau.
+password.changed = Votre mot de passe a bien été changé.
+
+
 error.date=Date obligatoire
 
 participant.addusername=Ajouter un nom d'utilisateur...

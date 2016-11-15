@@ -2,7 +2,8 @@ package models.user
 
 import java.util.UUID
 
-import com.mohiva.play.silhouette.api.{ Identity, LoginInfo }
+import com.mohiva.play.silhouette.api.{Identity, LoginInfo}
+import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import org.joda.time.LocalDateTime
 
 case class User(
@@ -14,4 +15,8 @@ case class User(
 ) extends Identity {
   def isGuest = profiles.isEmpty
   def isAdmin = roles.contains(models.user.Role.Admin)
+  def email = profiles.find(_.providerID == CredentialsProvider.ID) match {
+    case Some(loginInfo) => Some(loginInfo.providerKey)
+    case None => None
+  }
 }

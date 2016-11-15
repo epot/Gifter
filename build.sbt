@@ -23,6 +23,9 @@ libraryDependencies ++= Seq(
   "com.mohiva" %% "play-silhouette" % "4.0.0",
   "com.mohiva" %% "play-silhouette-persistence" % "4.0.0",
   "com.mohiva" %% "play-silhouette-crypto-jca" % "4.0.0",
+  "org.webjars" %% "webjars-play" % "2.5.0-2",
+  "com.typesafe.play" %% "play-mailer" % "5.0.0",
+  "com.enragedginger" %% "akka-quartz-scheduler" % "1.5.0-akka-2.4.x",
   // async postgres
   "com.kyleu" %% "jdub-async" % "1.0",
    jdbc,

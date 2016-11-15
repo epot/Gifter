@@ -13,6 +13,14 @@ POST        /signin                  controllers.AuthenticationController.authen
 GET         /signin/:provider        controllers.AuthenticationController.authenticateSocial(provider)
 GET         /signout                 controllers.AuthenticationController.signOut
 
+GET         /password/forgot         controllers.ForgotPasswordController.view
+POST        /password/forgot         controllers.ForgotPasswordController.submit
+GET         /password/reset/:token   controllers.ResetPasswordController.view(token: java.util.UUID)
+POST        /password/reset/:token   controllers.ResetPasswordController.submit(token: java.util.UUID)
+GET         /password/change         controllers.ChangePasswordController.view
+POST        /password/change         controllers.ChangePasswordController.submit
+
+
 # User actions
 GET         /profile                 controllers.ProfileController.profile
 #POST     /profile                   controllers.UserApplication.postProfile

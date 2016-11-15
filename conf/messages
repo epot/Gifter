@@ -1,3 +1,6 @@
+
+email.from = Rene Coty <rene@coty.com>
+
 gift.to=Destiné à:
 gift.add=Ajouter une idée de cadeau
 gift.statut.new=Nouveau
@@ -30,6 +33,29 @@ participant.statut.reader=Lecteur
 
 event.type.birthday=Annniversaire
 event.type.christmas=Noël
+
+forgot.password.title = Forgot Password
+reset.password.title = Reset Password
+change.password.title = Change Password
+
+forgot.your.password = Forgot your password?
+forgot.password = Forgot password
+reset.password = Reset password
+change.password = Change password
+
+remember.me = Remember my login on this computer
+forgot.password.info = Please enter your email address and we will send you an email with further instructions to reset your password.
+reset.email.sent = We have sent you an email with further instructions to reset your password, on condition that the address was found in our system. If you do not receive an email within the next 5 minutes, then please recheck your entered email address and try it again.
+invalid.reset.link = The link isn't valid anymore! Please request a new link to reset your password.
+password.reset = We have reset your password. You can now sign in with your credentials.
+password.changed = Your password has been changed.
+
+# Reset Password
+email.reset.password.subject = Reset password
+email.reset.password.hello = Hello {0},
+email.reset.password.html.text = Please follow <a href="{0}">this link</a> to reset your password.
+email.reset.password.txt.text = Please follow the link to reset your password: {0}
+
 
 google = Google
 facebook = Facebook

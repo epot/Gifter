@@ -39,6 +39,7 @@ class AuthenticationController @Inject() (
   }
 
   def authenticateCredentials = silhouette.UnsecuredAction.async { implicit request =>
+    logger.info("slip")
     UserForms.signInForm.bindFromRequest.fold(
       form => Future.successful(BadRequest(views.html.index(form, socialProviderRegistry))),
       data => {

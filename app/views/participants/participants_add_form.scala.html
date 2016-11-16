@@ -47,22 +47,5 @@
       <button type="button" class="btn btn-primary add-participant-btn">Ajouter</button>
     </div>
 </form>
-<script type="text/javascript">
 
-$('.add-participant-btn').on('click', function(e) {
-  $.ajax({
-    url: '/addParticipant',
-    type: 'GET',
-    contentType: "application/x-www-form-urlencoded",
-    data: $('.add-participant-form').serializeArray(),
-    success: function( response, textStatus, xhr ) {
-      $('#participants-table').html(response)
-    },
-    error: function(jqXHR, textStatus, errorThrown) {
-      if(jqXHR.status == 400) {
-        $('.add-participant-form').html(jqXHR.responseText)
-      }
-    }
-  });
-})
-</script>
+<script src="@routes.Assets.at("javascripts/participant_add_form.js")"></script>

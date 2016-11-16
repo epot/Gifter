@@ -26,6 +26,7 @@ libraryDependencies ++= Seq(
   "org.webjars" %% "webjars-play" % "2.5.0-2",
   "com.typesafe.play" %% "play-mailer" % "5.0.0",
   "com.enragedginger" %% "akka-quartz-scheduler" % "1.5.0-akka-2.4.x",
+  "com.github.nscala-time" %% "nscala-time" % "2.14.0",
   // async postgres
   "com.kyleu" %% "jdub-async" % "1.0",
    jdbc,

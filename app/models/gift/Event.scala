@@ -9,11 +9,9 @@ import anorm._
 import anorm.SqlParser._
 import play.api.db._
 import play.i18n.Messages
-import java.text.SimpleDateFormat
+import com.github.nscala_time.time.Imports._
 
 import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormatter
-import org.joda.time.format.DateTimeFormat
 import play.api.Play.current
 
 
@@ -102,7 +100,7 @@ object Event {
       where creator_id = {id}::uuid or participant.user_id={id}::uuid
     """)
     .on('id -> user.id)
-      .as(Event.simple *)
+      .as(Event.simple *).sortBy(_.date).reverse
   }
   
   /**

@@ -1,5 +1,5 @@
 @(user: models.user.User,
-  g:models.gift.Gift)(implicit messages: Messages)
+  g:models.gift.Gift)(implicit request: RequestHeader, messages: Messages)
 
 @import models.gift.Gift
 @import views.html.modal.updateGiftModal

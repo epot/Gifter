@@ -1,5 +1,5 @@
 @(title: String,
-confirmationMessage: String)(implicit messages: Messages)
+confirmationMessage: String)(implicit request: RequestHeader, messages: Messages)
 
   <!-- Modal -->
   <div id="delete-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -14,6 +14,7 @@ confirmationMessage: String)(implicit messages: Messages)
         </div>
         <div class="modal-footer">
           <form id="delete-event-form" action="" method="POST" class="form-horizontal">
+            @helper.CSRF.formField
             <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Annuler</button>
             <button type="submit" class="btn btn-primary">Confirmer</button>
           </form>

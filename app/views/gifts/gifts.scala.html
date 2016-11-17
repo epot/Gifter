@@ -1,7 +1,7 @@
 @(user: models.user.User,
   event: models.gift.Event,
   to: Option[models.user.User]
-)(implicit messages: Messages)
+)(implicit request: RequestHeader, messages: Messages)
 
 @import helper._
 

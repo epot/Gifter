@@ -1,4 +1,4 @@
-@(gift: models.gift.Gift)(implicit messages: Messages)
+@(gift: models.gift.Gift)(implicit request: RequestHeader, messages: Messages)
 
 @import models.gift.Gift
 
@@ -11,7 +11,7 @@
           <h3 id="myModalLabel">Offrir "@gift.name"</h3>
         </div>
         <form id="update-gift-status-@gift.id.get-form" action="" method="POST" class="form-horizontal">
-        
+          @helper.CSRF.formField
         <div class="modal-body">
               <div class="clearfix">
                 <label for="name">Changer le statut:</label>

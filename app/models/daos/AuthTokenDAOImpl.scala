@@ -1,13 +1,29 @@
 package models.daos
 
-import java.util.UUID
+import java.util.{Date, UUID}
 
+import com.github.tototoshi.slick.PostgresJodaSupport._
 import models.AuthToken
 import models.daos.AuthTokenDAOImpl._
 import org.joda.time.DateTime
+import play.api.db.slick.HasDatabaseConfigProvider
+import slick.driver.JdbcProfile
 
 import scala.collection.mutable
 import scala.concurrent.Future
+
+trait CompaniesComponent { self: HasDatabaseConfigProvider[JdbcProfile] =>
+  import driver.api._
+
+  implicit val dateColumnType = MappedColumnType.base[Date, Long](d => d.getTime, d => new Date(d))
+
+  class AuthTokens(tag: Tag) extends Table[AuthToken](tag, "auth_token") {
+    def id = column[UUID]("id", O.PrimaryKey)
+    def userId = column[UUID]("userid")
+    def expiry = column[DateTime]("expiry")
+    def * = (id, userId, expiry) <> (AuthToken.tupled, AuthToken.unapply _)
+  }
+}
 
 /**
  * Give access to the [[AuthToken]] object.

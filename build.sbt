@@ -33,7 +33,10 @@ libraryDependencies ++= Seq(
   "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
   "com.mohiva" %% "play-silhouette-password-bcrypt" % "4.0.0",
   "com.iheart" %% "ficus" % "1.2.6",
-  "net.codingwell" %% "scala-guice" % "4.0.1"
+  "net.codingwell" %% "scala-guice" % "4.0.1",
+  "com.typesafe.play" %% "play-slick" % "2.0.0",
+  "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0",
+  "com.github.tototoshi" %% "slick-joda-mapper" % "2.2.0"
 )
 
 includeFilter in (Assets, LessKeys.less) := "*.less"

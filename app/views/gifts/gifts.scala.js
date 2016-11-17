@@ -1,3 +1,5 @@
+@(toDefined: Boolean, username: String)
+
   $(document).ready(function() {
     $('.button-tooltip').tooltip();
   });
@@ -38,8 +40,8 @@
       widgets : [ "uitheme", "filter", "zebra" ],
 
       initialized: function (table) {
-        @if(to.isDefined) {
-          $.tablesorter.setFilters( table, ['', '@to.get.username'], true);
+        @if(toDefined) {
+          $.tablesorter.setFilters( table, ['', '@username'], true);
         }
       },
       headers: {
@@ -60,22 +62,4 @@
 
       }
     })
-    .tablesorterPager({
-
-      // target the pager markup - see the HTML block below
-      container: $(".ts-pager"),
-
-      // target the pager page select dropdown - choose a page
-      cssGoto  : ".pagenum",
-
-      // remove rows from the table to speed up the sort of large tables.
-      // setting this to false, only hides the non-visible rows; needed if you plan to add/remove rows with the pager enabled.
-      removeRows: false,
-
-      // output string - default is '{page}/{totalPages}';
-      // possible variables: {page}, {totalPages}, {filteredPages}, {startRow}, {endRow}, {filteredRows} and {totalRows}
-      output: '{startRow} - {endRow} / {filteredRows} ({totalRows})'
-
-    });
-
   });

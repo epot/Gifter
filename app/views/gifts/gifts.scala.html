@@ -12,4 +12,4 @@
   @gifts_table(user, event, Gift.findByEventId(event.id.get))
 </div>
 
-<script src="@routes.Assets.at("javascripts/gifts.js")"></script>
+<script type='text/javascript' src='@routes.HomeController.giftsDynamicScripts(to.isDefined, to.map(_.username).getOrElse(None).getOrElse(""))'></script>

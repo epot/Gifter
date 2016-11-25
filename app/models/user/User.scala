@@ -8,15 +8,12 @@ import org.joda.time.LocalDateTime
 
 case class User(
     id: UUID,
-    username: Option[String],
     profiles: Seq[LoginInfo],
-    roles: Set[Role] = Set(Role.User),
-    created: LocalDateTime = new LocalDateTime()
+    firstName: Option[String]=None,
+    lastName: Option[String]=None,
+    fullName: Option[String],
+    email: Option[String],
+    avatarURL: Option[String]=None
 ) extends Identity {
   def isGuest = profiles.isEmpty
-  def isAdmin = roles.contains(models.user.Role.Admin)
-  def email = profiles.find(_.providerID == CredentialsProvider.ID) match {
-    case Some(loginInfo) => Some(loginInfo.providerKey)
-    case None => None
-  }
 }

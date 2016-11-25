@@ -24,6 +24,8 @@ import com.mohiva.play.silhouette.impl.util._
 import com.mohiva.play.silhouette.password.BCryptPasswordHasher
 import com.mohiva.play.silhouette.persistence.daos.{DelegableAuthInfoDAO, InMemoryAuthInfoDAO}
 import com.mohiva.play.silhouette.persistence.repositories.DelegableAuthInfoRepository
+import models.daos._
+import models.services.{UserService, UserServiceImpl}
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 import net.codingwell.scalaguice.ScalaModule
@@ -32,7 +34,6 @@ import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.openid.OpenIdClient
 import play.api.libs.ws.WSClient
 import utils.auth.{CustomSecuredErrorHandler, CustomUnsecuredErrorHandler, DefaultEnv}
-import models.services.user._
 
 /**
   * The Guice module which wires all Silhouette dependencies.
@@ -52,13 +53,13 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
     bind[FingerprintGenerator].toInstance(new DefaultFingerprintGenerator(false))
     bind[EventBus].toInstance(EventBus())
     bind[Clock].toInstance(Clock())
-    bind[UserService].to[UserServiceImpl]
 
-    // Replace this with the bindings to your concrete DAOs
-    bind[DelegableAuthInfoDAO[PasswordInfo]].toInstance(new PasswordInfoService())
-    bind[DelegableAuthInfoDAO[OAuth1Info]].toInstance(new OAuth1InfoService())
-    bind[DelegableAuthInfoDAO[OAuth2Info]].toInstance(new OAuth2InfoService())
-    bind[DelegableAuthInfoDAO[OpenIDInfo]].toInstance(new OpenIdInfoService())
+    bind[UserService].to[UserServiceImpl]
+    bind[UserDAO].to[UserDAOImpl]
+    bind[DelegableAuthInfoDAO[PasswordInfo]].to[PasswordInfoDAO]
+    bind[DelegableAuthInfoDAO[OAuth1Info]].to[OAuth1InfoDAO]
+    bind[DelegableAuthInfoDAO[OAuth2Info]].to[OAuth2InfoDAO]
+    bind[DelegableAuthInfoDAO[OpenIDInfo]].to[OpenIDInfoDAO]
   }
 
   /**

@@ -40,7 +40,7 @@ strong.password.info = Un mot de passe complexe inclue de la ponctuation, des no
 
 error.date=Date obligatoire
 
-participant.addusername=Ajouter un nom d'utilisateur...
+participant.addemail=Ajouter un nom d'utilisateur...
 participant.statut.owner=Administrateur
 participant.statut.gifter=Acheteur de cadeaux
 participant.statut.reader=Lecteur

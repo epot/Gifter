@@ -26,14 +26,14 @@
   
       <input type="hidden" name="eventid" value="@addParticipantForm("eventid").value">
       
-      @if(addParticipantForm.error("username")) {
-        <div class="form-group  has-error" id="username_field">
-       	  <input type="text" class="input-medium search-query" name="username" value="@addParticipantForm("username").value" placeholder="@play.i18n.Messages.get("participant.addusername")">
-			<span id="username_error_0" class="help-block">@addParticipantForm.error("username").get.message</span>
-			<span id="username_info_0" class="help-block"></span>
+      @if(addParticipantForm.error("email")) {
+        <div class="form-group  has-error" id="email_field">
+       	  <input type="text" class="input-medium search-query" name="email" value="@addParticipantForm("email").value" placeholder="@play.i18n.Messages.get("participant.addemail")">
+			<span id="email_error_0" class="help-block">@addParticipantForm.error("email").get.message</span>
+			<span id="email_info_0" class="help-block"></span>
         </div>
       } else {
-      	<input type="text" class="input-medium search-query" name="username" value="@addParticipantForm("username").value" placeholder="@play.i18n.Messages.get("participant.addusername")">
+      	<input type="text" class="input-medium search-query" name="email" value="@addParticipantForm("email").value" placeholder="@play.i18n.Messages.get("participant.addemail")">
       }
       <select name="role">
         @for(role <- Participant.Role.values) {

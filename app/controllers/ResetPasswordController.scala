@@ -8,8 +8,7 @@ import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.util.{PasswordHasherRegistry, PasswordInfo}
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import forms.ResetPasswordForm
-import models.services.AuthTokenService
-import models.services.user.UserService
+import models.services.{AuthTokenService, UserService}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.mvc.Controller
@@ -62,7 +61,7 @@ class ResetPasswordController @Inject() (
       case Some(authToken) =>
         ResetPasswordForm.form.bindFromRequest.fold(
           form => Future.successful(BadRequest(views.html.resetPassword(form, token))),
-          password => userService.retrieve(authToken.userID).flatMap {
+          password => userService.retrieveById(authToken.userID).flatMap {
             case Some(user) if user.profiles.find(_.providerID == CredentialsProvider.ID).isDefined =>
               val passwordInfo = passwordHasherRegistry.current.hash(password)
               val loginInfo = user.profiles.find(_.providerID == CredentialsProvider.ID).get

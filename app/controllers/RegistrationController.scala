@@ -8,12 +8,11 @@ import com.mohiva.play.silhouette.api.services.AvatarService
 import com.mohiva.play.silhouette.api.util.PasswordHasherRegistry
 import com.mohiva.play.silhouette.api.{LoginEvent, LoginInfo, SignUpEvent, Silhouette}
 import com.mohiva.play.silhouette.impl.providers.{CommonSocialProfile, CredentialsProvider}
-import models.services.user.UserService
+import models.services.UserService
 import models.user.{RegistrationData, UserForms}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc.{AnyContent, Controller, Request}
-import models.services.user.{UserSearchService, UserService}
 import models.user.User
 import utils.auth.DefaultEnv
 
@@ -36,18 +35,11 @@ class RegistrationController @Inject() (
     UserForms.registrationForm.bindFromRequest.fold(
       form => Future.successful(BadRequest(views.html.signIn(form))),
       data => {
-        UserSearchService.retrieve(LoginInfo(CredentialsProvider.ID, data.email)).flatMap {
+        userService.retrieve(LoginInfo(CredentialsProvider.ID, data.email)).flatMap {
           case Some(user) => Future.successful {
             Ok(views.html.signIn(UserForms.registrationForm.fill(data))).flashing("error" -> "That email address is already taken.")
           }
-          case None => UserSearchService.retrieve(data.username) flatMap {
-            case Some(user) => Future.successful {
-              Ok(views.html.signIn(UserForms.registrationForm.fill(data))).flashing("error" -> "That username is already taken.")
-            }
-            case None => {
-              saveProfile(data)
-            }
-          }
+          case None => saveProfile(data)
         }
       }
     )
@@ -58,8 +50,9 @@ class RegistrationController @Inject() (
     val authInfo = passwordHasherRegistry.current.hash(data.password._1)
     val user = User(
               id = UUID.randomUUID(),
-              username = Some(data.username),
-              profiles = Seq(loginInfo)
+              profiles = Seq(loginInfo),
+              fullName = Some(data.username),
+              email=Some(data.email)
             )  
     val profile = CommonSocialProfile(
       loginInfo = loginInfo,

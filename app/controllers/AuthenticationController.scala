@@ -1,6 +1,5 @@
 package controllers
 
-import java.util.UUID
 import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api.Authenticator.Implicits._
@@ -13,7 +12,7 @@ import com.mohiva.play.silhouette.api.{Logger, LoginEvent, LogoutEvent, Silhouet
 import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
 import com.mohiva.play.silhouette.impl.providers._
 import models.user.{User, UserForms}
-import models.services.user.{UserSearchService, UserService}
+import models.services.{UserService}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, Controller}
@@ -46,7 +45,7 @@ class AuthenticationController @Inject() (
         val credentials = Credentials(data.email, data.password)
         credentialsProvider.authenticate(credentials).flatMap { loginInfo =>
           val result = Redirect(routes.HomeController.index())
-          UserSearchService.retrieve(loginInfo).flatMap {
+          userService.retrieve(loginInfo).flatMap {
             case Some(user) =>
               val c = configuration.underlying
               silhouette.env.authenticatorService.create(loginInfo).map {

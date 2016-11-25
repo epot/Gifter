@@ -4,6 +4,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api.LoginInfo
+import models.user.User
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
@@ -25,10 +26,10 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
       dbLoginInfo <- loginInfoQuery(loginInfo)
       dbUserLoginInfo <- slickUserLoginInfos.filter(_.loginInfoId === dbLoginInfo.id)
       dbUser <- slickUsers.filter(_.id === dbUserLoginInfo.userID)
-    } yield dbUser
+    } yield (dbUser)
     db.run(userQuery.result.headOption).map { dbUserOption =>
       dbUserOption.map { user =>
-        User(UUID.fromString(user.userID), loginInfo, user.firstName, user.lastName, user.fullName, user.email, user.avatarURL)
+        User(user.userID, List(loginInfo), user.firstName, user.lastName, user.fullName, user.email, user.avatarURL)
       }
     }
   }
@@ -41,7 +42,7 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
    */
   def find(userID: UUID) = {
     val query = for {
-      dbUser <- slickUsers.filter(_.id === userID.toString)
+      dbUser <- slickUsers.filter(_.id === userID)
       dbUserLoginInfo <- slickUserLoginInfos.filter(_.userID === dbUser.id)
       dbLoginInfo <- slickLoginInfos.filter(_.id === dbUserLoginInfo.loginInfoId)
     } yield (dbUser, dbLoginInfo)
@@ -49,13 +50,31 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
       resultOption.map {
         case (user, loginInfo) =>
           User(
-            UUID.fromString(user.userID),
-            LoginInfo(loginInfo.providerID, loginInfo.providerKey),
+            user.userID,
+            List(LoginInfo(loginInfo.providerID, loginInfo.providerKey)),
             user.firstName,
             user.lastName,
             user.fullName,
             user.email,
             user.avatarURL)
+      }
+    }
+  }
+  def findByEmail(email: String) = {
+    val userQuery = for {
+      dbUser <- slickUsers.filter(_.email === email)
+      dbUserLoginInfo <- slickUserLoginInfos.filter(_.userID === dbUser.id)
+      dbLoginInfo <- slickLoginInfos.filter(_.id === dbUserLoginInfo.loginInfoId)
+    } yield (dbUser, dbLoginInfo)
+    db.run(userQuery.result.headOption).map { resultOption =>
+      resultOption.map { case (user, loginInfo) =>
+        User(user.userID,
+          List(LoginInfo(loginInfo.providerID, loginInfo.providerKey)),
+          user.firstName,
+          user.lastName,
+          user.fullName,
+          user.email,
+          user.avatarURL)
       }
     }
   }
@@ -67,14 +86,15 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
    * @return The saved user.
    */
   def save(user: User) = {
-    val dbUser = DBUser(user.userID.toString, user.firstName, user.lastName, user.fullName, user.email, user.avatarURL)
-    val dbLoginInfo = DBLoginInfo(None, user.loginInfo.providerID, user.loginInfo.providerKey)
+    val dbUser = DBUser(user.id, user.firstName, user.lastName, user.fullName, user.email, user.avatarURL)
+
     // We don't have the LoginInfo id so we try to get it first.
     // If there is no LoginInfo yet for this user we retrieve the id on insertion.    
-    val loginInfoAction = {
+    val loginInfoActions = for(loginInfo <- user.profiles) yield {
+      val dbLoginInfo = DBLoginInfo(None, loginInfo.providerID, loginInfo.providerKey)
       val retrieveLoginInfo = slickLoginInfos.filter(
-        info => info.providerID === user.loginInfo.providerID &&
-        info.providerKey === user.loginInfo.providerKey).result.headOption
+        info => info.providerID === loginInfo.providerID &&
+          info.providerKey === loginInfo.providerKey).result.headOption
       val insertLoginInfo = slickLoginInfos.returning(slickLoginInfos.map(_.id)).
         into((info, id) => info.copy(id = Some(id))) += dbLoginInfo
       for {
@@ -82,11 +102,14 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
         loginInfo <- loginInfoOption.map(DBIO.successful(_)).getOrElse(insertLoginInfo)
       } yield loginInfo
     }
+
     // combine database actions to be run sequentially
     val actions = (for {
       _ <- slickUsers.insertOrUpdate(dbUser)
-      loginInfo <- loginInfoAction
-      _ <- slickUserLoginInfos += DBUserLoginInfo(dbUser.userID, loginInfo.id.get)
+      loginInfoActionList <- DBIO.sequence(loginInfoActions)
+      _ <- DBIO.sequence { loginInfoActionList.map { loginInfo =>
+        slickUserLoginInfos += DBUserLoginInfo(dbUser.userID, loginInfo.id.get) }
+      }
     } yield ()).transactionally
     // run actions and return user afterwards
     db.run(actions).map(_ => user)

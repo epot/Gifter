@@ -3,21 +3,29 @@ package controllers
 import javax.inject.Inject
 import java.util.UUID
 
-import play.api.data.Forms._
 import models.gift._
-import models.services.user._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import org.joda.time.DateTime
 import play.api.i18n.{I18nSupport, MessagesApi}
 import com.mohiva.play.silhouette.api.Silhouette
+import models.daos.{EventDAO, GiftDAO, HistoryDAO, ParticipantDAO}
+import models.services.UserService
+import models.user.User
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import utils.auth._
 
 import scala.concurrent.Future
 
-class Events @Inject() (val messagesApi: MessagesApi, silhouette: Silhouette[DefaultEnv])
+class Events @Inject() (
+   val messagesApi: MessagesApi,
+   userService: UserService,
+   eventDAO: EventDAO,
+   participantDAO: ParticipantDAO,
+   giftDAO: GiftDAO,
+   historyDAO: HistoryDAO,
+   silhouette: Silhouette[DefaultEnv])
   extends Controller with I18nSupport {
 
   val eventForm = Form[EventSimple](
@@ -50,23 +58,37 @@ class Events @Inject() (val messagesApi: MessagesApi, silhouette: Silhouette[Def
         Future.successful(BadRequest(views.html.newEvent(request.identity, errors)))
       },
       event => {
-        val new_event = Event.create(Event(creator = request.identity,
+         eventDAO.save(Event(creator = request.identity,
           name= event.name,
           date= event.date,
-          eventtype= event.eventtype))
-        Participant.create(Participant(event=new_event, user=request.identity, role=Participant.Role.Owner))
-        Future.successful(Redirect(routes.HomeController.index))
+          eventType= event.eventtype)).flatMap { new_event =>
+
+           participantDAO.save(
+             Participant(eventid=new_event.id.get, user=request.identity, role=Participant.Role.Owner)).map { p =>
+             Redirect(routes.HomeController.index)
+           }
+        }
       }
     )
   }  
   
   def event(eventid: Long) = silhouette.SecuredAction(WithParticipantOf[DefaultEnv#A](eventid)).async { implicit request =>
-    Future.successful(Ok(views.html.event(request.identity, Event.findById(eventid).get)))
+    eventDAO.find(eventid).map { event =>
+      event match {
+        case Some(e) => Ok(views.html.event(request.identity, e))
+        case _ => NotFound
+      }
+    }
   }
 
   def eventWithUser(eventid: Long, userid: UUID) = silhouette.SecuredAction(WithParticipantOf[DefaultEnv#A](eventid)).async { implicit request =>
-    UserSearchService.retrieve(userid).map { to =>
-      Ok(views.html.event(request.identity, Event.findById(eventid).get, to))
+    userService.retrieveById(userid).flatMap { to =>
+      eventDAO.find(eventid).map { event =>
+        event match {
+          case Some(e) => Ok(views.html.event(request.identity, e, to))
+          case _ => NotFound
+        }
+      }
     }
   }
 
@@ -74,25 +96,23 @@ class Events @Inject() (val messagesApi: MessagesApi, silhouette: Silhouette[Def
    * Delete an event.
    */
   def postDeleteEvent(eventid: Long) = silhouette.SecuredAction(WithCreatorOf[DefaultEnv#A](eventid)).async { implicit request =>
-    Event.findById(eventid) match {
-      case Some(event) => { 
-        Event.delete(eventid)
-        Future.successful(Redirect(routes.HomeController.index))
+    eventDAO.find(eventid).map { event =>
+      event match {
+        case Some(e) => {
+          eventDAO.delete(eventid)
+          Redirect(routes.HomeController.index)
+        }
+        case _ => BadRequest
       }
-      case None => Future.successful(BadRequest)
     }
   }
   
   
   val giftForm = Form[GiftSimple] {
     tuple(
-      "id" -> optional(longNumber).verifying ("Could not find gift to update.", 
-          optid => optid match {
-            case Some(id) => Gift.findById(id).isDefined
-            case None => true 
-          })
+      "id" -> optional(longNumber)
       ,"creatorid" -> nonEmptyText
-      ,"eventid" -> longNumber.verifying ("Could not find event. Maybe you deleted it ?", id => Event.findById(id).isDefined)
+      ,"eventid" -> longNumber
       ,"name" -> nonEmptyText
       ,"urls" -> list(nonEmptyText)
       ,"to" -> optional(nonEmptyText)
@@ -102,14 +122,11 @@ class Events @Inject() (val messagesApi: MessagesApi, silhouette: Silhouette[Def
         
         val pkid = optid
 
-        val toid_uuid = toid match {
-          case Some(id) => Some(UUID.fromString(id))
-          case None => None
-        }
+        val toid_uuid = toid.collect{case(id) => UUID.fromString(id)}
         GiftSimple(
             id = pkid,
             creatorid = UUID.fromString(creatorid),
-            event=Event.findById(eventid).get, 
+            eventid=eventid,
             name=name, 
             urls=urls,
             toid = toid_uuid
@@ -117,13 +134,10 @@ class Events @Inject() (val messagesApi: MessagesApi, silhouette: Silhouette[Def
       }
     },{ /*unapply*/
       gift: GiftSimple => {
-        val toid = gift.toid match {
-          case Some(id) => Some(id.toString)
-          case None => None
-        }
+        val toid = gift.toid.collect{case(id) => id.toString}
         ( gift.id,
           gift.creatorid.toString,
-          gift.event.id.get,
+          gift.eventid,
           gift.name,
           gift.urls,
           toid)
@@ -132,7 +146,7 @@ class Events @Inject() (val messagesApi: MessagesApi, silhouette: Silhouette[Def
   }
 
   def newGift(eventid: Long) = silhouette.SecuredAction.async { implicit request =>
-    Future.successful(Ok(views.html.gifts.edit_gift(request.identity, giftForm.fill(GiftSimple(creatorid=request.identity.id, event=Event.findById(eventid).get, name="")))))
+    Future.successful(Ok(views.html.gifts.edit_gift(request.identity, giftForm.fill(GiftSimple(creatorid=request.identity.id, eventid=eventid, name="")))))
   }
 
   def postEditGift(eventid: Long) = silhouette.SecuredAction(WithParticipantOf[DefaultEnv#A](eventid)).async { implicit request =>
@@ -144,73 +158,97 @@ class Events @Inject() (val messagesApi: MessagesApi, silhouette: Silhouette[Def
       gift => {
         
         // quickwin
-        
         val to = gift.toid match {
-          case Some(id) => UserSearchService.blocking_ugly_retrieve_option(id)
-          case None => None
+          case Some(id) => userService.retrieveById(id)
+          case None => Future[Option[User]](None)
         }
         val from = gift.fromid match {
-          case Some(id) => UserSearchService.blocking_ugly_retrieve_option(id)
-          case None => None
+          case Some(id) => userService.retrieveById(id)
+          case None => Future[Option[User]](None)
         }
-        
-        val new_gift = Gift(
-          id = gift.id,
-          creator = UserSearchService.blocking_ugly_retrieve(gift.creatorid),
-          event = gift.event,
-          creationDate = gift.creationDate,
-          name = gift.name,
-          status = gift.status,
-          to = to,
-          from = from,
-          urls = gift.urls)
 
-        
-        val newGift = gift.id match {
-          case Some(id) => { 
-            History.create(History(objectid=id, user=request.identity, category="Gift", content="Update gift from " + Gift.findById(id) + " to " +  new_gift))
-            Gift.update(new_gift)
+        val creator = userService.retrieveById(gift.creatorid)
+
+        Future.sequence(List(to, from, creator)).flatMap { s =>
+          val new_gift = Gift(
+            id = gift.id,
+            creator = s(3).get,
+            eventid = gift.eventid,
+            creationDate = gift.creationDate,
+            name = gift.name,
+            status = gift.status,
+            to = s(0),
+            from = s(1),
+            urls = gift.urls)
+
+          val newGift = gift.id match {
+            case Some(id) => {
+              historyDAO.save(
+                History(
+                  objectid=id,
+                  user=request.identity,
+                  category="Gift",
+                  content="Update gift from " + gift + " to " +  new_gift)).flatMap { _ =>
+                giftDAO.save(new_gift)
+              }
+            }
+            case None => giftDAO.save(new_gift)
           }
-          case None => Gift.create(new_gift)
-        }
-        
-        newGift.to match {
-          case Some(user_to) => Future.successful(Redirect(routes.Events.eventWithUser(newGift.event.id.get, user_to.id)))
-          case _ => Future.successful(Redirect(routes.Events.event(newGift.event.id.get)))
+          newGift.map { gift =>
+            gift.to match {
+              case Some(user_to) => Redirect(routes.Events.eventWithUser(gift.eventid, user_to.id))
+              case _ => Redirect(routes.Events.event(gift.eventid))
+            }
+          }
         }
       }
     )
   }  
   
   def editGift(giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftid)).async { implicit request =>
-    val gift = Gift.findById(giftid).get
-    val gift_simple = GiftSimple(
-          id = gift.id,
-          creatorid = gift.creator.id,
-          event = gift.event,
-          creationDate = gift.creationDate,
-          name = gift.name,
-          status = gift.status,
-          toid = gift.to.map{_.id},
-          fromid = gift.from.map{_.id},
-          urls = gift.urls)
-    Future.successful(Ok(views.html.gifts.edit_gift(request.identity, giftForm.fill(gift_simple))))
+    giftDAO.find(giftid).map { maybeGift =>
+       maybeGift match {
+         case Some(gift) =>
+           val gift_simple = GiftSimple(
+             id = gift.id,
+             creatorid = gift.creator.id,
+             eventid = gift.eventid,
+             creationDate = gift.creationDate,
+             name = gift.name,
+             status = gift.status,
+             toid = gift.to.map{_.id},
+             fromid = gift.from.map{_.id},
+             urls = gift.urls)
+           Ok(views.html.gifts.edit_gift(request.identity, giftForm.fill(gift_simple)))
+         case _ =>
+           NotFound
+       }
+    }
   }
   
   def viewGift(giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftid)).async { implicit request =>
-    Future.successful(Ok(views.html.gifts.view_gift(request.identity, Gift.findById(giftid).get)))
+    giftDAO.find(giftid).map { maybeGift =>
+      maybeGift match {
+        case Some(gift) =>
+          Ok(views.html.gifts.view_gift(request.identity, gift))
+        case _ =>
+          NotFound
+      }
+    }
   }
   
   /**
    * Delete a gift.
    */
   def postDeleteGift(giftid: Long) = silhouette.SecuredAction(WithGiftCreatorOf[DefaultEnv#A](giftid)).async { implicit request =>
-    Gift.findById(giftid) match {
-      case Some(gift) => { 
-        Gift.delete(giftid)
-        Future.successful(Redirect(routes.Events.event(gift.event.id.get)))
+    giftDAO.find(giftid).map { maybeGift =>
+      maybeGift match {
+        case Some(gift) => {
+          giftDAO.delete(giftid)
+          Redirect(routes.Events.event(gift.eventid))
+        }
+        case None => BadRequest
       }
-      case None => Future.successful(BadRequest)
     }
   }
   
@@ -224,27 +262,33 @@ class Events @Inject() (val messagesApi: MessagesApi, silhouette: Silhouette[Def
       tuple => {
         
         val eventid = tuple._1
-        val username = tuple._2
+        val email = tuple._2
         val role = Participant.Role.withName(tuple._3)
-        
-        
-        UserSearchService.retrieve(username).map {
+
+        userService.retrieveByEmail(email).flatMap {
           user => user match {
             case Some(u) =>  {
-              Participant.findByEventIdAndByUserId(eventid, u.id) match {
-                case Some(p) => Participant.update(p.id.get, role)
-                case None => Participant.create(Participant(
-                  user=u,
-                  event=Event.findById(eventid).get,
-                  role=role)) 
+              participantDAO.find(eventid, u.id).flatMap { maybeParticipant =>
+                val participant = maybeParticipant match {
+                  case Some(p) => p.copy(role = role)
+                  case None => Participant(
+                    user = u,
+                    eventid = eventid,
+                    role = role)
+                }
+                participantDAO.save(participant).flatMap { _ =>
+                  participantDAO.find(eventid).map { participants =>
+                    Ok(views.html.participants.participants_table(request.identity, participants))
+                  }
+                }
               }
-              Ok(views.html.participants.participants_table(request.identity, Participant.findByEventId(eventid)))
             }
             case None => {
               val form = Events.addParticipantForm.fill(tuple)
-              val moncul = form.withError("username","Could not find anyone with this username")
-              println(moncul)
-              BadRequest(views.html.participants.participants_add_form(form.withError("username","User name not found")))
+              Future.successful(BadRequest(
+                views.html.participants.participants_add_form(
+                  form.withError("email","User with his email not found")))
+              )
             }
           }
         }
@@ -259,32 +303,42 @@ class Events @Inject() (val messagesApi: MessagesApi, silhouette: Silhouette[Def
         Future.successful(BadRequest)
       },
       status => {
-        Gift.findById(giftid) match {
-          case Some(gift) => {
-            
-            gift.from match {
-              case Some(x) if x != request.identity => Future.successful(BadRequest)
-              case _ => {
-                val statusValue = Gift.Status.withName(status)
+        giftDAO.find(giftid).flatMap { maybeGift =>
+          maybeGift match {
+            case Some(gift) => {
 
-                val from = statusValue match {
-                  case Gift.Status.New => None
-                  case _ => Some(request.identity)
-                }
-                
-                History.create(History(objectid=giftid, user=request.identity, category="Gift", content="Update gift status from " + gift.status + " to " +  status))
-                val newGift = Gift.update(gift.copy(status=statusValue, from=from))
-                
-                newGift.to match {
-                  case Some(user_to) => {
-                    Future.successful(Redirect(routes.Events.eventWithUser(newGift.event.id.get, user_to.id)).withSession("userId" -> request.identity.id.toString))
+              gift.from match {
+                case Some(x) if x != request.identity => Future.successful(BadRequest)
+                case _ => {
+                  val statusValue = Gift.Status.withName(status)
+
+                  val from = statusValue match {
+                    case Gift.Status.New => None
+                    case _ => Some(request.identity)
                   }
-                  case _ => Future.successful(Redirect(routes.Events.event(newGift.event.id.get)).withSession("userId" -> request.identity.id.toString))
+
+                  historyDAO.save(
+                    History(objectid = giftid,
+                      user = request.identity,
+                      category = "Gift",
+                      content = "Update gift status from " + gift.status + " to " + status)
+                  )
+
+                  giftDAO.save(gift.copy(status=statusValue, from=from)).map { newGift =>
+                    newGift.to match {
+                      case Some(user_to) => {
+                        Redirect(routes.Events.eventWithUser(
+                          newGift.eventid, user_to.id))
+                      }
+                      case _ =>
+                        Redirect(routes.Events.event(newGift.eventid))
+                    }
+                  }
                 }
               }
             }
+            case None => Future.successful(BadRequest)
           }
-          case None => Future.successful(BadRequest)
         }
       }
     )
@@ -294,7 +348,7 @@ class Events @Inject() (val messagesApi: MessagesApi, silhouette: Silhouette[Def
 object Events {
     val addParticipantForm = Form {
     tuple(
-      "eventid" -> longNumber.verifying ("Could not find event. Maybe you deleted it ?", id => Event.findById(id).isDefined)
+      "eventid" -> longNumber
       ,"username" -> nonEmptyText
       ,"role" -> nonEmptyText
     )

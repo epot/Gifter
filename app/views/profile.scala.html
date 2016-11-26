@@ -29,10 +29,10 @@
 		        ?
 		      </p>
 		    } else {
-		      @user.username.map { un =>
-		        <div class="username">@un</div>
+		      @user.fullName.map { un =>
+		        <div class="fullName">@un</div>
 		      }.getOrElse {
-		        <div class="username">Guest</div>
+		        <div class="fullName">Guest</div>
 		      }
 		      <div class="logout">
 		        <a class="sign-out-link" href="@controllers.routes.AuthenticationController.signOut">Sign Out</a>

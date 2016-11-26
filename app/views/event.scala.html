@@ -1,5 +1,8 @@
 @(user: models.user.User,
   event: models.gift.Event,
+  eventGifts: List[models.gift.Gift],
+  p: List[models.gift.Participant],
+  isOwnerOf: Boolean,
   to: Option[models.user.User] = None
 )(implicit request: RequestHeader, messages: Messages, flash: Flash)
 
@@ -22,9 +25,9 @@
   </ul>
   
   <div class="tab-content">
-    @gifts(user, event, to)
+    @gifts(user, event, eventGifts, to)
     <div class="tab-pane" id="participants">
-      @participants(user, event)
+      @participants(user, event, p, isOwnerOf)
     </div>
   </div>
   

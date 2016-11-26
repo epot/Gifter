@@ -1,5 +1,7 @@
 @(user: models.user.User,
-  giftForm: Form[models.gift.GiftSimple]
+  giftForm: Form[models.gift.GiftSimple],
+  event: models.gift.Event,
+  participants: List[models.gift.Participant]
 )(implicit request: RequestHeader, messages: Messages)
 
 @import play.api.i18n.Messages
@@ -48,10 +50,10 @@
             '_error -> giftForm.error("name"),
           'class -> "form-control")      
           
-        @if(giftForm("eventid").value.isDefined && Event.findById(giftForm("eventid").value.get.toLong).get.eventtype == Event.Type.Christmas) {
+        @if(giftForm("eventid").value.isDefined && event.eventType == Event.Type.Christmas) {
           @b3.select(
             giftForm("to"),
-            options = (for(p <- Participant.findByEventId(giftForm("eventid").value.get.toLong)) yield (p.user.id.toString, p.user.username.get)).toSeq,
+            options = (for(p <- participants) yield (p.user.id.toString, p.user.fullName.get)).toSeq,
             '_label -> Messages("gift.to"),
             '_help -> "",
             'class -> "form-control"

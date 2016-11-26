@@ -10,7 +10,9 @@ import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Json
 
-import scala.concurrent.Future
+import scala.collection.generic.CanBuildFrom
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 /**
  * Give access to the user object using Slick
@@ -94,6 +96,72 @@ class GiftDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
         }
         case _ => Future.successful(None)
       }
+    }
+  }
+
+  // http://stackoverflow.com/questions/20874186/scala-listfuture-to-futurelist-disregarding-failed-futures
+  def allSuccessful[A, M[X] <: TraversableOnce[X]](in: M[Future[A]])
+                                                  (implicit cbf: CanBuildFrom[M[Future[A]], A, M[A]]
+                                                  ): Future[M[A]] = {
+    in.foldLeft(Future.successful(cbf(in))) {
+      (fr, fa) ⇒ (for (r ← fr; a ← fa) yield r += a) fallbackTo fr
+    } map (_.result())
+  }
+
+  def findByEventId(eventId: Long) = {
+
+    val giftQuery = for {
+      dbGift <- slickGifts.filter(_.eventId === eventId)
+      dbUser <- slickUsers.filter(_.id === dbGift.creatorId)
+    } yield (dbGift, dbUser)
+    db.run(giftQuery.result).flatMap { results =>
+      val listOfFutures = results.map {
+        case (gift, user) => {
+          val creator = User(
+            user.userID,
+            Nil,
+            user.firstName,
+            user.lastName,
+            user.fullName,
+            user.email,
+            user.avatarURL)
+
+          val g = BaseGift(gift.id, creator, gift.eventId, gift.creationDate, gift.content)
+
+          val giftContent = GiftContentReads.reads(Json.parse(g.content)).get
+
+          val usersId = List(giftContent.to, giftContent.from).flatten
+          val actions = DBIO.sequence(usersId.map(getUser))
+          db.run(actions).map { optDBUsers =>
+            val users = for (user <- optDBUsers.flatten) yield {
+              User(user.userID, Nil, user.firstName, user.lastName, user.fullName, user.email, user.avatarURL)
+            }
+
+            val to = giftContent.to match {
+              case Some(id) => users.filter(_.id == id).headOption
+              case None => None
+            }
+
+            val from = giftContent.from match {
+              case Some(id) => users.filter(_.id == id).headOption
+              case None => None
+            }
+            Gift(
+              id = g.id,
+              creator = creator,
+              eventid = g.eventid,
+              name = giftContent.name,
+              creationDate = g.creationDate,
+              status = Gift.Status(giftContent.status),
+              to = to,
+              from = from,
+              urls = giftContent.urls
+            )
+          }
+        }
+      }.toList
+
+      allSuccessful(listOfFutures)
     }
   }
 

@@ -1,25 +1,30 @@
 package utils.auth
 
 import com.mohiva.play.silhouette.api.{Authenticator, Authorization}
-import models.gift.{Event, Gift, Participant}
+import models.daos.{GiftDAO, ParticipantDAO}
 import models.user.User
 import play.api.mvc.Request
 
 import scala.concurrent.Future
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
-case class WithParticipantOfWithGift[A <: Authenticator](giftid: Long) extends Authorization[User, A] {
+case class WithParticipantOfWithGift[A <: Authenticator](giftDAO: GiftDAO, participantDAO: ParticipantDAO, giftid: Long) extends Authorization[User, A] {
 
   def isAuthorized[B](user: User, authenticator: A)(
     implicit request: Request[B]) = {
 
-    Future.successful(Gift.findById(giftid) match {
-      case Some(gift) => {
-        Participant.findByEventIdAndByUserId(gift.event.id.get, user.id) match {
-          case Some(p) => true
-          case _ => false
+    giftDAO.find(giftid).flatMap { case(maybeGift) =>
+      maybeGift match {
+        case Some(gift) => {
+          participantDAO.find(gift.eventid , user.id).map { maybeParticipant =>
+            maybeParticipant match {
+              case Some(p) => true
+              case _ => false
+            }
+          }
         }
+        case _ => Future.successful(false)
       }
-      case _ => false
-    })
+    }
   }
 }

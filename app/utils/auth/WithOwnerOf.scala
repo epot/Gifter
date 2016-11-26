@@ -7,6 +7,7 @@ import models.daos.ParticipantDAO
 import models.gift.Participant
 import models.user.User
 import play.api.mvc.Request
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 object WithOwnerOf {
   def IsOwnerOf(participantDAO: ParticipantDAO, eventid: Long, userid: UUID) = {

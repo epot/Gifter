@@ -1,5 +1,6 @@
 @(user: models.user.User,
-  event: models.gift.Event,
+ event: models.gift.Event,
+ gifts: List[models.gift.Gift],
   to: Option[models.user.User]
 )(implicit request: RequestHeader, messages: Messages)
 
@@ -9,7 +10,7 @@
 @import models.gift._
 
 <div class="tab-pane active" id="gifts">
-  @gifts_table(user, event, Gift.findByEventId(event.id.get))
+  @gifts_table(user, event, gifts)
 </div>
 
-<script type='text/javascript' src='@routes.HomeController.giftsDynamicScripts(to.isDefined, to.map(_.username).getOrElse(None).getOrElse(""))'></script>
+<script type='text/javascript' src='@routes.HomeController.giftsDynamicScripts(to.isDefined, to.map(_.fullName).getOrElse(None).getOrElse(""))'></script>

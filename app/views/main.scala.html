@@ -29,7 +29,7 @@
             @connected.map { u =>
               <ul class="navbar-nav nav right">  
                 <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown">@u.username<b class="caret"></b></a>
+                    <a class="dropdown-toggle" data-toggle="dropdown">@u.fullName<b class="caret"></b></a>
                     <ul class="dropdown-menu">
                       <li><a href="@routes.ProfileController.profile">Profil</a></li>
                       <li class="divider"></li>

@@ -29,8 +29,7 @@ libraryDependencies ++= Seq(
   "com.github.nscala-time" %% "nscala-time" % "2.14.0",
   // async postgres
   "com.kyleu" %% "jdub-async" % "1.0",
-   jdbc,
-  "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
+  "org.postgresql" % "postgresql" % "9.4.1212",
   "com.mohiva" %% "play-silhouette-password-bcrypt" % "4.0.0",
   "com.iheart" %% "ficus" % "1.2.6",
   "net.codingwell" %% "scala-guice" % "4.0.1",

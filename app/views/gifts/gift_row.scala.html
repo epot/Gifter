@@ -15,13 +15,13 @@
   <td class="col-md-4">@g.name</td>
   <td class="col-md-1">
     @if(g.to.isDefined) {
-      @g.to.get.username
+      @g.to.get.fullName
     }
   </td>
   <td class="col-md-1">
     @if(g.to != Some(user)) {
       @if(g.from.isDefined) {
-        <p class="bg-primary button-tooltip" data-toggle="tooltip" title="offert par @g.from.get.username">@g.status</p>
+        <p class="bg-primary button-tooltip" data-toggle="tooltip" title="offert par @g.from.get.fullName">@g.status</p>
       } else {
         @g.status
       }

@@ -10,7 +10,7 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 /**
   * Give access to the user object using Slick
   */
-class HistoryDAOImplt @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HistoryDAO with DAOSlick {
+class HistoryDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HistoryDAO with DAOSlick {
 
   import driver.api._
 

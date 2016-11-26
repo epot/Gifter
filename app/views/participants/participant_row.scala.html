@@ -1,17 +1,19 @@
 @(user: models.user.User,
-  p:models.gift.Participant
+  event:models.gift.Event,
+  p:models.gift.Participant,
+  isOwnerOf: Boolean
 )(implicit messages: Messages)
 
 @import models.gift.Participant
 @import utils.auth.WithOwnerOf
 
 <tr>
-  <td>@p.user.username</td>
+  <td>@p.user.fullName</td>
   <td>
     @if(
-      p.event.creator != p.user &&
+      event.creator != p.user &&
       p.user != user &&
-      WithOwnerOf.IsOwnerOf(p.event.id.get, user.id) ) {
+      isOwnerOf ) {
       <select name="role" participantid="@p.id.get">
         @for(role <- Participant.Role.values) {
           <option

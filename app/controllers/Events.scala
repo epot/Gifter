@@ -72,21 +72,35 @@ class Events @Inject() (
     )
   }  
   
-  def event(eventid: Long) = silhouette.SecuredAction(WithParticipantOf[DefaultEnv#A](eventid)).async { implicit request =>
-    eventDAO.find(eventid).map { event =>
+  def event(eventid: Long) = silhouette.SecuredAction(WithParticipantOf[DefaultEnv#A](participantDAO, eventid)).async { implicit request =>
+    eventDAO.find(eventid).flatMap { case(event) =>
       event match {
-        case Some(e) => Ok(views.html.event(request.identity, e))
-        case _ => NotFound
+        case Some(e) =>
+          giftDAO.findByEventId(e.id.get).flatMap { gifts =>
+            participantDAO.find(e.id.get).flatMap {participants =>
+              WithOwnerOf.IsOwnerOf(participantDAO, eventid, request.identity.id).map { isOwnerOf =>
+                Ok(views.html.event(request.identity, e, gifts, participants, isOwnerOf))
+              }
+            }
+          }
+        case _ => Future.successful(NotFound)
       }
     }
   }
 
-  def eventWithUser(eventid: Long, userid: UUID) = silhouette.SecuredAction(WithParticipantOf[DefaultEnv#A](eventid)).async { implicit request =>
+  def eventWithUser(eventid: Long, userid: UUID) = silhouette.SecuredAction(WithParticipantOf[DefaultEnv#A](participantDAO, eventid)).async { implicit request =>
     userService.retrieveById(userid).flatMap { to =>
-      eventDAO.find(eventid).map { event =>
+      eventDAO.find(eventid).flatMap { case(event) =>
         event match {
-          case Some(e) => Ok(views.html.event(request.identity, e, to))
-          case _ => NotFound
+          case Some(e) =>
+            giftDAO.findByEventId(e.id.get).flatMap { gifts =>
+              participantDAO.find(e.id.get).flatMap {participants =>
+                WithOwnerOf.IsOwnerOf(participantDAO, eventid, request.identity.id).map { isOwnerOf =>
+                  Ok(views.html.event(request.identity, e, gifts, participants, isOwnerOf, to))
+                }
+              }
+            }
+          case _ => Future.successful(NotFound)
         }
       }
     }
@@ -95,7 +109,7 @@ class Events @Inject() (
   /**
    * Delete an event.
    */
-  def postDeleteEvent(eventid: Long) = silhouette.SecuredAction(WithCreatorOf[DefaultEnv#A](eventid)).async { implicit request =>
+  def postDeleteEvent(eventid: Long) = silhouette.SecuredAction(WithCreatorOf[DefaultEnv#A](eventDAO, eventid)).async { implicit request =>
     eventDAO.find(eventid).map { event =>
       event match {
         case Some(e) => {
@@ -146,14 +160,38 @@ class Events @Inject() (
   }
 
   def newGift(eventid: Long) = silhouette.SecuredAction.async { implicit request =>
-    Future.successful(Ok(views.html.gifts.edit_gift(request.identity, giftForm.fill(GiftSimple(creatorid=request.identity.id, eventid=eventid, name="")))))
+    eventDAO.find(eventid).flatMap { case (maybeEvent) =>
+      maybeEvent match {
+        case Some(event) =>
+          participantDAO.find(eventid).map { participants =>
+            Ok(views.html.gifts.edit_gift(
+              request.identity,
+              giftForm.fill(GiftSimple(creatorid=request.identity.id, eventid=eventid, name="")),
+              event,
+              participants))
+          }
+        case _ => Future.successful(NotFound)
+      }
+    }
   }
 
-  def postEditGift(eventid: Long) = silhouette.SecuredAction(WithParticipantOf[DefaultEnv#A](eventid)).async { implicit request =>
+  def postEditGift(eventid: Long) = silhouette.SecuredAction(WithParticipantOf[DefaultEnv#A](participantDAO, eventid)).async { implicit request =>
     giftForm.bindFromRequest.fold(
       errors => {
         println(errors)
-        Future.successful(BadRequest(views.html.gifts.edit_gift(request.identity, errors)))
+        eventDAO.find(eventid).flatMap { case (maybeEvent) =>
+          maybeEvent match {
+            case Some(event) =>
+              participantDAO.find(eventid).map { participants =>
+                BadRequest(views.html.gifts.edit_gift(
+                  request.identity,
+                  errors,
+                  event,
+                  participants))
+              }
+            case _ => Future.successful(NotFound)
+          }
+        }
       },
       gift => {
         
@@ -205,8 +243,8 @@ class Events @Inject() (
     )
   }  
   
-  def editGift(giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftid)).async { implicit request =>
-    giftDAO.find(giftid).map { maybeGift =>
+  def editGift(giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftDAO, participantDAO, giftid)).async { implicit request =>
+    giftDAO.find(giftid).flatMap { case(maybeGift) =>
        maybeGift match {
          case Some(gift) =>
            val gift_simple = GiftSimple(
@@ -219,20 +257,32 @@ class Events @Inject() (
              toid = gift.to.map{_.id},
              fromid = gift.from.map{_.id},
              urls = gift.urls)
-           Ok(views.html.gifts.edit_gift(request.identity, giftForm.fill(gift_simple)))
+
+           eventDAO.find(gift.eventid).flatMap { case (maybeEvent) =>
+             maybeEvent match {
+               case Some(event) =>
+                 participantDAO.find(gift.eventid).map { participants =>
+                   Ok(views.html.gifts.edit_gift(request.identity, giftForm.fill(gift_simple), event, participants))
+                 }
+               case _ => Future.successful(NotFound)
+             }
+           }
+
          case _ =>
-           NotFound
+           Future.successful(NotFound)
        }
     }
   }
   
-  def viewGift(giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftid)).async { implicit request =>
-    giftDAO.find(giftid).map { maybeGift =>
+  def viewGift(giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftDAO, participantDAO, giftid)).async { implicit request =>
+    giftDAO.find(giftid).flatMap { maybeGift =>
       maybeGift match {
         case Some(gift) =>
-          Ok(views.html.gifts.view_gift(request.identity, gift))
+          historyDAO.findByCategoryAndId("Gift", gift.id.get).map { history =>
+            Ok(views.html.gifts.view_gift(request.identity, gift, history))
+          }
         case _ =>
-          NotFound
+          Future.successful(NotFound)
       }
     }
   }
@@ -240,7 +290,7 @@ class Events @Inject() (
   /**
    * Delete a gift.
    */
-  def postDeleteGift(giftid: Long) = silhouette.SecuredAction(WithGiftCreatorOf[DefaultEnv#A](giftid)).async { implicit request =>
+  def postDeleteGift(giftid: Long) = silhouette.SecuredAction(WithGiftCreatorOf[DefaultEnv#A](giftDAO, giftid)).async { implicit request =>
     giftDAO.find(giftid).map { maybeGift =>
       maybeGift match {
         case Some(gift) => {
@@ -277,8 +327,23 @@ class Events @Inject() (
                     role = role)
                 }
                 participantDAO.save(participant).flatMap { _ =>
-                  participantDAO.find(eventid).map { participants =>
-                    Ok(views.html.participants.participants_table(request.identity, participants))
+                  participantDAO.find(eventid).flatMap { participants =>
+                    eventDAO.find(eventid).flatMap { maybeEvent =>
+                      maybeEvent match {
+                        case Some(event) =>
+                          WithOwnerOf.IsOwnerOf(participantDAO, eventid, request.identity.id).map { isOwnerOf =>
+                            Ok(views.html.participants.participants_table(
+                              request.identity,
+                              event,
+                              participants,
+                              isOwnerOf)
+                            )
+
+                          }
+
+                        case _ => Future.successful(NotFound)
+                      }
+                    }
                   }
                 }
               }
@@ -297,7 +362,7 @@ class Events @Inject() (
   }
   
   
-  def updateGiftStatus(giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftid)).async { implicit request =>
+  def updateGiftStatus(giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftDAO, participantDAO, giftid)).async { implicit request =>
     Form("status" -> nonEmptyText).bindFromRequest.fold(
       errors => {
         Future.successful(BadRequest)

@@ -28,7 +28,10 @@ case class Gift(
   status: Gift.Status.Value = Gift.Status.New,
   to: Option[User] = None,
   from: Option[User] = None,
-  urls: List[String]=Nil)
+  urls: List[String]=Nil) {
+  def toId = to.collect{case(user) => user.id}
+  def fromId = to.collect{case(user) => user.id}
+}
 
 object Gift {
   object Status extends Enumeration {

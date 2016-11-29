@@ -166,14 +166,14 @@ class GiftDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
   }
 
   /**
-    * Saves a user.
+    * Saves a Gift.
     *
-    * @param gift The event to save.
-    * @return The saved event.
+    * @param gift The gift to save.
+    * @return The saved gift.
     */
   def save(gift: Gift) = {
     val toid = gift.to.collect{case(user) => user.id}
-    val fromid = gift.to.collect{case(user) => user.id}
+    val fromid = gift.from.collect{case(user) => user.id}
 
     val dbGift = DBGift(
       gift.id,

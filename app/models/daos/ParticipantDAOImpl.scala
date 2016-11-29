@@ -37,7 +37,7 @@ class ParticipantDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfi
             p.eventId,
             Participant.Role(p.participantRole)
           )
-      }.toList
+      }.distinct.toList
     }
   }
 

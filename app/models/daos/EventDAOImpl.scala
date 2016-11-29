@@ -65,14 +65,12 @@ class EventDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
       dbParticipant <- slickParticipants.filter(_.userId === user.id)
       dbEvent <- slickEvents.filter(e => e.id === dbParticipant.eventId || e.creatorId === user.id)
       dbUser <- slickUsers.filter(_.id === dbEvent.creatorId)
-      dbUserLoginInfo <- slickUserLoginInfos.filter(_.userID === dbUser.id)
-      dbLoginInfo <- slickLoginInfos.filter(_.id === dbUserLoginInfo.loginInfoId)
-    } yield (dbEvent, dbUser, dbLoginInfo)
+    } yield (dbEvent, dbUser)
     db.run(eventQuery.result).map { results =>
       (for(result <- results) yield {
         val creator = User(
           result._2.userID,
-          List(LoginInfo(result._3.providerID, result._3.providerKey)),
+          Nil,
           user.firstName,
           user.lastName,
           user.fullName,
@@ -80,7 +78,7 @@ class EventDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
           user.avatarURL)
         val event = result._1
         Event(event.id, creator, event.name, event.date, Event.Type(event.eventType))
-      }).toList
+      }).distinct.toList
     }
   }
 

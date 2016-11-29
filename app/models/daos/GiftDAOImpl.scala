@@ -159,7 +159,7 @@ class GiftDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
             )
           }
         }
-      }.toList
+      }.distinct.toList
 
       allSuccessful(listOfFutures)
     }

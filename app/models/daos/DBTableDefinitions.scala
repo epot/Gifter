@@ -100,11 +100,11 @@ trait DBTableDefinitions {
 
   class OAuth2Infos(tag: Tag) extends Table[DBOAuth2Info](tag, "oauth2_info") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
-    def accessToken = column[String]("accesstoken")
-    def tokenType = column[Option[String]]("tokentype")
-    def expiresIn = column[Option[Int]]("expiresin")
-    def refreshToken = column[Option[String]]("refreshtoken")
-    def loginInfoId = column[Long]("logininfoid")
+    def accessToken = column[String]("access_token")
+    def tokenType = column[Option[String]]("token_type")
+    def expiresIn = column[Option[Int]]("expires_in")
+    def refreshToken = column[Option[String]]("refresh_token")
+    def loginInfoId = column[Long]("loginInfoId")
     def * = (id.?, accessToken, tokenType, expiresIn, refreshToken, loginInfoId) <> (DBOAuth2Info.tupled, DBOAuth2Info.unapply)
   }
 
@@ -183,7 +183,7 @@ trait DBTableDefinitions {
   
   class OpenIDInfos(tag: Tag) extends Table[DBOpenIDInfo](tag, "openid_info") {
     def id = column[String]("id", O.PrimaryKey)
-    def loginInfoId = column[Long]("logininfoid")
+    def loginInfoId = column[Long]("loginInfoId")
     def * = (id, loginInfoId) <> (DBOpenIDInfo.tupled, DBOpenIDInfo.unapply)
   }
   

@@ -16,7 +16,7 @@ case class WithParticipantOfWithGift[A <: Authenticator](giftDAO: GiftDAO, parti
     giftDAO.find(giftid).flatMap { case(maybeGift) =>
       maybeGift match {
         case Some(gift) => {
-          participantDAO.find(gift.eventid , user.id).map { maybeParticipant =>
+          participantDAO.find(gift.eventid , user).map { maybeParticipant =>
             maybeParticipant match {
               case Some(p) => true
               case _ => false

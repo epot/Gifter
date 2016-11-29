@@ -78,7 +78,7 @@ class Events @Inject() (
         case Some(e) =>
           giftDAO.findByEventId(e.id.get).flatMap { gifts =>
             participantDAO.find(e.id.get).flatMap {participants =>
-              WithOwnerOf.IsOwnerOf(participantDAO, eventid, request.identity.id).map { isOwnerOf =>
+              WithOwnerOf.IsOwnerOf(participantDAO, eventid, request.identity).map { isOwnerOf =>
                 Ok(views.html.event(request.identity, e, gifts, participants, isOwnerOf))
               }
             }
@@ -95,7 +95,7 @@ class Events @Inject() (
           case Some(e) =>
             giftDAO.findByEventId(e.id.get).flatMap { gifts =>
               participantDAO.find(e.id.get).flatMap {participants =>
-                WithOwnerOf.IsOwnerOf(participantDAO, eventid, request.identity.id).map { isOwnerOf =>
+                WithOwnerOf.IsOwnerOf(participantDAO, eventid, request.identity).map { isOwnerOf =>
                   Ok(views.html.event(request.identity, e, gifts, participants, isOwnerOf, to))
                 }
               }
@@ -210,7 +210,7 @@ class Events @Inject() (
         Future.sequence(List(to, from, creator)).flatMap { s =>
           val new_gift = Gift(
             id = gift.id,
-            creator = s(3).get,
+            creator = s(2).get,
             eventid = gift.eventid,
             creationDate = gift.creationDate,
             name = gift.name,
@@ -318,7 +318,7 @@ class Events @Inject() (
         userService.retrieveByEmail(email).flatMap {
           user => user match {
             case Some(u) =>  {
-              participantDAO.find(eventid, u.id).flatMap { maybeParticipant =>
+              participantDAO.find(eventid, u).flatMap { maybeParticipant =>
                 val participant = maybeParticipant match {
                   case Some(p) => p.copy(role = role)
                   case None => Participant(
@@ -331,7 +331,7 @@ class Events @Inject() (
                     eventDAO.find(eventid).flatMap { maybeEvent =>
                       maybeEvent match {
                         case Some(event) =>
-                          WithOwnerOf.IsOwnerOf(participantDAO, eventid, request.identity.id).map { isOwnerOf =>
+                          WithOwnerOf.IsOwnerOf(participantDAO, eventid, request.identity).map { isOwnerOf =>
                             Ok(views.html.participants.participants_table(
                               request.identity,
                               event,

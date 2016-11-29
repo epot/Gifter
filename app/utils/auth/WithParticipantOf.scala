@@ -11,7 +11,7 @@ case class WithParticipantOf[A <: Authenticator](participantDAO: ParticipantDAO,
   def isAuthorized[B](user: User, authenticator: A)(
     implicit request: Request[B]) = {
 
-    participantDAO.find(eventid, user.id).map { p =>
+    participantDAO.find(eventid, user).map { p =>
       p.isDefined
     }
   }

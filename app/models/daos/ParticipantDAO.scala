@@ -1,8 +1,7 @@
 package models.daos
 
-import java.util.UUID
-
 import models.gift.Participant
+import models.user.User
 
 import scala.concurrent.Future
 
@@ -13,7 +12,7 @@ trait ParticipantDAO {
 
   def find(eventId: Long): Future[List[Participant]]
 
-  def find(eventid: Long, userid: UUID): Future[Option[Participant]]
+  def find(eventid: Long, user: User): Future[Option[Participant]]
 
   def save(participant: Participant): Future[Participant]
 }

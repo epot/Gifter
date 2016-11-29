@@ -41,21 +41,12 @@ class ParticipantDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfi
     }
   }
 
-  def find(eventid: Long, userid: UUID) = {
+  def find(eventid: Long, user: User) = {
     val participantQuery = for {
-      dbGift <- slickParticipants.filter(p => p.eventId === eventid && p.userId == userid)
-      dbUser <- slickUsers.filter(_.id === dbGift.userId)
-    } yield (dbGift, dbUser)
+      dbParticipant <- slickParticipants.filter(p => p.eventId === eventid && p.userId === user.id)
+    } yield (dbParticipant)
     db.run(participantQuery.result.headOption).map { resultOption =>
-      resultOption.map { case(p, u) =>
-        val user = User(
-          u.userID,
-          Nil,
-          u.firstName,
-          u.lastName,
-          u.fullName,
-          u.email,
-          u.avatarURL)
+      resultOption.map { case(p) =>
 
         Participant(
           p.id,

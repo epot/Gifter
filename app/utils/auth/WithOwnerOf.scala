@@ -10,8 +10,8 @@ import play.api.mvc.Request
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 object WithOwnerOf {
-  def IsOwnerOf(participantDAO: ParticipantDAO, eventid: Long, userid: UUID) = {
-    participantDAO.find(eventid, userid).map { maybeParticipant =>
+  def IsOwnerOf(participantDAO: ParticipantDAO, eventid: Long, user: User) = {
+    participantDAO.find(eventid, user).map { maybeParticipant =>
       maybeParticipant match {
         case Some(p) if p.role == Participant.Role.Owner => true
         case _ => false
@@ -24,6 +24,6 @@ case class WithOwnerOf[A <: Authenticator](participantDAO: ParticipantDAO, event
 
   def isAuthorized[B](user: User, authenticator: A)(
     implicit request: Request[B]) = {
-    WithOwnerOf.IsOwnerOf(participantDAO, eventid, user.id)
+    WithOwnerOf.IsOwnerOf(participantDAO, eventid, user)
   }
 }

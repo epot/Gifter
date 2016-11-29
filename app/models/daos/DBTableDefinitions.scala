@@ -20,7 +20,8 @@ trait DBTableDefinitions {
     lastName: Option[String],
     fullName: Option[String],
     email: Option[String],
-    avatarURL: Option[String]
+    avatarURL: Option[String],
+    created: DateTime=DateTime.now()
   )
 
   class Users(tag: Tag) extends Table[DBUser](tag, "user_profiles") {
@@ -30,7 +31,8 @@ trait DBTableDefinitions {
     def fullName = column[Option[String]]("full_name")
     def email = column[Option[String]]("email")
     def avatarURL = column[Option[String]]("avatar_url")
-    def * = (id, firstName, lastName, fullName, email, avatarURL) <> (DBUser.tupled, DBUser.unapply)
+    def created = column[DateTime]("created")
+    def * = (id, firstName, lastName, fullName, email, avatarURL, created) <> (DBUser.tupled, DBUser.unapply)
   }
 
   case class DBLoginInfo (
@@ -116,7 +118,7 @@ trait DBTableDefinitions {
 
   class Events(tag: Tag) extends Table[DBEvent](tag, "event") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
-    def creatorId = column[UUID]("creatorid")
+    def creatorId = column[UUID]("creator_id")
     def name = column[String]("name")
     def date = column[DateTime]("date")
     def eventType = column[Int]("type")
@@ -133,7 +135,7 @@ trait DBTableDefinitions {
 
   class Gifts(tag: Tag) extends Table[DBGift](tag, "gift") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
-    def creatorId = column[UUID]("creatorid")
+    def creatorId = column[UUID]("creator_id")
     def eventId = column[Long]("eventid")
     def creationDate = column[DateTime]("creationdate")
     def content = column[String]("content")

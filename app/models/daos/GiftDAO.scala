@@ -3,6 +3,8 @@ package models.daos
 import java.util.UUID
 
 import models.gift.Gift
+import models.gift.Gift.GiftWithNotification
+import models.user.User
 
 import scala.concurrent.Future
 
@@ -22,7 +24,7 @@ trait GiftDAO {
     * @return The found event or None if no gift for the given ID could be found.
     */
   def find(giftId: Long): Future[Option[Gift]]
-  def findByEventId(eventId: Long): Future[List[Gift]]
+  def findByEventId(userConnected: User, eventId: Long): Future[List[GiftWithNotification]]
 
 
   /**

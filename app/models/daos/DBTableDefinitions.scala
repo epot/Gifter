@@ -194,6 +194,22 @@ trait DBTableDefinitions {
     def content = column[String]("content")
     def * = (id.?, userId, objectId, creationDate, category, content) <> (DBComment.tupled, DBComment.unapply)
   }
+
+  case class DBNotification (
+     id: Option[Long],
+     userId: UUID,
+     objectId: Long,
+     category: Int
+   )
+
+  class Notifications(tag: Tag) extends Table[DBNotification](tag, "notification") {
+    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+    def userId = column[UUID]("userid")
+    def objectId = column[Long]("objectid")
+    def category = column[Int]("category")
+    def * = (id.?, userId, objectId, category) <> (DBNotification.tupled, DBNotification.unapply)
+  }
+
   case class DBOpenIDInfo (
     id: String,
     loginInfoId: Long
@@ -232,6 +248,7 @@ trait DBTableDefinitions {
   val slickParticipants = TableQuery[Participants]
   val slickHistory = TableQuery[HistoryT]
   val slickComment = TableQuery[Comments]
+  val slickNotification = TableQuery[Notifications]
 
   // queries used in multiple places
   def loginInfoQuery(loginInfo: LoginInfo) = 

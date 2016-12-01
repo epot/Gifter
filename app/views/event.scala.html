@@ -1,6 +1,6 @@
 @(user: models.user.User,
   event: models.gift.Event,
-  eventGifts: List[models.gift.Gift],
+  eventGifts: List[models.gift.Gift.GiftWithNotification],
   p: List[models.gift.Participant],
   isOwnerOf: Boolean,
   to: Option[models.user.User] = None

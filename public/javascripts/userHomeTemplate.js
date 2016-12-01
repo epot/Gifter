@@ -22,6 +22,9 @@
     if($(this).attr("disabled") !== undefined) {
         return;
     }
+    // not very nice way to say that the user will have read these notifications
+    $(this).removeClass("btn-info")
+    $(this).addClass("btn-default")
     var giftid = $(this).data('id');
     $(".comments").empty();
     $.ajax({

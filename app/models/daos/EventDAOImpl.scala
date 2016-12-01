@@ -26,10 +26,7 @@ class EventDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
       dbEvent <- slickEvents.filter(e => e.id === eventid && e.creatorId === userid)
     } yield dbEvent
     db.run(eventQuery.result.headOption).map { dbEvent =>
-      dbEvent match {
-        case Some(_) => true
-        case None => false
-      }
+      dbEvent.isDefined
     }
   }
 

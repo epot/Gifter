@@ -31,6 +31,8 @@ case class Gift(
   urls: List[String]=Nil)
 
 object Gift {
+  case class GiftWithNotification(gift: Gift, hasCommentNotification: Boolean)
+
   object Status extends Enumeration {
     val New = Value(1, Messages.get("gift.statut.new"))
     val AboutToBeBought = Value(2, Messages.get("gift.statut.abouttobebought"))

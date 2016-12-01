@@ -11,6 +11,7 @@ import scala.concurrent.Future
 trait ParticipantDAO {
 
   def find(eventId: Long): Future[List[Participant]]
+  def findByGiftId(giftId: Long): Future[List[Participant]]
 
   def find(eventid: Long, user: User): Future[Option[Participant]]
 

@@ -15,7 +15,6 @@ case class Comment(
 object Comment {
   object Category extends Enumeration {
     val Gift = Value(1)
-    val Event = Value(2)
   }
 
   case class CommentSimple(content: String, username: String, creationDate: DateTime)

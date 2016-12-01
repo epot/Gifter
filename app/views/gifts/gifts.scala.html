@@ -1,6 +1,6 @@
 @(user: models.user.User,
  event: models.gift.Event,
- gifts: List[models.gift.Gift],
+ gifts: List[models.gift.Gift.GiftWithNotification],
   to: Option[models.user.User]
 )(implicit request: RequestHeader, messages: Messages)
 

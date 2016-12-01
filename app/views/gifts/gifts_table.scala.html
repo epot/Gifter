@@ -1,6 +1,6 @@
 @(user: models.user.User,
   event: models.gift.Event,
-  gifts:List[models.gift.Gift]
+  gifts:List[models.gift.Gift.GiftWithNotification]
 )(implicit request: RequestHeader, messages: Messages)
 
 @import play.i18n.Messages
@@ -20,7 +20,7 @@
   </thead>
   <tbody>
     @for(g <- gifts) {
-      @gift_row(user, g)
+      @gift_row(user, g.gift, g.hasCommentNotification)
     }
   </tbody>
 </table>

@@ -3,7 +3,7 @@ package models.daos
 import java.util.UUID
 import javax.inject.Inject
 
-import models.gift.Gift
+import models.gift.{Gift, Notification}
 import models.gift.Gift._
 import models.user.User
 import play.api.db.slick.DatabaseConfigProvider
@@ -11,13 +11,14 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Json
 
 import scala.collection.generic.CanBuildFrom
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
+import scala.concurrent.Future
 
 /**
  * Give access to the user object using Slick
  */
-class GiftDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends GiftDAO with DAOSlick {
+class GiftDAOImpl @Inject()(
+   notificationDAO: NotificationDAO,
+   protected val dbConfigProvider: DatabaseConfigProvider) extends GiftDAO with DAOSlick {
 
   import driver.api._
 
@@ -108,7 +109,7 @@ class GiftDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     } map (_.result())
   }
 
-  def findByEventId(eventId: Long) = {
+  def findByEventId(userConnected: User, eventId: Long) = {
 
     val giftQuery = for {
       dbGift <- slickGifts.filter(_.eventId === eventId)
@@ -132,7 +133,7 @@ class GiftDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
 
           val usersId = List(giftContent.to, giftContent.from).flatten
           val actions = DBIO.sequence(usersId.map(getUser))
-          db.run(actions).map { optDBUsers =>
+          db.run(actions).flatMap { optDBUsers =>
             val users = for (user <- optDBUsers.flatten) yield {
               User(user.userID, Nil, user.firstName, user.lastName, user.fullName, user.email, user.avatarURL)
             }
@@ -146,7 +147,7 @@ class GiftDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
               case Some(id) => users.filter(_.id == id).headOption
               case None => None
             }
-            Gift(
+            val giftModel = Gift(
               id = g.id,
               creator = creator,
               eventid = g.eventid,
@@ -157,6 +158,10 @@ class GiftDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
               from = from,
               urls = giftContent.urls
             )
+
+            notificationDAO.hasNotification(userConnected, Notification.Category.GiftComment, gift.id.get).map { value =>
+              GiftWithNotification(giftModel, value)
+            }
           }
         }
       }.distinct.toList

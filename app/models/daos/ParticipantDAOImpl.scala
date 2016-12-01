@@ -17,9 +17,9 @@ class ParticipantDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfi
 
   def find(eventId: Long) = {
     val participantQuery = for {
-      dbGift <- slickParticipants.filter(p => p.eventId === eventId)
-      dbUser <- slickUsers.filter(_.id === dbGift.userId)
-    } yield (dbGift, dbUser)
+      dbParticipant <- slickParticipants.filter(p => p.eventId === eventId)
+      dbUser <- slickUsers.filter(_.id === dbParticipant.userId)
+    } yield (dbParticipant, dbUser)
     db.run(participantQuery.result).map { resultOption =>
       resultOption.map { case(p, u) =>
         val user = User(
@@ -37,6 +37,34 @@ class ParticipantDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfi
             p.eventId,
             Participant.Role(p.participantRole)
           )
+      }.distinct.toList
+    }
+  }
+
+  def findByGiftId(giftId: Long) = {
+    val participantQuery = for {
+      dbGift <- slickGifts.filter(_.id === giftId)
+      dbEvent <- slickEvents.filter(_.id === dbGift.eventId)
+      dbParticipant <- slickParticipants.filter(p => p.eventId === dbEvent.id)
+      dbUser <- slickUsers.filter(_.id === dbParticipant.userId)
+    } yield (dbParticipant, dbUser)
+    db.run(participantQuery.result).map { resultOption =>
+      resultOption.map { case(p, u) =>
+        val user = User(
+          u.userID,
+          Nil,
+          u.firstName,
+          u.lastName,
+          u.fullName,
+          u.email,
+          u.avatarURL)
+
+        Participant(
+          p.id,
+          user,
+          p.eventId,
+          Participant.Role(p.participantRole)
+        )
       }.distinct.toList
     }
   }

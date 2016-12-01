@@ -2,7 +2,7 @@ package models.daos
 
 import javax.inject.Inject
 
-import models.gift.Comment
+import models.gift.{Comment, Notification}
 import models.user.User
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -11,7 +11,9 @@ import com.github.nscala_time.time.Imports._
 /**
   * Give access to the user object using Slick
   */
-class CommentDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends CommentDAO with DAOSlick {
+class CommentDAOImpl @Inject()(
+  participantDAO: ParticipantDAO,
+  protected val dbConfigProvider: DatabaseConfigProvider) extends CommentDAO with DAOSlick {
 
   import driver.api._
 
@@ -47,6 +49,17 @@ class CommentDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigPro
       c.creationDate,
       c.category.id,
       c.content)
+
+    c.category match {
+      case Comment.Category.Gift =>
+        participantDAO.findByGiftId(c.objectid).map { participants =>
+          val toInsert = for(p <- participants if p.user != c.user) yield {
+            DBNotification(None, p.user.id, c.objectid, Notification.Category.GiftComment.id)
+          }
+          db.run(DBIO.seq(slickNotification ++= toInsert).transactionally)
+        }
+      case _ => // not supported yet
+    }
 
     val insertQuery = (slickComment returning slickComment.map(_.id)).insertOrUpdate(dbComment)
     dbConfig.db.run(insertQuery).map(id => c.copy(id=id))

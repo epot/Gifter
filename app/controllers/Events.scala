@@ -26,6 +26,7 @@ class Events @Inject() (
    eventDAO: EventDAO,
    commentDAO: CommentDAO,
    participantDAO: ParticipantDAO,
+   notificationDAO: NotificationDAO,
    giftDAO: GiftDAO,
    historyDAO: HistoryDAO,
    silhouette: Silhouette[DefaultEnv])
@@ -79,7 +80,7 @@ class Events @Inject() (
     eventDAO.find(eventid).flatMap { case(event) =>
       event match {
         case Some(e) =>
-          giftDAO.findByEventId(e.id.get).flatMap { gifts =>
+          giftDAO.findByEventId(request.identity, e.id.get).flatMap { gifts =>
             participantDAO.find(e.id.get).flatMap {participants =>
               WithOwnerOf.IsOwnerOf(participantDAO, eventid, request.identity).map { isOwnerOf =>
                 Ok(views.html.event(request.identity, e, gifts, participants, isOwnerOf))
@@ -96,7 +97,7 @@ class Events @Inject() (
       eventDAO.find(eventid).flatMap { case(event) =>
         event match {
           case Some(e) =>
-            giftDAO.findByEventId(e.id.get).flatMap { gifts =>
+            giftDAO.findByEventId(request.identity, e.id.get).flatMap { gifts =>
               participantDAO.find(e.id.get).flatMap {participants =>
                 WithOwnerOf.IsOwnerOf(participantDAO, eventid, request.identity).map { isOwnerOf =>
                   Ok(views.html.event(request.identity, e, gifts, participants, isOwnerOf, to))
@@ -366,8 +367,9 @@ class Events @Inject() (
 
   def getGiftComments(giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftDAO, participantDAO, giftid)).async { implicit request =>
     commentDAO.findByCategoryAndId(Comment.Category.Gift, giftid).map { comments =>
+      // remove notifications for this user, he is going to read those messages !
+      notificationDAO.delete(request.identity, Notification.Category.GiftComment, giftid)
       val json = Json.toJson(for(c <- comments) yield {CommentSimple(c.content, c.user.userName, c.creationDate)})
-      println(json)
       Ok(json)
     }
   }
@@ -445,7 +447,7 @@ object Events {
     val addParticipantForm = Form {
     tuple(
       "eventid" -> longNumber
-      ,"username" -> nonEmptyText
+      ,"email" -> nonEmptyText
       ,"role" -> nonEmptyText
     )
   }

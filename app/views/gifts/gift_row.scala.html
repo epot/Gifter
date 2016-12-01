@@ -1,5 +1,6 @@
 @(user: models.user.User,
-  g:models.gift.Gift)(implicit request: RequestHeader, messages: Messages)
+  g:models.gift.Gift,
+  hasCommentNotification: Boolean)(implicit request: RequestHeader, messages: Messages)
 
 @import models.gift.Gift
 @import views.html.modal.updateGiftModal
@@ -47,7 +48,13 @@
             disabled=
           }
           ><i class="glyphicon glyphicon-remove"></i></a>
-        <a class="btn btn-default btn-sm open-gift-comment-modal" data-id="@g.id.get">
+        <a class="btn
+          @if(hasCommentNotification) {
+            btn-info
+          } else {
+            btn-default
+          }
+           btn-sm open-gift-comment-modal" data-id="@g.id.get">
           <i class="glyphicon glyphicon-comment button-tooltip" data-toggle="tooltip" title="@Messages("gift.comment")"></i>
         </a>
       </div>

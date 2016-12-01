@@ -38,13 +38,13 @@
         <a class="btn btn-default btn-sm" href="@routes.Events.editGift(g.id.get)"><i class="glyphicon glyphicon-edit button-tooltip" data-toggle="tooltip" title="Modifier"></i></a>
         <a class="btn btn-default btn-sm open-gift-status-modal" data-id="@g.id.get"
           @if(g.to == Some(user) || (g.from.isDefined && g.from.get != user)) {
-            disabled="true"
+            disabled=
           }
           
           ><i class="glyphicon glyphicon-credit-card button-tooltip" data-toggle="tooltip" title="Acheter"></i></a>
         <a class="btn btn-default btn-sm open-delete-modal" data-id="@g.id.get" data-action="deleteGift"
           @if(g.creator != user) {
-            disabled="true"
+            disabled=
           }
           ><i class="glyphicon glyphicon-remove"></i></a>
         <a class="btn btn-default btn-sm open-gift-comment-modal" data-id="@g.id.get">

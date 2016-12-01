@@ -1,4 +1,7 @@
   $('.open-delete-modal').click(function() {
+    if($(this).attr("disabled") !== undefined) {
+        return;
+    }
     var giftid = $(this).data('id');
     var action = $(this).data('action');
     $(".modal-footer #delete-event-form").attr("action", "/" + action + "/" + giftid);
@@ -7,12 +10,18 @@
 
 
   $('.open-gift-status-modal').click(function() {
+    if($(this).attr("disabled") !== undefined) {
+        return;
+    }
     var giftid = $(this).data('id');
     $("#update-gift-status-" + giftid + "-form").attr("action", "/updateGiftStatus/" + giftid);
     $('#update-gift-status-modal-' + giftid).modal('show');
   });
 
   $('.open-gift-comment-modal').click(function() {
+    if($(this).attr("disabled") !== undefined) {
+        return;
+    }
     var giftid = $(this).data('id');
     $(".comments").empty();
     $.ajax({

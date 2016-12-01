@@ -20,5 +20,6 @@ class BaseModule extends AbstractModule with ScalaModule {
     bind[GiftDAO].to[GiftDAOImpl]
     bind[HistoryDAO].to[HistoryDAOImpl]
     bind[ParticipantDAO].to[ParticipantDAOImpl]
+    bind[CommentDAO].to[CommentDAOImpl]
   }
 }

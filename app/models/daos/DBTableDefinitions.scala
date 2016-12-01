@@ -176,6 +176,24 @@ trait DBTableDefinitions {
     def * = (id.?, userId, objectId, creationDate, category, content) <> (DBHistory.tupled, DBHistory.unapply)
   }
 
+  case class DBComment (
+     id: Option[Long],
+     userId: UUID,
+     objectId: Long,
+     creationDate: DateTime,
+     category: Int,
+     content:String
+   )
+
+  class Comments(tag: Tag) extends Table[DBComment](tag, "comment") {
+    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+    def userId = column[UUID]("userid")
+    def objectId = column[Long]("objectid")
+    def creationDate = column[DateTime]("creationdate")
+    def category = column[Int]("category")
+    def content = column[String]("content")
+    def * = (id.?, userId, objectId, creationDate, category, content) <> (DBComment.tupled, DBComment.unapply)
+  }
   case class DBOpenIDInfo (
     id: String,
     loginInfoId: Long
@@ -213,6 +231,7 @@ trait DBTableDefinitions {
   val slickGifts = TableQuery[Gifts]
   val slickParticipants = TableQuery[Participants]
   val slickHistory = TableQuery[HistoryT]
+  val slickComment = TableQuery[Comments]
 
   // queries used in multiple places
   def loginInfoQuery(loginInfo: LoginInfo) = 

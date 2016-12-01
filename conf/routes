@@ -38,6 +38,8 @@ GET      /editGift/:giftid          controllers.Events.editGift(giftid: Long)
 GET      /viewGift/:giftid          controllers.Events.viewGift(giftid: Long)
 POST     /updateGiftStatus/:giftid  controllers.Events.updateGiftStatus(giftid: Long)
 POST     /deleteGift/:giftid        controllers.Events.postDeleteGift(giftid: Long)
+GET      /gift/:giftid/comment      controllers.Events.getGiftComments(giftid: Long)
+POST     /gift/:giftid/comment      controllers.Events.postGiftComment(giftid: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

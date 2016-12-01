@@ -10,10 +10,12 @@ import play.api.data.Forms._
 import org.joda.time.DateTime
 import play.api.i18n.{I18nSupport, MessagesApi}
 import com.mohiva.play.silhouette.api.Silhouette
-import models.daos.{EventDAO, GiftDAO, HistoryDAO, ParticipantDAO}
+import models.daos._
+import models.gift.Comment.CommentSimple
 import models.services.UserService
 import models.user.User
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.libs.json.Json
 import utils.auth._
 
 import scala.concurrent.Future
@@ -22,6 +24,7 @@ class Events @Inject() (
    val messagesApi: MessagesApi,
    userService: UserService,
    eventDAO: EventDAO,
+   commentDAO: CommentDAO,
    participantDAO: ParticipantDAO,
    giftDAO: GiftDAO,
    historyDAO: HistoryDAO,
@@ -360,7 +363,35 @@ class Events @Inject() (
       }
     )
   }
-  
+
+  def getGiftComments(giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftDAO, participantDAO, giftid)).async { implicit request =>
+    commentDAO.findByCategoryAndId(Comment.Category.Gift, giftid).map { comments =>
+      val json = Json.toJson(for(c <- comments) yield {CommentSimple(c.content, c.user.userName, c.creationDate)})
+      println(json)
+      Ok(json)
+    }
+  }
+
+  def postGiftComment(giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftDAO, participantDAO, giftid)).async { implicit request =>
+    Form("comment" -> nonEmptyText).bindFromRequest.fold(
+      errors => {
+        println(errors)
+        Future.successful(BadRequest)
+      },
+      comment => {
+        commentDAO.save(Comment(
+          objectid=giftid,
+          user=request.identity,
+          category=Comment.Category.Gift,
+          content=comment)).flatMap { _ =>
+          commentDAO.findByCategoryAndId(Comment.Category.Gift, giftid).map { comments =>
+            val json = Json.toJson(for(c <- comments) yield {CommentSimple(c.content, c.user.userName, c.creationDate)})
+            Ok(json)
+          }
+        }
+      }
+    )
+  }
   
   def updateGiftStatus(giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftDAO, participantDAO, giftid)).async { implicit request =>
     Form("status" -> nonEmptyText).bindFromRequest.fold(

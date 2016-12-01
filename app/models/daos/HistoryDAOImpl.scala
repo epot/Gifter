@@ -16,7 +16,7 @@ class HistoryDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   def findByCategoryAndId(category: String, objectid: Long) = {
     val giftQuery = for {
-      dbHistory <- slickHistory.filter(h => h.category === category && h.objectId == objectid)
+      dbHistory <- slickHistory.filter(h => h.category === category && h.objectId === objectid)
       dbUser <- slickUsers.filter(_.id === dbHistory.userId)
     } yield (dbHistory, dbUser)
     db.run(giftQuery.result).map { results =>

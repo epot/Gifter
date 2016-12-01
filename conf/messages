@@ -1,4 +1,6 @@
 
+close=Close
+
 email.from = Rene Coty <rene@coty.com>
 
 gift.to=Destiné à:
@@ -10,6 +12,10 @@ gift.statut.markedfordeletion=Supprimé
 gift.creator=Idée de:
 gift.view=Détails d'un cadeau
 gift.new=Gifter nouvelle idée de cadeau
+gift.comment=Comment
+gift.comment.add=Add
+gift.comment.your=Your comment...
+gift.comment=Comment on "{0}"
 
 gift.delete.confirm.title=Confirmer la suppression
 gift.delete.confirm.message=Si vous supprimez ce cadeau, tout le monde va être déçu. Etes vous bien sur ?

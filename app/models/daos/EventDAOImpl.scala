@@ -8,6 +8,7 @@ import models.gift.Event
 import models.user.User
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import com.github.nscala_time.time.Imports._
 
 import scala.concurrent.Future
 
@@ -78,10 +79,9 @@ class EventDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
           user.avatarURL)
         val event = result._1
         Event(event.id, creator, event.name, event.date, Event.Type(event.eventType))
-      }).distinct.toList
+      }).distinct.toList.sortBy(_.date).reverse
     }
   }
-
   /**
     * Saves a user.
     *

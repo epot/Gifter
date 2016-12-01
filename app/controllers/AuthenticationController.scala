@@ -47,6 +47,12 @@ class AuthenticationController @Inject() (
           val result = Redirect(routes.HomeController.index())
           userService.retrieve(loginInfo).flatMap {
             case Some(user) =>
+              user.email match {
+                case None =>
+                  // update email column for old accounts
+                  userService.save(user.copy(email=Some(data.email)))
+                  case _ =>
+              }
               val c = configuration.underlying
               silhouette.env.authenticatorService.create(loginInfo).map {
                 case authenticator if data.rememberMe =>

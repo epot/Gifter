@@ -53,7 +53,7 @@
         @if(giftForm("eventid").value.isDefined && event.eventType == Event.Type.Christmas) {
           @b3.select(
             giftForm("to"),
-            options = (for(p <- participants) yield (p.user.id.toString, p.user.fullName.get)).toSeq,
+            options = (for(p <- participants) yield (p.user.id.toString, p.user.userName)).toSeq,
             '_label -> Messages("gift.to"),
             '_help -> "",
             'class -> "form-control"

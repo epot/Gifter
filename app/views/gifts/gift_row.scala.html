@@ -15,11 +15,11 @@
   <td class="col-md-4">@g.name</td>
   <td class="col-md-1">
     @if(g.to.isDefined) {
-      @g.to.get.fullName
+      @g.to.get.userName
     }
   </td>
   <td class="col-md-1">
-    @if(g.toId != Some(user.id)) {
+    @if(g.to != Some(user)) {
       @if(g.from.isDefined) {
         <p class="bg-primary button-tooltip" data-toggle="tooltip" title="offert par @g.from.get.fullName">@g.status</p>
       } else {
@@ -36,7 +36,7 @@
         <a class="btn btn-default btn-sm" href="@routes.Events.viewGift(g.id.get)"><i class="glyphicon glyphicon-eye-open button-tooltip" data-toggle="tooltip" title="Voir détails"></i></a>
         <a class="btn btn-default btn-sm" href="@routes.Events.editGift(g.id.get)"><i class="glyphicon glyphicon-edit button-tooltip" data-toggle="tooltip" title="Modifier"></i></a>
         <a class="btn btn-default btn-sm open-gift-status-modal" data-id="@g.id.get"
-          @if(g.toId == Some(user.id) || (g.from.isDefined && g.from.get.id != user.id)) {
+          @if(g.to == Some(user) || (g.from.isDefined && g.from.get != user)) {
             disabled="disabled"
           }
           

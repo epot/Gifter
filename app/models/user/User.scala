@@ -16,4 +16,15 @@ case class User(
     avatarURL: Option[String]=None
 ) extends Identity {
   def isGuest = profiles.isEmpty
+  override def equals(that: Any) = {
+    that match {
+      case that: User => that.canEqual(this) && this.id == that.id
+      case _ => false
+    }
+  }
+
+  def userName = firstName match {
+    case Some(name) => name
+    case _ => fullName.getOrElse("Rene Coty")
+  }
 }

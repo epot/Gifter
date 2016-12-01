@@ -24,7 +24,7 @@
         @for(event <- events) {
           <tr eventid="@event.id.get">
             <td><a href="@routes.Events.event(event.id.get)">@event.name</a></td>
-            <td>@event.creator.fullName</td>
+            <td>@event.creator.userName</td>
             <td>@event.date.toDate().format("dd/MM/yyyy")</td>
             <td>@event.eventType</td>
             <td>

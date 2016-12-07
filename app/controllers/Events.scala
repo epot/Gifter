@@ -17,6 +17,7 @@ import models.user.User
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Json
 import utils.auth._
+import com.github.nscala_time.time.Imports._
 
 import scala.concurrent.Future
 
@@ -83,7 +84,7 @@ class Events @Inject() (
           giftDAO.findByEventId(request.identity, e.id.get).flatMap { gifts =>
             participantDAO.find(e.id.get).flatMap {participants =>
               WithOwnerOf.IsOwnerOf(participantDAO, eventid, request.identity).map { isOwnerOf =>
-                Ok(views.html.event(request.identity, e, gifts, participants, isOwnerOf))
+                Ok(views.html.event(request.identity, e, gifts.sortBy(g => g.gift.creationDate).reverse, participants, isOwnerOf))
               }
             }
           }
@@ -100,7 +101,7 @@ class Events @Inject() (
             giftDAO.findByEventId(request.identity, e.id.get).flatMap { gifts =>
               participantDAO.find(e.id.get).flatMap {participants =>
                 WithOwnerOf.IsOwnerOf(participantDAO, eventid, request.identity).map { isOwnerOf =>
-                  Ok(views.html.event(request.identity, e, gifts, participants, isOwnerOf, to))
+                  Ok(views.html.event(request.identity, e, gifts.sortBy(g => g.gift.creationDate).reverse, participants, isOwnerOf, to))
                 }
               }
             }

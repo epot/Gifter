@@ -37,7 +37,7 @@ class RegistrationController @Inject() (
       data => {
         userService.retrieve(LoginInfo(CredentialsProvider.ID, data.email)).flatMap {
           case Some(user) => Future.successful {
-            Ok(views.html.signIn(UserForms.registrationForm.fill(data))).flashing("error" -> "That email address is already taken.")
+            Redirect(routes.RegistrationController.registrationForm).flashing("error" -> "That email address is already taken.")
           }
           case None => saveProfile(data)
         }

@@ -34,10 +34,10 @@ object Gift {
   case class GiftWithNotification(gift: Gift, hasCommentNotification: Boolean)
 
   object Status extends Enumeration {
-    val New = Value(1, Messages.get("gift.statut.new"))
-    val AboutToBeBought = Value(2, Messages.get("gift.statut.abouttobebought"))
-    val Bought = Value(3, Messages.get("gift.statut.bought"))
-    val MarkedForDeletion = Value(4, Messages.get("gift.statut.markedfordeletion"))
+    val New = Value(1)
+    val AboutToBeBought = Value(2)
+    val Bought = Value(3)
+    val MarkedForDeletion = Value(4)
   }
 
   case class GiftContent(

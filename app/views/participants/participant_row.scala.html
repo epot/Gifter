@@ -20,11 +20,11 @@
           @if(p.role == role) {
             selected
           }
-          >@role</option>
+          >@messages("participant.status." + role.toString.toLowerCase)</option>
         }
       </select>
     } else {
-      @p.role
+      @messages("participant.status." + p.role.toString.toLowerCase)
     }
   </td>
 </tr>

@@ -5,10 +5,10 @@ email.from = Rene Coty <rene@coty.com>
 
 gift.to=Destiné à:
 gift.add=Ajouter une idée de cadeau
-gift.statut.new=Nouveau
-gift.statut.abouttobebought=En cours d''achat
-gift.statut.bought=Acheté
-gift.statut.markedfordeletion=Supprimé
+gift.status.new=New
+gift.status.abouttobebought=About to be bought
+gift.status.bought=Bought
+gift.status.markedfordeletion=Deleted
 gift.creator=Idée de:
 gift.view=Détails d'un cadeau
 gift.new=Gifter nouvelle idée de cadeau
@@ -32,13 +32,13 @@ event.create=Créer
 error.date=Date obligatoire
 
 participant.addemail=Ajouter un email d'utilisateur...
-participant.statut.owner=Administrateur
-participant.statut.gifter=Acheteur de cadeaux
-participant.statut.reader=Lecteur
+participant.status.owner=Administrator
+participant.status.gifter=Gifts buyer
+participant.status.reader=Reader
 
 
-event.type.birthday=Annniversaire
-event.type.christmas=Noël
+event.type.birthday=Birthday
+event.type.christmas=Christmas
 
 forgot.password.title = Forgot Password
 reset.password.title = Reset Password

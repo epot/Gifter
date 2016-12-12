@@ -26,7 +26,7 @@
 
       @b3.text(
           eventForm("name"),
-          '_label -> Messages.get("event.name"),
+          '_label -> messages("event.name"),
           '_help -> "",
           'class -> "form-control")      
           
@@ -34,11 +34,11 @@
           'class -> "form-control") { (id, name, value, _) =>
         <input type="text" class ="form-control" id="datepicker" name="@name" value="@value"/>
       }
-      @b3.select(eventForm("type"), options = options(Event.Type.values.toList.map(_.toString)), '_label -> "Type:", '_help -> "",
+      @b3.select(eventForm("type"), options = options(Event.Type.values.toList.map(x=> messages("event.type." + x.toString.toLowerCase))), '_label -> "Type:", '_help -> "",
           'class -> "form-control")
           
       <div class="actions">
-        <input type="submit" class="btn btn-primary" value="@Messages.get("event.create")" />
+        <input type="submit" class="btn btn-primary" value="@messages("event.create")" />
         <a href="@routes.HomeController.index">
           <input type="button" class="btn btn-danger" value="Annuler">
         </a>

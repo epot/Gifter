@@ -10,7 +10,7 @@
 
 @import models.gift._
 
-@userHomeTemplate(title = Messages.get("gift.view"), user = user) {
+@userHomeTemplate(title = messages("gift.view"), user = user) {
 
   <hr/>
   
@@ -32,7 +32,7 @@
       }
       <tr>
         <td>
-          <h5 class="text-left">@Messages.get("gift.creator")</h5>
+          <h5 class="text-left">@messages("gift.creator")</h5>
           <h6 class="text-left">@gift.creator.userName</h6>
         </td>
       </tr>

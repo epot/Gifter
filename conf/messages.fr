@@ -3,10 +3,10 @@ close=Fermer
 
 gift.to=Destiné à:
 gift.add=Ajouter une idée de cadeau
-gift.statut.new=Nouveau
-gift.statut.abouttobebought=En cours d''achat
-gift.statut.bought=Acheté
-gift.statut.markedfordeletion=Supprimé
+gift.status.new=Nouveau
+gift.status.abouttobebought=En cours d''achat
+gift.status.bought=Acheté
+gift.status.markedfordeletion=Supprimé
 gift.creator=Idée de:
 gift.view=Détails d'un cadeau
 gift.new=Gifter nouvelle idée de cadeau
@@ -48,9 +48,9 @@ strong.password.info = Un mot de passe complexe inclue de la ponctuation, des no
 error.date=Date obligatoire
 
 participant.addemail=Ajouter un nom d'utilisateur...
-participant.statut.owner=Administrateur
-participant.statut.gifter=Acheteur de cadeaux
-participant.statut.reader=Lecteur
+participant.status.owner=Administrateur
+participant.status.gifter=Acheteur de cadeaux
+participant.status.reader=Lecteur
 
 
 event.type.birthday=Annniversaire

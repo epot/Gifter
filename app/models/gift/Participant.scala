@@ -2,7 +2,6 @@ package models.gift
 
 import java.util.UUID
 import models.user._
-import play.i18n.Messages
 
 case class Participant(
   id: Option[Long] = None,
@@ -12,9 +11,9 @@ case class Participant(
 
 object Participant {
   object Role extends Enumeration {
-    val Owner = Value(1, Messages.get("participant.statut.owner"))
-    val Gifter = Value(2, Messages.get("participant.statut.gifter"))
-    val Reader = Value(3, Messages.get("participant.statut.reader"))
+    val Owner = Value(1)
+    val Gifter = Value(2)
+    val Reader = Value(3)
     class ParticipantVal(name: String, val x : String) extends Val(nextId, name)
     protected final def Value(name: String, x : String): ParticipantVal = new ParticipantVal(name, x)
   }

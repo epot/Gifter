@@ -28,12 +28,12 @@
       
       @if(addParticipantForm.error("email")) {
         <div class="form-group  has-error" id="email_field">
-       	  <input type="text" class="input-medium search-query" name="email" value="@addParticipantForm("email").value" placeholder="@play.i18n.Messages.get("participant.addemail")">
+       	  <input type="text" class="input-medium search-query" name="email" value="@addParticipantForm("email").value" placeholder="@messages("participant.addemail")">
 			<span id="email_error_0" class="help-block">@addParticipantForm.error("email").get.message</span>
 			<span id="email_info_0" class="help-block"></span>
         </div>
       } else {
-      	<input type="text" class="input-medium search-query" name="email" value="@addParticipantForm("email").value" placeholder="@play.i18n.Messages.get("participant.addemail")">
+      	<input type="text" class="input-medium search-query" name="email" value="@addParticipantForm("email").value" placeholder="@messages("participant.addemail")">
       }
       <select name="role">
         @for(role <- Participant.Role.values) {
@@ -41,7 +41,7 @@
             @if(role == addParticipantForm("role").value) {
               selected
             }
-            >@role</option>
+            >@messages("participant.status." + role.toString.toLowerCase)</option>
         }
       </select>
   

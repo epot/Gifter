@@ -26,7 +26,7 @@
             <td><a href="@routes.Events.event(event.id.get)">@event.name</a></td>
             <td>@event.creator.userName</td>
             <td>@event.date.toDate().format("dd/MM/yyyy")</td>
-            <td>@event.eventType</td>
+            <td>@messages("event.type." + event.eventType.toString.toLowerCase)</td>
             <td>
               <div class="btn-toolbar">
                 <div class="btn-group">

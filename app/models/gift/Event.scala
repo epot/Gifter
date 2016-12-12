@@ -1,7 +1,6 @@
 package models.gift
 
 import models.user._
-import play.i18n.Messages
 
 import org.joda.time.DateTime
 
@@ -24,7 +23,7 @@ case class Event(
 
 object Event {
   object Type extends Enumeration {
-    val Birthday = Value(1, Messages.get("event.type.birthday"))
-    val Christmas = Value(2, Messages.get("event.type.christmas"))
+    val Birthday = Value(1)
+    val Christmas = Value(2)
   }
 }

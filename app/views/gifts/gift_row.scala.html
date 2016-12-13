@@ -35,14 +35,14 @@
   <td class="col-md-5">
     <div class="text-centered">
       <div class="btn-group">
-        <a class="btn btn-default btn-sm" href="@routes.Events.viewGift(g.id.get)"><i class="glyphicon glyphicon-eye-open button-tooltip" data-toggle="tooltip" title="Voir détails"></i></a>
-        <a class="btn btn-default btn-sm" href="@routes.Events.editGift(g.id.get)"><i class="glyphicon glyphicon-edit button-tooltip" data-toggle="tooltip" title="Modifier"></i></a>
+        <a class="btn btn-default btn-sm" href="@routes.Events.viewGift(g.id.get)"><i class="glyphicon glyphicon-eye-open button-tooltip" data-toggle="tooltip" title="@messages("details")"></i></a>
+        <a class="btn btn-default btn-sm" href="@routes.Events.editGift(g.id.get)"><i class="glyphicon glyphicon-edit button-tooltip" data-toggle="tooltip" title="@messages("modify")"></i></a>
         <a class="btn btn-default btn-sm open-gift-status-modal" data-id="@g.id.get"
           @if(g.to == Some(user) || (g.from.isDefined && g.from.get != user)) {
             disabled=
           }
           
-          ><i class="glyphicon glyphicon-credit-card button-tooltip" data-toggle="tooltip" title="Acheter"></i></a>
+          ><i class="glyphicon glyphicon-credit-card button-tooltip" data-toggle="tooltip" title="@messages("gift.buy")"></i></a>
         <a class="btn btn-default btn-sm open-delete-modal" data-id="@g.id.get" data-action="deleteGift"
           @if(g.creator != user) {
             disabled=
@@ -55,7 +55,7 @@
             btn-default
           }
            btn-sm open-gift-comment-modal" data-id="@g.id.get">
-          <i class="glyphicon glyphicon-comment button-tooltip" data-toggle="tooltip" title="@Messages("gift.comment")"></i>
+          <i class="glyphicon glyphicon-comment button-tooltip" data-toggle="tooltip" title="@messages("gift.comment")"></i>
         </a>
       </div>
     </div>

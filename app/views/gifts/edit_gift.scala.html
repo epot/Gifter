@@ -35,7 +35,7 @@
     }
     @if(giftForm.hasErrors) {
         <div class="alert alert-danger" role="alert">
-            <p><strong>Oops</strong> Corrigez toutes les erreurs</p>
+            <p><strong>Oops</strong> @messages("form.errors")</p>
         </div>
     }
     <div class="well new-gift">
@@ -45,16 +45,16 @@
       <input type="hidden" id="eventid" name="eventid" value="@giftForm("eventid").value"> 
       @b3.text(
           giftForm("name"),
-          '_label -> "Description du cadeau:",
+          '_label -> messages("gift.description"),
           '_help -> "",
-            '_error -> giftForm.error("name"),
+          '_error -> giftForm.error("name"),
           'class -> "form-control")      
           
         @if(giftForm("eventid").value.isDefined && event.eventType == Event.Type.Christmas) {
           @b3.select(
             giftForm("to"),
             options = (for(p <- participants) yield (p.user.id.toString, p.user.userName)).toSeq,
-            '_label -> Messages("gift.to"),
+            '_label -> messages("gift.to"),
             '_help -> "",
             'class -> "form-control"
           )
@@ -77,7 +77,7 @@
         
         <div class="clearfix">
           <div class="input">
-            <a class="addUrl btn btn-success">Ajouter un lien</a>
+            <a class="addUrl btn btn-success">@messages("gift.add.link")</a>
           </div>
         </div
       </div>
@@ -86,9 +86,9 @@
       <hr/>
           
       <div class="actions">
-        <input type="submit" class="btn btn-primary" value="Soumettre" />
+        <input type="submit" class="btn btn-primary" value="@messages("submit")" />
         <a href="@routes.Events.event(giftForm("eventid").value.get.toLong)">
-          <input type="button" class="btn btn-danger" value="Annuler">
+          <input type="button" class="btn btn-danger" value="@messages("cancel")">
         </a>
       </div>              
     </div>

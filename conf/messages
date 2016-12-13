@@ -1,41 +1,71 @@
 
 close=Close
+submit=Submit
+cancel=Cancel
+connection=Connection
+add=Add
+details=View details
+modify=Modify
+profile=Profile
+logout=Log out
 
 email.from = Rene Coty <rene@coty.com>
 
-gift.to=Destiné à:
-gift.add=Ajouter une idée de cadeau
+gift.to=Intended for:
+gift.add=Add a gift''s idea
 gift.status.new=New
 gift.status.abouttobebought=About to be bought
 gift.status.bought=Bought
 gift.status.markedfordeletion=Deleted
-gift.creator=Idée de:
-gift.view=Détails d'un cadeau
-gift.new=Gifter nouvelle idée de cadeau
+gift.creator=Idea from:
+gift.view=Gift''s details
+gift.new=Giftyou new gift''s idea
 gift.comment=Comment
 gift.comment.add=Add
 gift.comment.your=Your comment...
-gift.comment=Comment on "{0}"
+gift.comment.modal.title=Comment on "{0}"
+gift.gifts=Gifts
+gift.buy=Buy
 
-gift.delete.confirm.title=Confirmer la suppression
-gift.delete.confirm.message=Si vous supprimez ce cadeau, tout le monde va être déçu. Etes vous bien sur ?
+gift.description=Gift''s description:
+gift.add.link=Add a link
 
-event.delete.confirm.title=Confirmer la suppression
-event.delete.confirm.message=Si vous supprimez cet événement, tout le monde va être déçu. Etes vous bien sur ?
+gift.column.description=Description
+gift.column.for=For
+gift.column.status=Status
+gift.column.links=Links
+gift.column.actions=Actions
 
-event.list=Evénements
-event.new=Nouvel événement
+gift.filter.name=Filter by name
+gift.filter.status=Filter by status
 
-event.name=Nom de l''événement:
-event.create=Créer
+gift.delete.confirm.title=Confirm deletion
+gift.delete.confirm.message=If you delete this gift, everyone will be disappointed. Are you really sure ?
 
-error.date=Date obligatoire
+event.delete.confirm.title=Confirm deletion
+event.delete.confirm.message=If you delete this event, everyone will be disappointed. Are you really sure ?
 
-participant.addemail=Ajouter un email d'utilisateur...
+event.list=Events
+event.new=New event
+
+event.name=Name:
+event.create=Create
+
+error.date=Date is mandatory
+event.column.name=Event
+event.column.creator=Creator
+event.column.date=Date
+event.column.type=Type
+event.column.actions=Actions
+
+participant.addemail=Add a user''s email...
 participant.status.owner=Administrator
 participant.status.gifter=Gifts buyer
 participant.status.reader=Reader
+participant.participants=Participants
 
+participant.column.name=Name
+participant.column.status=Status
 
 event.type.birthday=Birthday
 event.type.christmas=Christmas
@@ -71,3 +101,12 @@ twitter = Twitter
 vk = VK
 xing = Xing
 yahoo = Yahoo
+
+signin.header = Create a new account
+signin.password=Password
+signin.password.confirm=Password confirmation
+
+index.create.account=Or create a new account
+index.sign.providers=Or sign in using these providers
+
+form.errors=Fix all the errors

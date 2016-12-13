@@ -1,5 +1,13 @@
 
 close=Fermer
+submit=Soumettre
+cancel=Annuler
+connection=Connexion
+add=Ajouter
+details=Voir détails
+modify=Modifier
+profile=Profile
+logout=Déconnexion
 
 gift.to=Destiné à:
 gift.add=Ajouter une idée de cadeau
@@ -14,6 +22,20 @@ gift.comment=Commenter
 gift.comment.add=Ajouter
 gift.comment.your=Votre commentaire...
 gift.comment.modal.title=Commenter à propos de "{0}"
+gift.gifts=Cadeaux
+gift.buy=Acheter
+
+gift.description=Description du cadeau:
+gift.add.link=Ajouter un lien
+
+gift.column.description=Description
+gift.column.for=Pour
+gift.column.status=Statut
+gift.column.links=Liens
+gift.column.actions=Actions
+
+gift.filter.name=Filtrer par nom
+gift.filter.status=Filtrer par statut
 
 gift.delete.confirm.title=Confirmer la suppression
 gift.delete.confirm.message=Si vous supprimez ce cadeau, tout le monde va être déçu. Etes vous bien sur ?
@@ -26,6 +48,14 @@ event.new=Nouvel événement
 
 event.name=Nom de l''événement:
 event.create=Créer
+
+error.date=Date obligatoire
+
+event.column.name=Evénement
+event.column.creator=Créateur
+event.column.date=Date
+event.column.type=Type
+event.column.actions=Actions
 
 forgot.password.title = Mot de passe oublié
 reset.password.title = Reset mot de passe
@@ -44,14 +74,23 @@ password.reset = Le mot de passe a bien ete change, merci de vous authentifier a
 password.changed = Votre mot de passe a bien été changé.
 strong.password.info = Un mot de passe complexe inclue de la ponctuation, des nombres et de la ponctuation.
 
-
-error.date=Date obligatoire
-
 participant.addemail=Ajouter un nom d'utilisateur...
 participant.status.owner=Administrateur
 participant.status.gifter=Acheteur de cadeaux
 participant.status.reader=Lecteur
+participant.participants=Participants
 
+participant.column.name=Nom
+participant.column.status=Statut
 
 event.type.birthday=Annniversaire
 event.type.christmas=Noël
+
+signin.header=Création de nouveau compte
+signin.password=Mot de passe
+signin.password.confirm=Confirmation du mot de passe
+
+index.create.account=Ou créer un nouveau compte
+index.sign.providers=Ou connectez vous avec l'un des fournisseurs suivants
+
+form.errors=Corrigez toutes les erreurs

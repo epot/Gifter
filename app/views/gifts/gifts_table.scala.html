@@ -9,13 +9,13 @@
 <table id="gifts-table" class="table table-striped table-hover table-bordered tablesorter">
   <thead>
     <tr>
-      <th>Description</th>
+      <th>@messages("gift.column.description")</th>
       @if(event.eventType == Event.Type.Christmas) {
-        <th class="filter-select filter-exact" data-placeholder="Filtrer par nom">Pour</th>
+        <th class="filter-select filter-exact" data-placeholder="@messages("gift.filter.name")">@messages("gift.column.for")</th>
       }
-      <th class="filter-select filter-exact" data-placeholder="Filtrer par statut">Statut</th>
-      <th>Liens</th>
-      <th>Actions</th>
+      <th class="filter-select filter-exact" data-placeholder="@messages("gift.filter.status")">@messages("gift.column.status")</th>
+      <th>@messages("gift.column.links")</th>
+      <th>@messages("gift.column.actions")</th>
     </tr>
   </thead>
   <tbody>

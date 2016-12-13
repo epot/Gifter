@@ -32,9 +32,9 @@
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown">@u.userName<b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                      <li><a href="@routes.ProfileController.profile">Profil</a></li>
+                      <li><a href="@routes.ProfileController.profile">@messages("profile")</a></li>
                       <li class="divider"></li>
-                      <li><a href="@routes.AuthenticationController.signOut">Déconnexion</a></li>
+                      <li><a href="@routes.AuthenticationController.signOut">@messages("logout")</a></li>
                     </ul>
                   </li>
               </ul>

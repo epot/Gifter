@@ -8,7 +8,7 @@
   <div class="container">
     <div class="content">
       <div class="page-header">
-      <h1>Creation de nouveau compte</h1>
+      <h1>messages("signin.header")</h1>
       </div>
       
       <div class="row"><div class="span14">
@@ -31,23 +31,22 @@
 
             @b3.password(
               userForm("password.main"),
-              '_label -> "Mot de passe",
+              '_label -> messages("signin.password"),
               '_help -> "",
               'class -> "form-control"
             )
 
             @b3.password(
               userForm("password.confirm"),
-              '_label -> "Confirmation du mot de passe",
+              '_label -> messages("signin.password.confirm"),
               '_error -> userForm.error("password"),
               'class -> "form-control"  
             )
-            @b3.checkbox(userForm("rememberMe"), '_text -> Messages("remember.me"), 'checked -> true)
           </fieldset>
           <div class="actions">
-            <input type="submit" value="Soumettre" class="btn btn-primary"/>
+            <input type="submit" value="@messages("submit")" class="btn btn-primary"/>
             <a href="@routes.HomeController.index">
-              <input type="button" class="btn btn-default" value="Annuler">
+              <input type="button" class="btn btn-default" value="@messages("cancel")">
             </a>
           </div>
         }

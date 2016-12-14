@@ -105,6 +105,11 @@ yahoo = Yahoo
 signin.header = Create a new account
 signin.password=Password
 signin.password.confirm=Password confirmation
+signin.name=Username
+signin.firstname=First name
+signin.lastname=Last name
+signin.email=E-mail
+signin.avatarurl=Avatar URL
 
 index.create.account=Or create a new account
 index.sign.providers=Or sign in using these providers

@@ -1,34 +1,30 @@
 package models.daos
 
-import java.util.{Date, UUID}
+import java.sql.Timestamp
+import java.util.UUID
+import javax.inject.Inject
 
-import com.github.tototoshi.slick.PostgresJodaSupport._
 import models.AuthToken
-import models.daos.AuthTokenDAOImpl._
 import org.joda.time.DateTime
-import play.api.db.slick.HasDatabaseConfigProvider
-import slick.driver.JdbcProfile
+import play.api.db.slick.DatabaseConfigProvider
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
-import scala.collection.mutable
 import scala.concurrent.Future
-
-trait CompaniesComponent { self: HasDatabaseConfigProvider[JdbcProfile] =>
-  import driver.api._
-
-  implicit val dateColumnType = MappedColumnType.base[Date, Long](d => d.getTime, d => new Date(d))
-
-  class AuthTokens(tag: Tag) extends Table[AuthToken](tag, "auth_token") {
-    def id = column[UUID]("id", O.PrimaryKey)
-    def userId = column[UUID]("userid")
-    def expiry = column[DateTime]("expiry")
-    def * = (id, userId, expiry) <> (AuthToken.tupled, AuthToken.unapply _)
-  }
-}
 
 /**
  * Give access to the [[AuthToken]] object.
  */
-class AuthTokenDAOImpl extends AuthTokenDAO {
+
+
+class AuthTokenDAOImpl @Inject()(
+  protected val dbConfigProvider: DatabaseConfigProvider) extends AuthTokenDAO with DAOSlick {
+
+  import driver.api._
+
+  implicit def jodaTimeMapping: BaseColumnType[DateTime] = MappedColumnType.base[DateTime, Timestamp] (
+    dateTime => new Timestamp(dateTime.getMillis),
+    timeStamp => new DateTime(timeStamp.getTime)
+  )
 
   /**
    * Finds a token by its ID.
@@ -36,18 +32,17 @@ class AuthTokenDAOImpl extends AuthTokenDAO {
    * @param id The unique token ID.
    * @return The found token or None if no token for the given ID could be found.
    */
-  def find(id: UUID) = Future.successful(tokens.get(id))
+  def find(id: UUID) = {
+    db.run(slickAuthToken.filter(_.id === id).result.headOption)
+  }
 
   /**
    * Finds expired tokens.
    *
    * @param dateTime The current date time.
    */
-  def findExpired(dateTime: DateTime) = Future.successful {
-    tokens.filter {
-      case (id, token) =>
-        token.expiry.isBefore(dateTime)
-    }.values.toSeq
+  def findExpired(dateTime: DateTime) = {
+    db.run(slickAuthToken.filter(_.expiry < dateTime).result)
   }
 
   /**
@@ -57,8 +52,7 @@ class AuthTokenDAOImpl extends AuthTokenDAO {
    * @return The saved token.
    */
   def save(token: AuthToken) = {
-    tokens += (token.id -> token)
-    Future.successful(token)
+    dbConfig.db.run(slickAuthToken.insertOrUpdate(token)).map(_ => token)
   }
 
   /**
@@ -68,18 +62,6 @@ class AuthTokenDAOImpl extends AuthTokenDAO {
    * @return A future to wait for the process to be completed.
    */
   def remove(id: UUID) = {
-    tokens -= id
-    Future.successful(())
+    db.run(slickAuthToken.filter(_.id === id).delete).map(_ => ())
   }
-}
-
-/**
- * The companion object.
- */
-object AuthTokenDAOImpl {
-
-  /**
-   * The list of tokens.
-   */
-  val tokens: mutable.HashMap[UUID, AuthToken] = mutable.HashMap()
 }

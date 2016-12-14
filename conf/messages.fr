@@ -89,6 +89,11 @@ event.type.christmas=Noël
 signin.header=Création de nouveau compte
 signin.password=Mot de passe
 signin.password.confirm=Confirmation du mot de passe
+signin.name=Nom d''utilisateur
+signin.firstname=Prénom
+signin.lastname=Nom de famille
+signin.email=E-mail
+signin.avatarurl=URL de votre avatar
 
 index.create.account=Ou créer un nouveau compte
 index.sign.providers=Ou connectez vous avec l'un des fournisseurs suivants

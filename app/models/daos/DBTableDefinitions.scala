@@ -7,6 +7,7 @@ import org.joda.time.DateTime
 import slick.driver.JdbcProfile
 import slick.lifted.ProvenShape.proveShapeOf
 import com.github.tototoshi.slick.PostgresJodaSupport._
+import models.AuthToken
 
 
 trait DBTableDefinitions {
@@ -234,6 +235,13 @@ trait DBTableDefinitions {
     def * = (id, key, value) <> (DBOpenIDAttribute.tupled, DBOpenIDAttribute.unapply)
   }
 
+  class AuthTokens(tag: Tag) extends Table[AuthToken](tag, "auth_token") {
+    def id = column[UUID]("id", O.PrimaryKey)
+    def userId = column[UUID]("userid")
+    def expiry = column[DateTime]("expiry")
+    def * = (id, userId, expiry) <> (AuthToken.tupled, AuthToken.unapply _)
+  }
+
   // table query definitions
   val slickUsers = TableQuery[Users]
   val slickLoginInfos = TableQuery[LoginInfos]
@@ -249,6 +257,7 @@ trait DBTableDefinitions {
   val slickHistory = TableQuery[HistoryT]
   val slickComment = TableQuery[Comments]
   val slickNotification = TableQuery[Notifications]
+  val slickAuthToken = TableQuery[AuthTokens]
 
   // queries used in multiple places
   def loginInfoQuery(loginInfo: LoginInfo) = 

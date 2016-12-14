@@ -52,7 +52,10 @@ class RegistrationController @Inject() (
               id = UUID.randomUUID(),
               profiles = Seq(loginInfo),
               fullName = Some(data.username),
-              email=Some(data.email)
+              email=Some(data.email),
+              avatarURL = Some(data.avatarURL),
+              firstName = Some(data.firstName),
+              lastName = Some(data.lastName)
             )  
     val profile = CommonSocialProfile(
       loginInfo = loginInfo,

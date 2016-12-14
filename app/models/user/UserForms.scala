@@ -34,7 +34,10 @@ object UserForms {
         ).verifying(
           // Add an additional constraint: both passwords must match
           "Passwords do not match", passwords => passwords._1 == passwords._2
-      )
+      ),
+      "firstname" -> text,
+      "lastname" -> text,
+      "avatarurl" -> text
     )(RegistrationData.apply)(RegistrationData.unapply)
   )
 }

@@ -41,7 +41,7 @@
             @if(role == addParticipantForm("role").value) {
               selected
             }
-            >@messages("participant.status." + role.toString.toLowerCase)</option>
+            value="@role">@messages("participant.status." + role.toString.toLowerCase)</option>
         }
       </select>
   

@@ -9,17 +9,17 @@ import com.mohiva.play.silhouette.api.util.{Credentials, PasswordHasherRegistry,
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import forms.ChangePasswordForm
 import models.services.UserService
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.Controller
+import org.webjars.play.WebJarAssets
+import play.api.i18n.{I18nSupport, Messages}
+import play.api.mvc.{AbstractController, ControllerComponents}
 import utils.auth.{DefaultEnv, WithProvider}
-import play.api.libs.concurrent.Execution.Implicits._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * The `Change Password` controller.
  *
- * @param messagesApi            The Play messages API.
+ * @param components            ControllerComponents
  * @param silhouette             The Silhouette stack.
  * @param userService            The user service implementation.
  * @param credentialsProvider    The credentials provider.
@@ -28,14 +28,15 @@ import scala.concurrent.Future
  * @param webJarAssets           The WebJar assets locator.
  */
 class ChangePasswordController @Inject() (
-  val messagesApi: MessagesApi,
+  components: ControllerComponents,
   silhouette: Silhouette[DefaultEnv],
   userService: UserService,
   credentialsProvider: CredentialsProvider,
   authInfoRepository: AuthInfoRepository,
-  passwordHasherRegistry: PasswordHasherRegistry,
-  implicit val webJarAssets: WebJarAssets)
-  extends Controller with I18nSupport {
+  passwordHasherRegistry: PasswordHasherRegistry)(
+  implicit val webJarAssets: WebJarAssets,
+  ex: ExecutionContext)
+  extends AbstractController(components) with I18nSupport {
 
   /**
    * Views the `Change Password` page.

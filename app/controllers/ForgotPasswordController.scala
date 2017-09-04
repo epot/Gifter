@@ -6,18 +6,18 @@ import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import forms.ForgotPasswordForm
 import models.services.{AuthTokenService, UserService}
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.concurrent.Execution.Implicits._
+import org.webjars.play.WebJarAssets
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.libs.mailer.{Email, MailerClient}
-import play.api.mvc.Controller
+import play.api.mvc.{AbstractController, ControllerComponents}
 import utils.auth.DefaultEnv
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * The `Forgot Password` controller.
  *
- * @param messagesApi      The Play messages API.
+ * @param components       ControllerComponents
  * @param silhouette       The Silhouette stack.
  * @param userService      The user service implementation.
  * @param authTokenService The auth token service implementation.
@@ -25,13 +25,15 @@ import scala.concurrent.Future
  * @param webJarAssets     The WebJar assets locator.
  */
 class ForgotPasswordController @Inject() (
-  val messagesApi: MessagesApi,
+  components: ControllerComponents,
   silhouette: Silhouette[DefaultEnv],
   userService: UserService,
   authTokenService: AuthTokenService,
-  mailerClient: MailerClient,
-  implicit val webJarAssets: WebJarAssets)
-  extends Controller with I18nSupport {
+  mailerClient: MailerClient
+ )(
+  implicit val webJarAssets: WebJarAssets,
+  ex: ExecutionContext)
+  extends AbstractController(components) with I18nSupport {
 
   /**
    * Views the `Forgot Password` page.

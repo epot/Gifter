@@ -26,8 +26,10 @@
 	      }
           
           <fieldset>
-            @b3.text(userForm("username"), '_label -> "Nom", '_help -> "", 'class -> "form-control")
-            @b3.text(userForm("email"), '_label -> "Email", '_help -> "", 'class -> "form-control")
+            @b3.text(userForm("username"), '_label -> messages("signin.name"), '_help -> "", 'class -> "form-control")
+            @b3.text(userForm("email"), '_label -> messages("signin.email"), '_help -> "", 'class -> "form-control")
+            @b3.text(userForm("firstname"), '_label -> messages("signin.firstname"), '_help -> "", 'class -> "form-control")
+            @b3.text(userForm("lastname"), '_label -> messages("signin.lastname"), '_help -> "", 'class -> "form-control")
 
             @b3.password(
               userForm("password.main"),
@@ -42,6 +44,8 @@
               '_error -> userForm.error("password"),
               'class -> "form-control"  
             )
+            @b3.text(userForm("avatarurl"), '_label -> messages("signin.avatarurl"), '_help -> "", 'class -> "form-control")
+
           </fieldset>
           <div class="actions">
             <input type="submit" value="@messages("submit")" class="btn btn-primary"/>

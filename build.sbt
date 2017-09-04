@@ -4,7 +4,7 @@ version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.12.3"
 
 resolvers ++= Seq(
   "Atlassian Releases" at "https://maven.atlassian.com/public/",
@@ -13,29 +13,30 @@ resolvers ++= Seq(
 resolvers += Resolver.jcenterRepo
 
 libraryDependencies ++= Seq(
-  cache,
+  ehcache,
   evolutions,
+  guice,
   // anorm is now an external dependency (since play2.4)
-  "com.typesafe.play" %% "anorm" % "2.5.2",
+  "com.typesafe.play" %% "anorm" % "2.5.3",
   // use http://play-bootstrap3.herokuapp.com/
-  "com.adrianhurt" %% "play-bootstrap" % "1.1-P25-B3",
+  "com.adrianhurt" %% "play-bootstrap" % "1.2-P26-B3",
   // silouhette to handle google/yahoo authentification dude dude dude
-  "com.mohiva" %% "play-silhouette" % "4.0.0",
-  "com.mohiva" %% "play-silhouette-persistence" % "4.0.0",
-  "com.mohiva" %% "play-silhouette-crypto-jca" % "4.0.0",
-  "org.webjars" %% "webjars-play" % "2.5.0-2",
-  "com.typesafe.play" %% "play-mailer" % "5.0.0",
-  "com.enragedginger" %% "akka-quartz-scheduler" % "1.5.0-akka-2.4.x",
-  "com.github.nscala-time" %% "nscala-time" % "2.14.0",
+  "com.mohiva" %% "play-silhouette" % "5.0.0",
+  "com.mohiva" %% "play-silhouette-persistence" % "5.0.0",
+  "com.mohiva" %% "play-silhouette-crypto-jca" % "5.0.0",
+  "org.webjars" %% "webjars-play" % "2.6.2",
+  "com.typesafe.play" %% "play-mailer" % "6.0.1",
+  "com.typesafe.play" %% "play-mailer-guice" % "6.0.1",
+  "com.enragedginger" %% "akka-quartz-scheduler" % "1.6.1-akka-2.5.x",
+  "com.github.nscala-time" %% "nscala-time" % "2.16.0",
   // async postgres
-  "com.kyleu" %% "jdub-async" % "1.0",
-  "org.postgresql" % "postgresql" % "9.4.1212",
-  "com.mohiva" %% "play-silhouette-password-bcrypt" % "4.0.0",
-  "com.iheart" %% "ficus" % "1.2.6",
-  "net.codingwell" %% "scala-guice" % "4.0.1",
-  "com.typesafe.play" %% "play-slick" % "2.0.0",
-  "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0",
-  "com.github.tototoshi" %% "slick-joda-mapper" % "2.2.0"
+  "org.postgresql" % "postgresql" % "42.1.4",
+  "com.mohiva" %% "play-silhouette-password-bcrypt" % "5.0.0",
+  "com.iheart" %% "ficus" % "1.4.2",
+  "net.codingwell" %% "scala-guice" % "4.1.0",
+  "com.typesafe.play" %% "play-slick" % "3.0.1",
+  "com.typesafe.play" %% "play-slick-evolutions" % "3.0.1",
+  "com.github.tototoshi" %% "slick-joda-mapper" % "2.3.0"
 )
 
 includeFilter in (Assets, LessKeys.less) := "*.less"

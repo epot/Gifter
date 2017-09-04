@@ -4,15 +4,18 @@ import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api.Silhouette
 import models.daos.EventDAO
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Controller}
+import play.api.i18n.I18nSupport
+import play.api.mvc.{AbstractController, ControllerComponents}
 import utils.auth.DefaultEnv
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+
+import scala.concurrent.ExecutionContext
 
 class HomeController @Inject() (
-  val messagesApi: MessagesApi,
+  components: ControllerComponents,
   eventDAO: EventDAO,
-  silhouette: Silhouette[DefaultEnv]) extends Controller with I18nSupport {
+  silhouette: Silhouette[DefaultEnv])(
+  implicit ex: ExecutionContext
+) extends AbstractController(components) with I18nSupport {
 
   def index = silhouette.SecuredAction.async { implicit request =>
     eventDAO.findByUser(request.identity).map { events =>

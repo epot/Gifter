@@ -7,25 +7,24 @@ import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.services.AvatarService
 import com.mohiva.play.silhouette.api.util.PasswordHasherRegistry
 import com.mohiva.play.silhouette.api.{LoginEvent, LoginInfo, SignUpEvent, Silhouette}
-import com.mohiva.play.silhouette.impl.providers.{CommonSocialProfile, CredentialsProvider}
+import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import models.services.UserService
 import models.user.{RegistrationData, UserForms}
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.mvc.{AnyContent, Controller, Request}
+import play.api.i18n.I18nSupport
+import play.api.mvc._
 import models.user.User
 import utils.auth.DefaultEnv
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class RegistrationController @Inject() (
-    val messagesApi: MessagesApi,
+    components: ControllerComponents,
     silhouette: Silhouette[DefaultEnv],
     passwordHasherRegistry: PasswordHasherRegistry,
     avatarService: AvatarService,
     authInfoRepository: AuthInfoRepository,
     userService: UserService
-) extends Controller with I18nSupport {
+)(implicit ex: ExecutionContext) extends AbstractController(components) with I18nSupport {
 
   def registrationForm = silhouette.UserAwareAction.async { implicit request =>
     Future.successful(Ok(views.html.signIn(UserForms.registrationForm)))
@@ -36,7 +35,7 @@ class RegistrationController @Inject() (
       form => Future.successful(BadRequest(views.html.signIn(form))),
       data => {
         userService.retrieve(LoginInfo(CredentialsProvider.ID, data.email)).flatMap {
-          case Some(user) => Future.successful {
+          case Some(_) => Future.successful {
             Redirect(routes.RegistrationController.registrationForm).flashing("error" -> "That email address is already taken.")
           }
           case None => saveProfile(data)
@@ -57,16 +56,12 @@ class RegistrationController @Inject() (
               firstName = Some(data.firstName),
               lastName = Some(data.lastName)
             )  
-    val profile = CommonSocialProfile(
-      loginInfo = loginInfo,
-      email = Some(data.email)
-    )
-    
+
     val r = Redirect(controllers.routes.HomeController.index())
     for {
-      avatar <- avatarService.retrieveURL(data.email)
+      _ <- avatarService.retrieveURL(data.email)
       u <- userService.save(user)
-      authInfo <- authInfoRepository.add(loginInfo, authInfo)
+      _ <- authInfoRepository.add(loginInfo, authInfo)
       authenticator <- silhouette.env.authenticatorService.create(loginInfo)
       value <- silhouette.env.authenticatorService.init(authenticator)
       result <- silhouette.env.authenticatorService.embed(value, r)

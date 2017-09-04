@@ -8,21 +8,19 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import org.joda.time.DateTime
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.I18nSupport
 import com.mohiva.play.silhouette.api.Silhouette
 import models.daos._
 import models.gift.Comment.CommentSimple
 import models.services.UserService
 import models.user.User
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Json
 import utils.auth._
 import com.github.nscala_time.time.Imports._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class Events @Inject() (
-   val messagesApi: MessagesApi,
+class Events @Inject() (components: ControllerComponents,
    userService: UserService,
    eventDAO: EventDAO,
    commentDAO: CommentDAO,
@@ -30,8 +28,10 @@ class Events @Inject() (
    notificationDAO: NotificationDAO,
    giftDAO: GiftDAO,
    historyDAO: HistoryDAO,
-   silhouette: Silhouette[DefaultEnv])
-  extends Controller with I18nSupport {
+   silhouette: Silhouette[DefaultEnv])(
+   implicit ex: ExecutionContext
+)
+  extends AbstractController(components) with I18nSupport {
 
   val eventForm = Form[EventSimple](
     tuple(

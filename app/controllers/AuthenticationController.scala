@@ -11,34 +11,33 @@ import com.mohiva.play.silhouette.api.util.{Clock, Credentials}
 import com.mohiva.play.silhouette.api.{Logger, LoginEvent, LogoutEvent, Silhouette}
 import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
 import com.mohiva.play.silhouette.impl.providers._
-import models.user.{User, UserForms}
-import models.services.{UserService}
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.{Action, Controller}
+import models.user.UserForms
+import models.services.UserService
+import play.api.i18n.I18nSupport
+import play.api.mvc.{AbstractController, ControllerComponents}
 import utils.auth.DefaultEnv
 
 import scala.language.postfixOps
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.FiniteDuration
 
-@javax.inject.Singleton
 class AuthenticationController @Inject() (
-  val messagesApi: MessagesApi,
+  components: ControllerComponents,
   silhouette: Silhouette[DefaultEnv],
   credentialsProvider: CredentialsProvider,
   configuration: Configuration,
   authInfoRepository: AuthInfoRepository,
   socialProviderRegistry: SocialProviderRegistry,
   userService: UserService,
-  clock: Clock) extends Controller with I18nSupport with Logger {
+  clock: Clock)(
+ implicit ex: ExecutionContext
+) extends AbstractController(components) with I18nSupport with Logger {
 
   def signInForm = silhouette.UnsecuredAction.async { implicit request =>
     Future.successful(Ok(views.html.index(UserForms.signInForm, socialProviderRegistry)))
   }
 
   def authenticateCredentials = silhouette.UnsecuredAction.async { implicit request =>
-    logger.info("slip")
     UserForms.signInForm.bindFromRequest.fold(
       form => Future.successful(BadRequest(views.html.index(form, socialProviderRegistry))),
       data => {

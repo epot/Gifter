@@ -25,6 +25,7 @@ libraryDependencies ++= Seq(
   "com.mohiva" %% "play-silhouette-persistence" % "5.0.0",
   "com.mohiva" %% "play-silhouette-crypto-jca" % "5.0.0",
   "org.webjars" %% "webjars-play" % "2.6.2",
+  "org.webjars" % "bootstrap" % "3.3.7-1",
   "com.typesafe.play" %% "play-mailer" % "6.0.1",
   "com.typesafe.play" %% "play-mailer-guice" % "6.0.1",
   "com.enragedginger" %% "akka-quartz-scheduler" % "1.6.1-akka-2.5.x",

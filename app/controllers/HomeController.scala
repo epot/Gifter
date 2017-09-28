@@ -19,7 +19,6 @@ class HomeController @Inject() (
 
   def index = silhouette.SecuredAction.async { implicit request =>
     eventDAO.findByUser(request.identity).map { events =>
-      events.foreach(println)
       Ok(views.html.userHome(request.identity, events))
     }
   }

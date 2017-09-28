@@ -59,7 +59,6 @@ class Events @Inject() (components: ControllerComponents,
   def postNewEvent() = silhouette.SecuredAction.async { implicit request =>
     eventForm.bindFromRequest.fold(
       errors => {
-        println(errors)
         Future.successful(BadRequest(views.html.newEvent(request.identity, errors)))
       },
       event => {
@@ -183,7 +182,6 @@ class Events @Inject() (components: ControllerComponents,
   def postEditGift(eventid: Long) = silhouette.SecuredAction(WithParticipantOf[DefaultEnv#A](participantDAO, eventid)).async { implicit request =>
     giftForm.bindFromRequest.fold(
       errors => {
-        println(errors)
         eventDAO.find(eventid).flatMap { case (maybeEvent) =>
           maybeEvent match {
             case Some(event) =>
@@ -378,7 +376,6 @@ class Events @Inject() (components: ControllerComponents,
   def postGiftComment(giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftDAO, participantDAO, giftid)).async { implicit request =>
     Form("comment" -> nonEmptyText).bindFromRequest.fold(
       errors => {
-        println(errors)
         Future.successful(BadRequest)
       },
       comment => {

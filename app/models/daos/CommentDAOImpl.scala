@@ -5,22 +5,24 @@ import javax.inject.Inject
 import models.gift.{Comment, Notification}
 import models.user.User
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import com.github.nscala_time.time.Imports._
+
+import scala.concurrent.ExecutionContext
 
 /**
   * Give access to the user object using Slick
   */
 class CommentDAOImpl @Inject()(
   participantDAO: ParticipantDAO,
-  protected val dbConfigProvider: DatabaseConfigProvider) extends CommentDAO with DAOSlick {
+  protected val dbConfigProvider: DatabaseConfigProvider,
+  implicit val ex: ExecutionContext) extends CommentDAO with DAOSlick {
 
-  import driver.api._
+  import profile.api._
 
-  def findByCategoryAndId(category: Comment.Category.Value, objectid: Long) = {
+  def findByCategoryAndId(category: Comment.Category, objectid: Long) = {
 
     val commentQuery = for {
-      dbComment <- slickComment.filter(c => c.category === category.id && c.objectId === objectid)
+      dbComment <- slickComment.filter(c => c.category === Comment.Category.id(category) && c.objectId === objectid)
       dbUser <- slickUsers.filter(_.id === dbComment.userId)
     } yield (dbComment, dbUser)
     db.run(commentQuery.result).map { results =>
@@ -36,7 +38,7 @@ class CommentDAOImpl @Inject()(
           user.email,
           user.avatarURL)
 
-        Comment(c.id, c.objectId, userObj, c.creationDate, Comment.Category(c.category), c.content)
+        Comment(c.id, c.objectId, userObj, c.creationDate, Comment.Category.fromId(c.category), c.content)
       }).toList.sortBy(_.creationDate)
     }
   }
@@ -47,14 +49,14 @@ class CommentDAOImpl @Inject()(
       c.user.id,
       c.objectid,
       c.creationDate,
-      c.category.id,
+      Comment.Category.id(c.category),
       c.content)
 
     c.category match {
       case Comment.Category.Gift =>
         participantDAO.findByGiftId(c.objectid).map { participants =>
           val toInsert = for(p <- participants if p.user != c.user) yield {
-            DBNotification(None, p.user.id, c.objectid, Notification.Category.GiftComment.id)
+            DBNotification(None, p.user.id, c.objectid, Notification.Category.id(Notification.Category.GiftComment))
           }
           db.run(DBIO.seq(slickNotification ++= toInsert).transactionally)
         }

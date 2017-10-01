@@ -7,18 +7,18 @@ import com.mohiva.play.silhouette.api.LoginInfo
 import models.gift.Event
 import models.user.User
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import com.github.nscala_time.time.Imports._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 
 /**
  * Give access to the user object using Slick
  */
-class EventDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends EventDAO with DAOSlick {
+class EventDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
+                             implicit val ex: ExecutionContext) extends EventDAO with DAOSlick {
 
-  import driver.api._
+  import profile.api._
 
   def isCreator(eventid: Long, userid: UUID): Future[Boolean] = {
 
@@ -53,7 +53,7 @@ class EventDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
           user.fullName,
           user.email,
           user.avatarURL)
-        Event(event.id, creator, event.name, event.date, Event.Type(event.eventType))
+        Event(event.id, creator, event.name, event.date, Event.Type.fromId(event.eventType))
       }
     }
   }
@@ -75,7 +75,7 @@ class EventDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
           user.email,
           user.avatarURL)
         val event = result._1
-        Event(event.id, creator, event.name, event.date, Event.Type(event.eventType))
+        Event(event.id, creator, event.name, event.date, Event.Type.fromId(event.eventType))
       }).distinct.toList.sortBy(_.date).reverse
     }
   }
@@ -91,7 +91,7 @@ class EventDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
       event.creator.id,
       event.name,
       event.date,
-      event.eventType.id)
+      Event.Type.id(event.eventType))
 
     val insertQuery = (slickEvents returning slickEvents.map(_.id)).insertOrUpdate(dbEvent)
     dbConfig.db.run(insertQuery).map(id => event.copy(id=id))

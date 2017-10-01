@@ -1,12 +1,10 @@
 package models.gift
 
 import java.util.UUID
+
+import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
 import models.user._
-
-import play.api.libs.json._
 import org.joda.time.DateTime
-
-import play.i18n.Messages
 
 case class GiftSimple(
   id: Option[Long] = None,
@@ -14,7 +12,7 @@ case class GiftSimple(
   eventid: Long,
   creationDate: DateTime = DateTime.now,
   name: String,
-  status: Gift.Status.Value = Gift.Status.New,
+  status: Gift.Status = Gift.Status.New,
   toid: Option[UUID] = None,
   fromid: Option[UUID] = None,
   urls: List[String]=Nil)
@@ -25,7 +23,7 @@ case class Gift(
   eventid: Long,
   creationDate: DateTime = DateTime.now,
   name: String,
-  status: Gift.Status.Value = Gift.Status.New,
+  status: Gift.Status = Gift.Status.New,
   to: Option[User] = None,
   from: Option[User] = None,
   urls: List[String]=Nil)
@@ -33,11 +31,31 @@ case class Gift(
 object Gift {
   case class GiftWithNotification(gift: Gift, hasCommentNotification: Boolean)
 
-  object Status extends Enumeration {
-    val New = Value(1)
-    val AboutToBeBought = Value(2)
-    val Bought = Value(3)
-    val MarkedForDeletion = Value(4)
+  sealed trait Status extends EnumEntry
+  object Status extends Enum[Status] with PlayJsonEnum[Status] {
+    val values = findValues
+
+    case object New extends Status
+    case object AboutToBeBought extends Status
+    case object Bought extends Status
+    case object MarkedForDeletion extends Status
+
+    def id(s: Status): Int = {
+      s match {
+        case New => 1
+        case AboutToBeBought => 2
+        case Bought => 3
+        case MarkedForDeletion => 4
+      }
+    }
+    def fromId(id: Int) = {
+      id match {
+        case 1 => New
+        case 2 => AboutToBeBought
+        case 3 => Bought
+        case 4 => MarkedForDeletion
+      }
+    }
   }
 
   case class GiftContent(
@@ -54,7 +72,4 @@ object Gift {
     eventid: Long,
     creationDate: DateTime,
     content: String)
-
-  implicit val GiftContentReads = Json.reads[GiftContent]
-  implicit val GiftContentWrites = Json.writes[GiftContent]
 }

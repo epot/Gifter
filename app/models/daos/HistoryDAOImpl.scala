@@ -5,14 +5,16 @@ import javax.inject.Inject
 import models.gift.History
 import models.user.User
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+
+import scala.concurrent.ExecutionContext
 
 /**
   * Give access to the user object using Slick
   */
-class HistoryDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HistoryDAO with DAOSlick {
+class HistoryDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
+                               implicit val ex: ExecutionContext) extends HistoryDAO with DAOSlick {
 
-  import driver.api._
+  import profile.api._
 
   def findByCategoryAndId(category: String, objectid: Long) = {
     val giftQuery = for {

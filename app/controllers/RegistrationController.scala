@@ -13,6 +13,7 @@ import models.user.{RegistrationData, UserForms}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import models.user.User
+import play.api.libs.json.Json
 import utils.auth.DefaultEnv
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -26,17 +27,13 @@ class RegistrationController @Inject() (
     userService: UserService
 )(implicit ex: ExecutionContext) extends AbstractController(components) with I18nSupport {
 
-  def registrationForm = silhouette.UserAwareAction.async { implicit request =>
-    Future.successful(Ok(views.html.signIn(UserForms.registrationForm)))
-  }
-
   def register = silhouette.UnsecuredAction.async { implicit request =>
     UserForms.registrationForm.bindFromRequest.fold(
-      form => Future.successful(BadRequest(views.html.signIn(form))),
+      form => Future.successful(BadRequest(Json.obj("errors" -> form.errors.map{_.messages.mkString(", ")}))),
       data => {
         userService.retrieve(LoginInfo(CredentialsProvider.ID, data.email)).flatMap {
           case Some(_) => Future.successful {
-            Redirect(routes.RegistrationController.registrationForm).flashing("error" -> "That email address is already taken.")
+            BadRequest(Json.obj("error" -> "That email address is already taken."))
           }
           case None => saveProfile(data)
         }
@@ -57,7 +54,7 @@ class RegistrationController @Inject() (
               lastName = Some(data.lastName)
             )  
 
-    val r = Redirect(controllers.routes.HomeController.index())
+    val r = Ok
     for {
       _ <- avatarService.retrieveURL(data.email)
       u <- userService.save(user)

@@ -30,6 +30,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-mailer-guice" % "6.0.1",
   "com.enragedginger" %% "akka-quartz-scheduler" % "1.6.1-akka-2.5.x",
   "com.github.nscala-time" %% "nscala-time" % "2.16.0",
+  "com.beachape" %% "enumeratum" % "1.5.12",
+  "com.beachape" %% "enumeratum-play" % "1.5.12",
   // async postgres
   "org.postgresql" % "postgresql" % "42.1.4",
   "com.mohiva" %% "play-silhouette-password-bcrypt" % "5.0.0",
@@ -39,6 +41,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick-evolutions" % "3.0.1",
   "com.github.tototoshi" %% "slick-joda-mapper" % "2.3.0"
 )
+
+enablePlugins(NpmSettings)
 
 includeFilter in (Assets, LessKeys.less) := "*.less"
 

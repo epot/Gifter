@@ -16,7 +16,7 @@ import scala.concurrent.Future
 class OAuth2InfoDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
     extends DelegableAuthInfoDAO[OAuth2Info] with DAOSlick {
 
-  import driver.api._
+  import profile.api._
 
   protected def oAuth2InfoQuery(loginInfo: LoginInfo) = for {
     dbLoginInfo <- loginInfoQuery(loginInfo)

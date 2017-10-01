@@ -11,6 +11,7 @@ import forms.ResetPasswordForm
 import models.services.{AuthTokenService, UserService}
 import org.webjars.play.WebJarAssets
 import play.api.i18n.{I18nSupport, Messages}
+import play.api.libs.json.Json
 import play.api.mvc.{AbstractController, ControllerComponents}
 import utils.auth.DefaultEnv
 
@@ -39,19 +40,6 @@ class ResetPasswordController @Inject() (
   extends AbstractController(components) with I18nSupport {
 
   /**
-   * Views the `Reset Password` page.
-   *
-   * @param token The token to identify a user.
-   * @return The result to display.
-   */
-  def view(token: UUID) = silhouette.UnsecuredAction.async { implicit request =>
-    authTokenService.validate(token).map {
-      case Some(_) => Ok(views.html.resetPassword(ResetPasswordForm.form, token))
-      case None => Redirect(routes.AuthenticationController.signInForm()).flashing("error" -> Messages("invalid.reset.link"))
-    }
-  }
-
-  /**
    * Resets the password.
    *
    * @param token The token to identify a user.
@@ -61,18 +49,18 @@ class ResetPasswordController @Inject() (
     authTokenService.validate(token).flatMap {
       case Some(authToken) =>
         ResetPasswordForm.form.bindFromRequest.fold(
-          form => Future.successful(BadRequest(views.html.resetPassword(form, token))),
+          form => Future.successful(BadRequest(Json.obj("errors" -> form.errors.map{_.messages.mkString(", ")}))),
           password => userService.retrieveById(authToken.userID).flatMap {
             case Some(user) if user.profiles.find(_.providerID == CredentialsProvider.ID).isDefined =>
               val passwordInfo = passwordHasherRegistry.current.hash(password)
               val loginInfo = user.profiles.find(_.providerID == CredentialsProvider.ID).get
               authInfoRepository.update[PasswordInfo](loginInfo, passwordInfo).map { _ =>
-                Redirect(routes.AuthenticationController.signInForm()).flashing("success" -> Messages("password.reset"))
+                Ok("")
               }
-            case _ => Future.successful(Redirect(routes.AuthenticationController.signInForm()).flashing("error" -> Messages("invalid.reset.link")))
+            case _ => Future.successful(BadRequest(Json.obj("error" -> Messages("invalid.reset.link"))))
           }
         )
-      case None => Future.successful(Redirect(routes.AuthenticationController.signInForm()).flashing("error" -> Messages("invalid.reset.link")))
+      case None => Future.successful(BadRequest(Json.obj("error" -> Messages("invalid.reset.link"))))
     }
   }
 }

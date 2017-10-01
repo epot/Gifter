@@ -15,4 +15,8 @@ object ChangePasswordForm {
     "current-password" -> nonEmptyText,
     "new-password" -> nonEmptyText
   ))
+
+  case class Data(
+   currentPassword: String,
+   newPassword: String)
 }

@@ -1,0 +1,31 @@
+@(user:models.user.User,
+title:String = "Gifter home")(body: Html)(implicit messages: Messages)
+
+@import play.api.i18n.Messages
+
+@main(title, connected = Some(user)){
+  <div class="container">
+    <div class="content">
+      <div class="page-header">
+        <h1/>
+      </div>
+      <div class="row">
+        <div class="col-md-2 bs-docs-sidebar">
+          <ul class="nav nav-pills nav-stacked">
+            <li
+              @if(title.contains("home")){
+                class="active"
+              }><a href="@routes.HomeController.index">@Messages("event.list")</a></li>
+            <li@if(title.contains("new event")){
+                class="active"
+              }><a href="@routes.Events.newEvent">@Messages("event.new")</a></li>
+          </ul>
+        </div>
+        <div class="col-md-10">
+          @body
+        </div>
+      </div>
+    </div>
+  </div>
+}
+<script src="@routes.Assets.at("javascripts/userHomeTemplate.js")"></script>

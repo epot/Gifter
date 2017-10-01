@@ -1,26 +1,32 @@
 package models.gift
 
+import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
 import models.user._
 import org.joda.time.DateTime
-import play.api.libs.json._
 
 case class Comment(
   id: Option[Long] = None,
   objectid: Long,
   user: User,
   creationDate: DateTime = DateTime.now,
-  category: Comment.Category.Value,
+  category: Comment.Category,
   content: String)
 
 object Comment {
-  object Category extends Enumeration {
-    val Gift = Value(1)
+  sealed trait Category extends EnumEntry
+  object Category extends Enum[Category] with PlayJsonEnum[Category] {
+    val values = findValues
+    case object Gift extends Category
+
+    def id(category: Category): Int = {
+      category match {
+        case Gift => 1
+      }
+    }
+    def fromId(id: Int) = {
+      id match {
+        case 1 => Gift
+      }
+    }
   }
-
-  case class CommentSimple(content: String, username: String, creationDate: DateTime)
-
-  val customDateFormat = "dd/MM/yyyy HH:mm:ss"
-  implicit val customDateReads = Reads.jodaDateReads(customDateFormat)
-  implicit val customDateWrites = Writes.jodaDateWrites(customDateFormat)
-  implicit val CommentSimpleFormat = Json.format[CommentSimple]
 }

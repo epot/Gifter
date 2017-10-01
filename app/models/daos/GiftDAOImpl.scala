@@ -5,22 +5,23 @@ import javax.inject.Inject
 
 import models.gift.{Gift, Notification}
 import models.gift.Gift._
+import models.JsonFormat._
 import models.user.User
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Json
 
 import scala.collection.generic.CanBuildFrom
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * Give access to the user object using Slick
  */
 class GiftDAOImpl @Inject()(
    notificationDAO: NotificationDAO,
-   protected val dbConfigProvider: DatabaseConfigProvider) extends GiftDAO with DAOSlick {
+   protected val dbConfigProvider: DatabaseConfigProvider,
+   implicit val ex: ExecutionContext) extends GiftDAO with DAOSlick {
 
-  import driver.api._
+  import profile.api._
 
   def isCreator(giftId: Long, userid: UUID): Future[Boolean] = {
     val eventQuery = for {
@@ -64,7 +65,7 @@ class GiftDAOImpl @Inject()(
 
           val g = BaseGift(gift.id, creator, gift.eventId, gift.creationDate, gift.content)
 
-          val giftContent = GiftContentReads.reads(Json.parse(g.content)).get
+          val giftContent = Json.parse(g.content).as[GiftContent]
 
           val usersId = List(giftContent.to, giftContent.from).flatten
           val actions = DBIO.sequence(usersId.map(getUser))
@@ -88,7 +89,7 @@ class GiftDAOImpl @Inject()(
               eventid = g.eventid,
               name = giftContent.name,
               creationDate = g.creationDate,
-              status = Gift.Status(giftContent.status),
+              status = Gift.Status.fromId(giftContent.status),
               to = to,
               from = from,
               urls = giftContent.urls
@@ -129,7 +130,7 @@ class GiftDAOImpl @Inject()(
 
           val g = BaseGift(gift.id, creator, gift.eventId, gift.creationDate, gift.content)
 
-          val giftContent = GiftContentReads.reads(Json.parse(g.content)).get
+          val giftContent = Json.parse(g.content).as[GiftContent]
 
           val usersId = List(giftContent.to, giftContent.from).flatten
           val actions = DBIO.sequence(usersId.map(getUser))
@@ -153,7 +154,7 @@ class GiftDAOImpl @Inject()(
               eventid = g.eventid,
               name = giftContent.name,
               creationDate = g.creationDate,
-              status = Gift.Status(giftContent.status),
+              status = Gift.Status.fromId(giftContent.status),
               to = to,
               from = from,
               urls = giftContent.urls
@@ -185,7 +186,7 @@ class GiftDAOImpl @Inject()(
       gift.creator.id,
       gift.eventid,
       gift.creationDate,
-      GiftContentWrites.writes(GiftContent(gift.name, gift.status.id, toid, fromid, gift.urls)).toString)
+      Json.toJson(GiftContent(gift.name, Gift.Status.id(gift.status), toid, fromid, gift.urls)).toString)
 
     val insertQuery = (slickGifts returning slickGifts.map(_.id)).insertOrUpdate(dbGift)
     dbConfig.db.run(insertQuery).map(id => gift.copy(id=id))

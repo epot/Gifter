@@ -2,7 +2,6 @@ package modules
 
 import com.google.inject.name.Named
 import com.google.inject.{ AbstractModule, Provides }
-import com.mohiva.play.silhouette.api.actions.{ SecuredErrorHandler, UnsecuredErrorHandler }
 import com.mohiva.play.silhouette.api.crypto._
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.services._
@@ -27,12 +26,14 @@ import models.daos._
 import models.services.{ UserService, UserServiceImpl }
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
+import net.ceedubs.ficus.readers.EnumerationReader._
 import net.codingwell.scalaguice.ScalaModule
 import play.api.Configuration
 import play.api.libs.openid.OpenIdClient
 import play.api.libs.ws.WSClient
 import play.api.mvc.CookieHeaderEncoding
-import utils.auth.{ CustomSecuredErrorHandler, CustomUnsecuredErrorHandler, DefaultEnv }
+import utils.auth.DefaultEnv
+
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -46,8 +47,6 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
     */
   def configure() {
     bind[Silhouette[DefaultEnv]].to[SilhouetteProvider[DefaultEnv]]
-    bind[UnsecuredErrorHandler].to[CustomUnsecuredErrorHandler]
-    bind[SecuredErrorHandler].to[CustomSecuredErrorHandler]
     bind[UserService].to[UserServiceImpl]
     bind[UserDAO].to[UserDAOImpl]
     bind[CacheLayer].to[PlayCacheLayer]
@@ -83,7 +82,7 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   @Provides
   def provideEnvironment(
                           userService: UserService,
-                          authenticatorService: AuthenticatorService[CookieAuthenticator],
+                          authenticatorService: AuthenticatorService[JWTAuthenticator],
                           eventBus: EventBus): Environment[DefaultEnv] = {
 
     Environment[DefaultEnv](
@@ -224,7 +223,6 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   /**
     * Provides the authenticator service.
     *
-    * @param signer The signer implementation.
     * @param crypter The crypter implementation.
     * @param cookieHeaderEncoding Logic for encoding and decoding `Cookie` and `Set-Cookie` headers.
     * @param fingerprintGenerator The fingerprint generator implementation.
@@ -235,18 +233,17 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
     */
   @Provides
   def provideAuthenticatorService(
-                                   @Named("authenticator-signer") signer: Signer,
                                    @Named("authenticator-crypter") crypter: Crypter,
                                    cookieHeaderEncoding: CookieHeaderEncoding,
                                    fingerprintGenerator: FingerprintGenerator,
                                    idGenerator: IDGenerator,
                                    configuration: Configuration,
-                                   clock: Clock): AuthenticatorService[CookieAuthenticator] = {
+                                   clock: Clock): AuthenticatorService[JWTAuthenticator] = {
 
-    val config = configuration.underlying.as[CookieAuthenticatorSettings]("silhouette.authenticator")
-    val authenticatorEncoder = new CrypterAuthenticatorEncoder(crypter)
+    val config = configuration.underlying.as[JWTAuthenticatorSettings]("silhouette.authenticator")
+    val encoder = new CrypterAuthenticatorEncoder(crypter)
 
-    new CookieAuthenticatorService(config, None, signer, cookieHeaderEncoding, authenticatorEncoder, fingerprintGenerator, idGenerator, clock)
+    new JWTAuthenticatorService(config, None, encoder, idGenerator, clock)
   }
 
   /**
@@ -302,11 +299,9 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
     * @return The social state handler implementation.
     */
   @Provides
-  def provideSocialStateHandler(
-                                 @Named("social-state-signer") signer: Signer,
-                                 csrfStateItemHandler: CsrfStateItemHandler): SocialStateHandler = {
+  def provideSocialStateHandler(@Named("social-state-signer") signer: Signer): SocialStateHandler = {
 
-    new DefaultSocialStateHandler(Set(csrfStateItemHandler), signer)
+    new DefaultSocialStateHandler(Set(), signer)
   }
 
   /**

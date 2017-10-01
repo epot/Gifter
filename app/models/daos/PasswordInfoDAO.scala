@@ -16,7 +16,7 @@ import scala.concurrent.Future
 class PasswordInfoDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
     extends DelegableAuthInfoDAO[PasswordInfo] with DAOSlick {
 
-  import driver.api._
+  import profile.api._
 
   protected def passwordInfoQuery(loginInfo: LoginInfo) = for {
     dbLoginInfo <- loginInfoQuery(loginInfo)

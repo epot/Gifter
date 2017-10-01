@@ -6,14 +6,16 @@ import javax.inject.Inject
 import models.gift.Participant
 import models.user.User
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+
+import scala.concurrent.ExecutionContext
 
 /**
  * Give access to the user object.
  */
-class ParticipantDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends ParticipantDAO with DAOSlick {
+class ParticipantDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
+                                   implicit val ex: ExecutionContext) extends ParticipantDAO with DAOSlick {
 
-  import driver.api._
+  import profile.api._
 
   def find(eventId: Long) = {
     val participantQuery = for {
@@ -35,7 +37,7 @@ class ParticipantDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfi
             p.id,
             user,
             p.eventId,
-            Participant.Role(p.participantRole)
+            Participant.Role.fromId(p.participantRole)
           )
       }.distinct.toList
     }
@@ -63,7 +65,7 @@ class ParticipantDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfi
           p.id,
           user,
           p.eventId,
-          Participant.Role(p.participantRole)
+          Participant.Role.fromId(p.participantRole)
         )
       }.distinct.toList
     }
@@ -80,7 +82,7 @@ class ParticipantDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfi
           p.id,
           user,
           p.eventId,
-          Participant.Role(p.participantRole)
+          Participant.Role.fromId(p.participantRole)
         )
       }
     }
@@ -91,7 +93,7 @@ class ParticipantDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfi
       participant.id,
       participant.user.id,
       participant.eventid,
-      participant.role.id)
+      Participant.Role.id(participant.role))
 
     val insertQuery = (slickParticipants returning slickParticipants.map(_.id)).insertOrUpdate(dbParticipant)
     dbConfig.db.run(insertQuery).map(id => participant.copy(id=id))

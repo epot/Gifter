@@ -7,9 +7,8 @@ import javax.inject.Inject
 import models.AuthToken
 import org.joda.time.DateTime
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext
 
 /**
  * Give access to the [[AuthToken]] object.
@@ -17,9 +16,10 @@ import scala.concurrent.Future
 
 
 class AuthTokenDAOImpl @Inject()(
-  protected val dbConfigProvider: DatabaseConfigProvider) extends AuthTokenDAO with DAOSlick {
+  protected val dbConfigProvider: DatabaseConfigProvider,
+  implicit val ex: ExecutionContext) extends AuthTokenDAO with DAOSlick {
 
-  import driver.api._
+  import profile.api._
 
   implicit def jodaTimeMapping: BaseColumnType[DateTime] = MappedColumnType.base[DateTime, Timestamp] (
     dateTime => new Timestamp(dateTime.getMillis),

@@ -5,30 +5,32 @@ import javax.inject.Inject
 import models.gift.Notification
 import models.user.User
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+
+import scala.concurrent.ExecutionContext
 
 /**
  * Give access to the user object using Slick
  */
-class NotificationDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends NotificationDAO with DAOSlick {
+class NotificationDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
+                                    implicit val ex: ExecutionContext) extends NotificationDAO with DAOSlick {
 
-  import driver.api._
+  import profile.api._
 
-  def hasNotification(user: User, category: Notification.Category.Value, objectid: Long) = {
+  def hasNotification(user: User, category: Notification.Category, objectid: Long) = {
     val notifQuery = for {
       dbNotif <- slickNotification.filter(n => n.userId === user.id
         && n.objectId === objectid
-        && n.category === category.id)
+        && n.category === Notification.Category.id(category))
     } yield dbNotif
     db.run(notifQuery.result.headOption).map { dbNotif =>
       dbNotif.isDefined
     }
   }
 
-  def delete(user: User, category: Notification.Category.Value, objectid: Long) {
+  def delete(user: User, category: Notification.Category, objectid: Long) {
     val q = slickNotification.filter(n => n.userId === user.id
       && n.objectId === objectid
-      && n.category === category.id)
+      && n.category === Notification.Category.id(category))
     db.run(q.delete)
   }
 

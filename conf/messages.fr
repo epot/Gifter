@@ -99,3 +99,4 @@ index.create.account=Ou créer un nouveau compte
 index.sign.providers=Ou connectez vous avec l'un des fournisseurs suivants
 
 form.errors=Corrigez toutes les erreurs
+could.not.authenticate = Impossible de s'identifier avec ce fournisseur ! Merci d'essayer a nouveau !

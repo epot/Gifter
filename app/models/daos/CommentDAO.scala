@@ -9,7 +9,7 @@ import scala.concurrent.Future
  */
 trait CommentDAO {
 
-  def findByCategoryAndId(category: Comment.Category.Value, objectid: Long): Future[List[Comment]]
+  def findByCategoryAndId(category: Comment.Category, objectid: Long): Future[List[Comment]]
 
   def save(comment: Comment): Future[Comment]
 }

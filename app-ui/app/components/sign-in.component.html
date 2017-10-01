@@ -1,0 +1,46 @@
+<fieldset class="col-md-6 col-md-offset-3" ng-controller="SignInCtrl">
+  <div class="page-header">
+    <h1 i18n>Connection <small><a routerLink="/signUp" i18n>Or create a new account</a></small></h1>
+  </div>
+  <div class="row">
+    <div class="span14">
+        <form class="col-lg-12" [formGroup]="form" (ngSubmit)="login(form.value)">
+            <div class="form-group"
+                [ngClass]="{'has-error':fh.hasError(form, 'email')}"
+            >
+                <label for="email" i18n>Email</label>
+                <div class="alert alert-danger" *ngIf="fh.hasError(form, 'email')" i18n>Valid email required</div>
+                <input class="form-control"
+                        id="email"
+                        name="email"
+                        [formControl]="form.controls['email']"
+                >
+            </div>
+            <div class="form-group"
+                [ngClass]="{'has-error':fh.hasError(form, 'password')}"
+            >
+                <label for="pwd" i18n>Password</label>
+                <div class="alert alert-danger" *ngIf="fh.hasError(form, 'password')" i18n>Password required</div>
+                <input type="password"
+                        class="form-control"
+                        id="pwd"
+                        name="password"
+                        [formControl]="form.controls['password']"
+                >
+            </div>
+
+            <div class="actions">
+                <button type="submit" class="btn btn-primary" [disabled]="!form.valid"><span i18n>Connection</span></button>
+            </div>
+            <a class="btn btn-warning"  href="/password" i18n-title title="Forgot your password ?" i18n>Forgot your password ?</a>
+            
+            <div class="social-providers">
+                <h3 i18n>Or login using the following provider:</h3>
+                <div>
+                    <a (click)="authenticate('google')" class="provider google" i18n-title title="Sign in with Google"><img src="/assets/images/providers/google.png" width="64px" height="64px" alt="@Messages(p.id)"></a>
+                </div>
+            </div>
+        </form>
+    </div>
+  </div>
+</fieldset>

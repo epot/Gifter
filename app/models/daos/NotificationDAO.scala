@@ -10,6 +10,6 @@ import scala.concurrent.Future
  * Give access to the notification object.
  */
 trait NotificationDAO {
-  def hasNotification(user: User, category: Notification.Category.Value, objectid: Long): Future[Boolean]
-  def delete(user: User, category: Notification.Category.Value, objectid: Long)
+  def hasNotification(user: User, category: Notification.Category, objectid: Long): Future[Boolean]
+  def delete(user: User, category: Notification.Category, objectid: Long)
 }

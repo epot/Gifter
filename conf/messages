@@ -115,3 +115,4 @@ index.create.account=Or create a new account
 index.sign.providers=Or sign in using these providers
 
 form.errors=Fix all the errors
+could.not.authenticate = Could not authenticate with social provider! Please try again!

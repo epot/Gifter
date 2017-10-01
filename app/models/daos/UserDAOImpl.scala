@@ -6,14 +6,16 @@ import javax.inject.Inject
 import com.mohiva.play.silhouette.api.LoginInfo
 import models.user.User
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+
+import scala.concurrent.ExecutionContext
 
 /**
  * Give access to the user object using Slick
  */
-class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends UserDAO with DAOSlick {
+class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
+                            implicit val ex: ExecutionContext) extends UserDAO with DAOSlick {
 
-  import driver.api._
+  import profile.api._
 
   /**
    * Finds a user by its login info.

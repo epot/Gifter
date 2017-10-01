@@ -8,6 +8,7 @@ import forms.ForgotPasswordForm
 import models.services.{AuthTokenService, UserService}
 import org.webjars.play.WebJarAssets
 import play.api.i18n.{I18nSupport, Messages}
+import play.api.libs.json.Json
 import play.api.libs.mailer.{Email, MailerClient}
 import play.api.mvc.{AbstractController, ControllerComponents}
 import utils.auth.DefaultEnv
@@ -36,15 +37,6 @@ class ForgotPasswordController @Inject() (
   extends AbstractController(components) with I18nSupport {
 
   /**
-   * Views the `Forgot Password` page.
-   *
-   * @return The result to display.
-   */
-  def view = silhouette.UnsecuredAction.async { implicit request =>
-    Future.successful(Ok(views.html.forgotPassword(ForgotPasswordForm.form)))
-  }
-
-  /**
    * Sends an email with password reset instructions.
    *
    * It sends an email to the given address if it exists in the database. Otherwise we do not show the user
@@ -54,14 +46,13 @@ class ForgotPasswordController @Inject() (
    */
   def submit = silhouette.UnsecuredAction.async { implicit request =>
     ForgotPasswordForm.form.bindFromRequest.fold(
-      form => Future.successful(BadRequest(views.html.forgotPassword(form))),
+      form => Future.successful(BadRequest(Json.obj("errors" -> form.errors.map{_.messages.mkString(", ")}))),
       email => {
         val loginInfo = LoginInfo(CredentialsProvider.ID, email)
-        val result = Redirect(routes.AuthenticationController.signInForm()).flashing("info" -> Messages("reset.email.sent"))
         userService.retrieve(loginInfo).flatMap {
           case Some(user) if user.email.isDefined =>
             authTokenService.create(user.id).map { authToken =>
-              val url = routes.ResetPasswordController.view(authToken.id).absoluteURL()
+              val url = s"${authToken.id}"
 
               mailerClient.send(Email(
                 subject = Messages("email.reset.password.subject"),
@@ -70,9 +61,9 @@ class ForgotPasswordController @Inject() (
                 bodyText = Some(views.txt.emails.resetPassword(user, url).body),
                 bodyHtml = Some(views.html.emails.resetPassword(user, url).body)
               ))
-              result
+              Ok("")
             }
-          case None => Future.successful(result)
+          case None => Future.successful(Ok(""))
         }
       }
     )

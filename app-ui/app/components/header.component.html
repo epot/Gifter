@@ -1,0 +1,19 @@
+<div id="top" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" routerLink="/" i18n>Home</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-6">
+            <ul *ngIf="isAuthenticated()" class="navbar-nav nav right">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown">{{user.userName}}<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a routerLink="/profile" i18n>Profile</a></li>
+                        <li class="divider"></li>
+                        <li (click)="signOut()"><a href="" i18n>Sign out</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

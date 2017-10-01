@@ -10,3 +10,9 @@ tmp
 *.class
 .idea/
 /bin/
+
+/app-ui/node_modules
+npm.debug.log
+
+#OS X
+.DS_Store

@@ -4,7 +4,7 @@ import java.util.UUID
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import org.joda.time.DateTime
-import slick.driver.JdbcProfile
+import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape.proveShapeOf
 import com.github.tototoshi.slick.PostgresJodaSupport._
 import models.AuthToken

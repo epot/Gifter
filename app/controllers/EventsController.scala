@@ -141,7 +141,7 @@ class EventsController @Inject()(components: ControllerComponents,
   /**
    * Delete an event.
    */
-  def postDeleteEvent(eventid: Long) = silhouette.SecuredAction(WithCreatorOf[DefaultEnv#A](eventDAO, eventid)).async { implicit request =>
+  def deleteEvent(eventid: Long) = silhouette.SecuredAction(WithCreatorOf[DefaultEnv#A](eventDAO, eventid)).async { implicit request =>
     eventDAO.find(eventid).map { event =>
       event match {
         case Some(e) => {
@@ -338,7 +338,7 @@ class EventsController @Inject()(components: ControllerComponents,
       maybeGift match {
         case Some(_) => {
           giftDAO.delete(giftid)
-          Ok("")
+          Ok
         }
         case None => BadRequest
       }

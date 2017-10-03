@@ -29,7 +29,7 @@
                       <div class="btn-toolbar">
                         <div class="btn-group">
                           <a class="btn btn-default btn-sm" [routerLink]="['/events', event.id]"><i class="glyphicon glyphicon-eye-open button-tooltip" data-toggle="tooltip" i18n-title title="details"></i></a>
-                          <a *ngIf="event.creator.id === user.id" class="btn btn-default btn-sm open-delete-modal" data-id="{{event.id}}" data-action="deleteEvent"><i class="glyphicon glyphicon-remove"></i></a>
+                          <a *ngIf="event.creator.id === user.id" class="btn btn-default btn-sm open-delete-modal" (click)="openDeleteEventModal(event.id)"><i class="glyphicon glyphicon-remove"></i></a>
                         </div>
                       </div>
                     </td>
@@ -46,3 +46,18 @@
     </div>
   </div>
 </div>
+
+
+<modal #deleteEventModal>
+    <modal-header [show-close]="true">
+        <h4 class="modal-title" i18n>Confirm deletion</h4>
+    </modal-header>
+    <modal-body>
+        <p i18n>If you delete this event, everyone will be disappointed. Are you really sure ?</p>
+    </modal-body>
+    <modal-footer>
+      <button type="button" class="btn btn-default" data-dismiss="modal" (click)="deleteEvent.dismiss()" i18n>Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="deleteEvent()" i18n>Confirm</button>
+    </modal-footer>
+  </modal>
+

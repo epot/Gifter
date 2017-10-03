@@ -20,7 +20,7 @@ GET         /api/user                controllers.HomeController.user
 
 # Events actions
 POST     /api/events                    controllers.EventsController.postNewEvent
-POST     /deleteEvent/:eventid          controllers.EventsController.postDeleteEvent(eventid: Long)
+DELETE   /api/events/:eventid           controllers.EventsController.deleteEvent(eventid: Long)
 GET      /api/events                    controllers.EventsController.getEvents
 GET      /api/events/:eventid/details   controllers.EventsController.getEventWithDetails(eventid: Long)
 GET      /api/events/:eventid/participants   controllers.EventsController.getEventParticipants(eventid: Long)

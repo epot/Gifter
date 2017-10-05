@@ -138,13 +138,13 @@ class EventsController @Inject()(components: ControllerComponents,
     }
   }
 
-  /**
+    /**
    * Delete an event.
    */
   def deleteEvent(eventid: Long) = silhouette.SecuredAction(WithCreatorOf[DefaultEnv#A](eventDAO, eventid)).async { implicit request =>
     eventDAO.find(eventid).map { event =>
       event match {
-        case Some(e) => {
+        case Some(_) => {
           eventDAO.delete(eventid)
           Ok
         }
@@ -448,14 +448,6 @@ class EventsController @Inject()(components: ControllerComponents,
                   )
 
                   giftDAO.save(gift.copy(status=statusValue, from=from)).map { newGift =>
-                    /*newGift.to match {
-                      case Some(user_to) => {
-                        Redirect(routes.Events.eventWithUser(
-                          newGift.eventid, user_to.id))
-                      }
-                      case _ =>
-                        Redirect(routes.Events.event(newGift.eventid))
-                    }*/
                     Ok(Json.toJson(newGift))
                   }
                 }

@@ -78,6 +78,15 @@ export class EventsService {
       .catch(this.handleError);
   }
 
+  updateGiftStatus(id: number, newStatus: string): Promise<Object> {
+    return this.http.post('/api/gifts/' + id + '/status', {status: newStatus})
+      .toPromise()
+      .then(response => {
+          return response;
+        })
+      .catch(this.handleError);
+  }
+
   newEvent(data: any): Promise<Object> {
     return this.http.post('/api/events', data)
       .toPromise()

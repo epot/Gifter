@@ -28,7 +28,7 @@ GET      /addParticipant                controllers.EventsController.addParticip
 POST     /api/events/:eventid/gifts     controllers.EventsController.postEditGift(eventid: Long)
 GET      /api/gifts/:giftid             controllers.EventsController.getGift(giftid: Long)
 GET      /api/gifts/:giftid/details     controllers.EventsController.getGiftWithDetails(giftid: Long)
-POST     /updateGiftStatus/:giftid      controllers.EventsController.updateGiftStatus(giftid: Long)
+POST     /api/gifts/:giftid/status           controllers.EventsController.updateGiftStatus(giftid: Long)
 POST     /deleteGift/:giftid            controllers.EventsController.postDeleteGift(giftid: Long)
 GET      /gift/:giftid/comment          controllers.EventsController.getGiftComments(giftid: Long)
 POST     /gift/:giftid/comment          controllers.EventsController.postGiftComment(giftid: Long)

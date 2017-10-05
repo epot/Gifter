@@ -1,17 +1,20 @@
-import { Component, Input, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
 import * as $ from 'jquery';
 
 import { UserService } from '../services/user.service';
 import { EventsService } from '../services/events.service';
 import { TokenUser } from '../token-user';
+import { ErrorHandleService } from '../services/error-handle.service'
 
 @Component({
   selector: 'my-event',
   template: require('./event.component.html')
 })
 export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('changeGiftModal') changeGiftModal: ModalComponent;
   public user: TokenUser;
   private _userSubscription: Subscription;
   public event: Object;
@@ -20,10 +23,13 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
   public participants: Object[];
   public loadingEvent;
   public error: any;
+  public giftChange: Object;
+  public giftChangeNewStatus: string;
 
   constructor(
     private userService: UserService,
     private eventsService: EventsService,
+    private eh: ErrorHandleService,
     private route: ActivatedRoute
   ) {
   }
@@ -58,6 +64,25 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     ($('[data-toggle="tooltip"]') as any).tooltip();
   }
+
+  openChangeGiftModal(gift: Object) {
+    this.giftChange = gift;
+    this.giftChangeNewStatus = gift['status'];
+    this.changeGiftModal.open();
+  }
+
+  changeGift() {
+    this.eventsService.updateGiftStatus(this.giftChange['id'], this.giftChangeNewStatus).then(response => {
+      this.changeGiftModal.close();
+      const updateItem = this.gifts.find(x => x['id'] === this.giftChange['id']);
+      const index = this.gifts.indexOf(updateItem);
+      this.gifts[index] = response;
+    }
+  ).catch(err => {
+      this.eh.handleError(err);
+    });
+  }
+
 
   ngOnDestroy() {
     // prevent memory leak when component destroyed

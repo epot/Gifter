@@ -62,7 +62,7 @@ export class MainComponent implements OnInit, OnDestroy {
     }
   ).catch(err => {
       this.eh.handleError(err);
-  });
+    });
   }
 
   ngOnDestroy() {

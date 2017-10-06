@@ -135,6 +135,7 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
   openCommentGiftModal(gift: Object) {
     this.giftToComment = gift;
     this.currentComment = '';
+    this.hasComments[gift['id']] = false;
     this.commentGiftModal.open();
     this.eventsService.getGiftComments(this.event['id'], gift['id']).then(response => {
       this.comments = response['comments'];

@@ -95,6 +95,16 @@ export class EventsService {
         })
       .catch(this.handleError);
   }
+
+  addParticipant(eventid: number, data: any): Promise<Object> {
+    return this.http.post('/api/events/' + eventid + '/participants', data)
+      .toPromise()
+      .then(response => {
+          return response;
+        })
+      .catch(this.handleError);
+  }
+
   private handleError(error: any): Promise<any> {
     console.error('An error occurred', error); // for demo purposes only
     return Promise.reject(error.message || error);

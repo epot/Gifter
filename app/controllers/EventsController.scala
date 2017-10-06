@@ -346,7 +346,7 @@ class EventsController @Inject()(components: ControllerComponents,
   }
   
   
-  def addParticipant = silhouette.SecuredAction.async { implicit request =>
+  def addParticipant(eventid: Long) = silhouette.SecuredAction.async { implicit request =>
 
     EventsController.addParticipantForm.bindFromRequest.fold(
       form => {
@@ -354,9 +354,8 @@ class EventsController @Inject()(components: ControllerComponents,
       },
       tuple => {
         
-        val eventid = tuple._1
-        val email = tuple._2
-        val role = Participant.Role.withName(tuple._3)
+        val email = tuple._1
+        val role = Participant.Role.withName(tuple._2)
 
         userService.retrieveByEmail(email).flatMap {
           user => user match {
@@ -369,18 +368,8 @@ class EventsController @Inject()(components: ControllerComponents,
                     eventid = eventid,
                     role = role)
                 }
-                participantDAO.save(participant).flatMap { _ =>
-                  participantDAO.find(eventid).flatMap { participants =>
-                    eventDAO.find(eventid).flatMap { maybeEvent =>
-                      maybeEvent match {
-                        case Some(_) =>
-                          WithOwnerOf.IsOwnerOf(participantDAO, eventid, request.identity).map { isOwnerOf =>
-                            BadRequest(Json.obj("participants" -> JsArray(participants.map{p => Json.toJson(p)})))
-                          }
-                        case _ => Future.successful(NotFound)
-                      }
-                    }
-                  }
+                participantDAO.save(participant).map { p =>
+                  Ok(Json.toJson(p))
                 }
               }
             }
@@ -464,8 +453,7 @@ class EventsController @Inject()(components: ControllerComponents,
 object EventsController {
     val addParticipantForm = Form {
     tuple(
-      "eventid" -> longNumber
-      ,"email" -> nonEmptyText
+      "email" -> nonEmptyText
       ,"role" -> nonEmptyText
     )
   }

@@ -54,7 +54,6 @@ export class GiftEditComponent implements OnInit, OnDestroy {
       .subscribe(response => {
         this.loadingGift = false;
         this.gift = response;
-        console.log(this.gift);
         this.toId = this.gift['to'] ? this.gift['to'].id : '';
         this.urls = this.gift['urls'];
         this.form = this.fb.group({

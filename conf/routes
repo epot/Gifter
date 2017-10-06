@@ -23,8 +23,8 @@ POST     /api/events                    controllers.EventsController.postNewEven
 DELETE   /api/events/:eventid           controllers.EventsController.deleteEvent(eventid: Long)
 GET      /api/events                    controllers.EventsController.getEvents
 GET      /api/events/:eventid/details   controllers.EventsController.getEventWithDetails(eventid: Long)
-GET      /api/events/:eventid/participants   controllers.EventsController.getEventParticipants(eventid: Long)
-GET      /addParticipant                controllers.EventsController.addParticipant
+GET      /api/events/:eventid/participants  controllers.EventsController.getEventParticipants(eventid: Long)
+POST     /api/events/:eventid/participants  controllers.EventsController.addParticipant(eventid: Long)
 POST     /api/events/:eventid/gifts     controllers.EventsController.postEditGift(eventid: Long)
 GET      /api/gifts/:giftid             controllers.EventsController.getGift(giftid: Long)
 GET      /api/gifts/:giftid/details     controllers.EventsController.getGiftWithDetails(giftid: Long)

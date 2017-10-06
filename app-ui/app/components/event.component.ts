@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
 import * as $ from 'jquery';
 
@@ -8,6 +9,7 @@ import { UserService } from '../services/user.service';
 import { EventsService } from '../services/events.service';
 import { TokenUser } from '../token-user';
 import { ErrorHandleService } from '../services/error-handle.service'
+import { FormHelperService } from '../services/form-helper.service';
 
 @Component({
   selector: 'my-event',
@@ -25,11 +27,14 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
   public error: any;
   public giftToBuy: Object;
   public giftToBuyNewStatus: string;
+  addParticipantForm: FormGroup;
 
   constructor(
     private userService: UserService,
     private eventsService: EventsService,
     private eh: ErrorHandleService,
+    private fb: FormBuilder,
+    public fh: FormHelperService,
     private route: ActivatedRoute
   ) {
   }
@@ -48,10 +53,13 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       )
       .subscribe(response => {
+        this.addParticipantForm = this.fb.group({
+          'email': new FormControl('', [Validators.required])
+        });
+
         this.loadingEvent = false;
         this.event = response['event'];
         this.gifts = response['gifts'].map(item => item.gift);
-        console.log(this.gifts);
         for (const elt of response['gifts']) {
           this.hasComments[elt.gift.id] = elt.hasCommentNotification;
         }
@@ -89,6 +97,19 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
       (!gift['from'] || gift['from']['id'] === this.user['id']);
    }
 
+  addParticipant(formData: any) {
+    console.log('coin ' + formData['email']);
+    this.eventsService.addParticipant(this.event['id'], {
+      email: formData['email'],
+      role: 'Owner' // hardcoded for now
+    })
+    .then(response => {
+      this.participants.push(response);
+    }
+    ).catch(err => {
+      this.eh.handleError(err);
+    });
+  }
 
   ngOnDestroy() {
     // prevent memory leak when component destroyed

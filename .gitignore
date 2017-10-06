@@ -13,6 +13,7 @@ tmp
 
 /app-ui/node_modules
 npm.debug.log
+/public/bundles
 
 #OS X
 .DS_Store

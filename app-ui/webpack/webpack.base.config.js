@@ -2,7 +2,7 @@
 var webpack = require('webpack');
 var path = require('path');
 console.log(__dirname);
-var buildPath = path.resolve(__dirname, '../../../public/bundles/');
+var buildPath = path.resolve(__dirname, '../../public/bundles/');
 var nodeModulesPath = path.resolve(__dirname, 'node_modules');
 
 /**
@@ -31,7 +31,7 @@ var config = {
                 use: ['style-loader', 'css-loader', 'less-loader']
             },
             {
-                test: /\.(jpg|png|woff|woff2|eot|ttf|gif|svg)$/,
+                test: /\.(jpg|png|woff|woff2|eot|ttf|svg)$/,
                 use: 'url-loader?limit=100000'
             },
             {
@@ -44,15 +44,6 @@ var config = {
                 loader: 'babel',
                 query: {
                   presets: ['es2015']
-                }
-            },
-            {
-                test: /\.(html)$/,
-                use: {
-                    loader: 'html-loader',
-                    options: {
-                    attrs: [':data-src']
-                    }
                 }
             },
             {
@@ -80,15 +71,8 @@ var config = {
         new webpack.ProvidePlugin({
             'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
         }),
-        // Maps jquery identifiers to the jQuery package (because Bootstrap and other dependencies expects it to be a global variable)
-        new webpack.ProvidePlugin({   
-            jQuery: 'jquery',
-            $: 'jquery',
-            jquery: 'jquery'
-        }),
         new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.bundle.js' })
     ]
 };
 
 module.exports = config;
-

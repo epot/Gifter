@@ -55,13 +55,6 @@ export class ErrorHandleService {
   handleError(err: any) {
       if (typeof err === 'string') {
           this._toastr.error(err);
-      } else if (err instanceof Response) {
-          const res: Response = err;
-          if (res.json().message) {
-              this._toastr.error(res.json().message, res.statusText);
-          } else {
-              this._toastr.error(res.statusText);
-          }
       } else if (err && err.message) {
           this._toastr.error(err.message);
       } else if (err) {

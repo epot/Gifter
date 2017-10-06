@@ -378,7 +378,7 @@ class EventsController @Inject()(components: ControllerComponents,
     )
   }
 
-  def getGiftComments(giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftDAO, participantDAO, giftid)).async { implicit request =>
+  def getGiftComments(eventid: Long, giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftDAO, participantDAO, giftid)).async { implicit request =>
     commentDAO.findByCategoryAndId(Comment.Category.Gift, giftid).map { comments =>
       // remove notifications for this user, he is going to read those messages !
       notificationDAO.delete(request.identity, Notification.Category.GiftComment, giftid)
@@ -386,7 +386,7 @@ class EventsController @Inject()(components: ControllerComponents,
     }
   }
 
-  def postGiftComment(giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftDAO, participantDAO, giftid)).async { implicit request =>
+  def postGiftComment(eventid: Long, giftid: Long) = silhouette.SecuredAction(WithParticipantOfWithGift[DefaultEnv#A](giftDAO, participantDAO, giftid)).async { implicit request =>
     Form("comment" -> nonEmptyText).bindFromRequest.fold(
       form => {
         Future.successful(BadRequest(Json.obj("errors" -> form.errors.map{_.messages.mkString(", ")})))

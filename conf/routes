@@ -2,12 +2,11 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET         /                       controllers.HomeController.index
+GET         /                        controllers.HomeController.index
 
 # Login action
-POST        /signup                  controllers.RegistrationController.register
-POST        /signin                  controllers.AuthenticationController.authenticateCredentials
-POST        /signin                  controllers.AuthenticationController.authenticateCredentials
+POST        /signUp                  controllers.RegistrationController.register
+POST        /signIn                  controllers.AuthenticationController.authenticateCredentials
 GET         /authenticate/:provider  controllers.AuthenticationController.authenticateSocial(provider)
 POST        /authenticate/:provider  controllers.AuthenticationController.authenticateSocial(provider)
 
@@ -15,7 +14,6 @@ POST        /password/forgot         controllers.ForgotPasswordController.submit
 POST        /password/reset/:token   controllers.ResetPasswordController.submit(token: java.util.UUID)
 POST        /password/change         controllers.ChangePasswordController.submit
 GET         /api/user                controllers.HomeController.user
-
 
 
 # Events actions
@@ -30,8 +28,8 @@ GET      /api/gifts/:giftid                     controllers.EventsController.get
 GET      /api/gifts/:giftid/details             controllers.EventsController.getGiftWithDetails(giftid: Long)
 POST     /api/gifts/:giftid/status              controllers.EventsController.updateGiftStatus(giftid: Long)
 DELETE   /api/events/:eventid/gifts/:giftid     controllers.EventsController.deleteGift(eventid: Long, giftid: Long)
-GET      /gift/:giftid/comment                  controllers.EventsController.getGiftComments(giftid: Long)
-POST     /gift/:giftid/comment                  controllers.EventsController.postGiftComment(giftid: Long)
+GET      /api/events/:eventid/gifts/:giftid/comments controllers.EventsController.getGiftComments(eventid: Long, giftid: Long)
+POST      /api/events/:eventid/gifts/:giftid/comments controllers.EventsController.postGiftComment(eventid: Long, giftid: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

@@ -23,13 +23,13 @@ export class UserService {
     private auth: AuthService,
     private router: Router,
     private http: HttpClient) {
-      this.renewUser().catch(_ => {
+      /*this.renewUser().catch(_ => {
           this.logout().subscribe({
             error: (err: any) => this.handleError(err),
             complete: () => this.router.navigateByUrl('/signIn')
           });
         }
-      );
+      );*/
   }
 
   logout() {

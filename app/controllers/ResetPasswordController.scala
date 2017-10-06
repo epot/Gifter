@@ -55,7 +55,7 @@ class ResetPasswordController @Inject() (
               val passwordInfo = passwordHasherRegistry.current.hash(password)
               val loginInfo = user.profiles.find(_.providerID == CredentialsProvider.ID).get
               authInfoRepository.update[PasswordInfo](loginInfo, passwordInfo).map { _ =>
-                Ok("")
+                Ok
               }
             case _ => Future.successful(BadRequest(Json.obj("error" -> Messages("invalid.reset.link"))))
           }

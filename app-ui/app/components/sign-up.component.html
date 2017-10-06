@@ -4,27 +4,38 @@
         <h1 i18n>Sign up</h1>
     </div>
     <form class="col-lg-12" [formGroup]="form" (ngSubmit)="signup(form.value)">
-      <div class="form-group"
-           [ngClass]="{'has-error':fh.hasError(form, 'firstName')}"
-      >
-          <label for="firstName" i18n>First name</label>
-          <div class="alert alert-danger" *ngIf="fh.hasError(form, 'firstName')" i18n>Field required</div>
-          <input class="form-control"
-                 id="firstName"
-                 name="firstName"
-                 [formControl]="form.controls['firstName']"
-          >
-      </div>
-      <div class="form-group"
-           [ngClass]="{'has-error':fh.hasError(form, 'lastName')}"
-      >
-          <label for="lastName" i18n>Last name</label>
-          <div class="alert alert-danger" *ngIf="fh.hasError(form, 'lastName')" i18n>Field required</div>
-          <input class="form-control"
-                 id="lastName"
-                 name="email"
-                 [formControl]="form.controls['lastName']"
-          >
+        <div class="form-group"
+        [ngClass]="{'has-error':fh.hasError(form, 'userName')}"
+        >
+        <label for="userName" i18n>User name</label>
+        <div class="alert alert-danger" *ngIf="fh.hasError(form, 'userName')" i18n>Field required</div>
+        <input class="form-control"
+                id="userName"
+                name="userName"
+                [formControl]="form.controls['userName']"
+        >
+        </div>
+        <div class="form-group"
+            [ngClass]="{'has-error':fh.hasError(form, 'firstName')}"
+                >
+            <label for="firstName" i18n>First name</label>
+            <div class="alert alert-danger" *ngIf="fh.hasError(form, 'firstName')" i18n>Field required</div>
+            <input class="form-control"
+                    id="firstName"
+                    name="firstName"
+                    [formControl]="form.controls['firstName']"
+            >
+        </div>
+    <div class="form-group"
+        [ngClass]="{'has-error':fh.hasError(form, 'lastName')}"
+    >
+        <label for="lastName" i18n>Last name</label>
+        <div class="alert alert-danger" *ngIf="fh.hasError(form, 'lastName')" i18n>Field required</div>
+        <input class="form-control"
+                id="lastName"
+                name="email"
+                [formControl]="form.controls['lastName']"
+        >
       </div>
       <div class="form-group"
            [ngClass]="{'has-error':fh.hasError(form, 'email')}"

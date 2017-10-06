@@ -28,13 +28,7 @@ object UserForms {
     mapping(
       "username" -> nonEmptyText,
       "email" -> nonEmptyText,
-      "password" -> tuple(
-          "main" -> nonEmptyText,
-          "confirm" -> text
-        ).verifying(
-          // Add an additional constraint: both passwords must match
-          "Passwords do not match", passwords => passwords._1 == passwords._2
-      ),
+      "password" -> nonEmptyText,
       "firstname" -> text,
       "lastname" -> text,
       "avatarurl" -> text

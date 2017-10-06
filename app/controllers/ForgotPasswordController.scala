@@ -52,7 +52,7 @@ class ForgotPasswordController @Inject() (
         userService.retrieve(loginInfo).flatMap {
           case Some(user) if user.email.isDefined =>
             authTokenService.create(user.id).map { authToken =>
-              val url = s"${authToken.id}"
+              val url = s"${routes.HomeController.index.absoluteURL}#/resetPassword/${authToken.id}"
 
               mailerClient.send(Email(
                 subject = Messages("email.reset.password.subject"),
@@ -61,9 +61,9 @@ class ForgotPasswordController @Inject() (
                 bodyText = Some(views.txt.emails.resetPassword(user, url).body),
                 bodyHtml = Some(views.html.emails.resetPassword(user, url).body)
               ))
-              Ok("")
+              Ok
             }
-          case None => Future.successful(Ok(""))
+          case None => Future.successful(Ok)
         }
       }
     )

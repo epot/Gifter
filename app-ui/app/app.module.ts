@@ -33,6 +33,9 @@ import { JsonHttpGateway } from './services/json-http.service';
 import { UserService } from './services/user.service';
 import { EventsService } from './services/events.service';
 import { GiftAddComponent } from './components/gift-add.component';
+import { ResetPasswordComponent } from './components/reset-password.component';
+import { ForgotPasswordComponent } from './components/forgot-password.component';
+import { PasswordService } from './services/password.service';
 
 @NgModule({
   imports: [
@@ -62,6 +65,8 @@ import { GiftAddComponent } from './components/gift-add.component';
     GiftViewComponent,
     GiftEditComponent,
     GiftAddComponent,
+    ResetPasswordComponent,
+    ForgotPasswordComponent,
   ],
   providers: [
     ErrorHandleService,
@@ -74,6 +79,7 @@ import { GiftAddComponent } from './components/gift-add.component';
     UserService,
     EventsService,
     DatePipe,
+    PasswordService,
   ],
   bootstrap: [AppComponent]
 })

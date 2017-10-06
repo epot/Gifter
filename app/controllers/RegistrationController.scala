@@ -43,7 +43,7 @@ class RegistrationController @Inject() (
 
   private[this] def saveProfile(data: RegistrationData)(implicit request: Request[AnyContent]) = {
     val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
-    val authInfo = passwordHasherRegistry.current.hash(data.password._1)
+    val authInfo = passwordHasherRegistry.current.hash(data.password)
     val user = User(
               id = UUID.randomUUID(),
               profiles = Seq(loginInfo),

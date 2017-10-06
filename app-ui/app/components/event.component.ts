@@ -18,18 +18,22 @@ import { FormHelperService } from '../services/form-helper.service';
 export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('buyGiftModal') buyGiftModal: ModalComponent;
   @ViewChild('deleteGiftModal') deleteGiftModal: ModalComponent;
+  @ViewChild('commentGiftModal') commentGiftModal: ModalComponent;
   public user: TokenUser;
   private _userSubscription: Subscription;
   public event: Object;
   public gifts: Object[];
   public hasComments: Map<string, boolean> = new Map<string, boolean>();
   public participants: Object[];
+  public comments: Object[];
+  public giftToComment: Object;
   public loadingEvent;
   public error: any;
   public giftToBuy: Object;
   public giftToBuyNewStatus: string;
   addParticipantForm: FormGroup;
   deleteGiftId: number;
+  currentComment: string;
 
   constructor(
     private userService: UserService,
@@ -123,7 +127,29 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
       this.gifts = this.gifts.filter(obj => obj['id'] !== this.deleteGiftId);
       this.deleteGiftModal.close();
     }
-  ).catch(err => {
+    ).catch(err => {
+      this.eh.handleError(err);
+    });
+  }
+
+  openCommentGiftModal(gift: Object) {
+    this.giftToComment = gift;
+    this.currentComment = '';
+    this.commentGiftModal.open();
+    this.eventsService.getGiftComments(this.event['id'], gift['id']).then(response => {
+      this.comments = response['comments'];
+    }
+    ).catch(err => {
+      this.eh.handleError(err);
+    });
+  }
+
+  addComment() {
+    this.eventsService.addGiftComments(this.event['id'], this.giftToComment['id'], this.currentComment).then(response => {
+      this.currentComment = '';
+      this.comments = response['comments'];
+    }
+    ).catch(err => {
       this.eh.handleError(err);
     });
   }

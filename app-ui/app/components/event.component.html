@@ -59,7 +59,7 @@
                           <button class="btn btn-default btn-sm" [disabled]="g.creator.id !== user.id" (click)="openDeleteGiftModal(g.id)"><i class="glyphicon glyphicon-remove"></i></button>
                           <a 
                           [ngClass]="{'btn btn-info btn-sm open-gift-comment-modal': true, 'btn-info': hasComments[g.id], 'btn-default': !hasComments[g.id]}"
-                          class="" data-id="{{g.id}}">
+                          (click)="openCommentGiftModal(g)">
                             <i class="glyphicon glyphicon-comment button-tooltip" data-toggle="tooltip" i18ntitle="Comment"></i>
                           </a>
                         </div>
@@ -140,14 +140,49 @@
 </modal>
 
 <modal #deleteGiftModal>
+  <modal-header [show-close]="true">
+      <h4 class="modal-title" i18n>Confirm deletion</h4>
+  </modal-header>
+  <modal-body>
+      <p i18n>If you delete this gift, everyone will be disappointed. Are you really sure ?</p>
+  </modal-body>
+  <modal-footer>
+    <button type="button" class="btn btn-default" data-dismiss="modal" (click)="deleteGiftModal.dismiss()" i18n>Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="deleteGift()" i18n>Confirm</button>
+  </modal-footer>
+</modal>
+
+<modal #commentGiftModal>
+  <ng-container *ngIf="giftToComment">
     <modal-header [show-close]="true">
-        <h4 class="modal-title" i18n>Confirm deletion</h4>
+        <h4 class="modal-title" i18n>Comment on {{giftToComment.name}}</h4>
     </modal-header>
     <modal-body>
-        <p i18n>If you delete this gift, everyone will be disappointed. Are you really sure ?</p>
+      <form class="gift-comment-form" *ngIf="!loadingComments">
+        <div class="modal-body modal-comment-body form-horizontal navbar-fixed-bottom">
+          <div class="comments">
+            <div class="media" *ngFor="let comment of comments">
+              <p class="pull-right"><small>{{comment.creationDate | date:'dd/MM/yyyy hh:mm:ss'}}</small></p>
+              <div class="media-body">
+                <h4 class="media-heading user-name">{{comment.user.userName}}</h4>
+                {{comment.content}}
+              </div>
+            </div>
+          </div>
+          <div class="comment-form form-group">
+            <div class="col-sm-10">
+              <input type="text" class="form-control" [(ngModel)]="currentComment" id="comment" name="comment" i18n-placeholder placeholder="Your comment...">
+            </div>
+            <div class="col-sm-2">
+              <button class="btn btn-primary" [disabled]="!currentComment" (click)="currentComment && addComment()" i18n>Add</button>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div *ngIf="loadingComments">Fetching comments...</div>
     </modal-body>
     <modal-footer>
-      <button type="button" class="btn btn-default" data-dismiss="modal" (click)="deleteGiftModal.dismiss()" i18n>Cancel</button>
-      <button type="button" class="btn btn-primary" (click)="deleteGift()" i18n>Confirm</button>
+      <button type="button" class="btn btn-default" data-dismiss="modal" (click)="commentGiftModal.dismiss()" i18n>Close</button>
     </modal-footer>
-  </modal>
+  </ng-container>
+</modal>

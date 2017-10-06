@@ -42,6 +42,24 @@ export class EventsService {
         })
       .catch(this.handleError);
   }
+  
+  getGiftComments(eventid: number, giftid: number): Promise<Object> {
+    return this.http.get('/api/events/' + eventid + '/gifts/' + giftid + '/comments')
+      .toPromise()
+      .then(response => {
+          return response;
+        })
+      .catch(this.handleError);
+  }
+
+  addGiftComments(eventid: number, giftid: number, comment: string): Promise<Object> {
+    return this.http.post('/api/events/' + eventid + '/gifts/' + giftid + '/comments', {comment: comment})
+      .toPromise()
+      .then(response => {
+          return response;
+        })
+      .catch(this.handleError);
+  }
 
   deleteGift(eventid: number, giftid: number): Promise<Object> {
     return this.http.delete('/api/events/' + eventid + '/gifts/' + giftid)

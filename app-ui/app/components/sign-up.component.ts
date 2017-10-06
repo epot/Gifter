@@ -8,13 +8,13 @@ import { ErrorHandleService } from '../services/error-handle.service';
 import { UserService } from '../services/user.service';
 
 @Component({
-    selector: 'my-signup',
-    template: require('./sign-up.component.html')
+  selector: 'my-signup',
+  template: require('./sign-up.component.html')
 })
 export class SignUpComponent implements OnInit {
-    form: FormGroup;
-    passwordFieldName = 'password';
-    repeatedPasswordFieldName = 'passwordConfirmation';
+  form: FormGroup;
+  passwordFieldName = 'password';
+  repeatedPasswordFieldName = 'passwordConfirmation';
 
     constructor(private auth: AuthService,
                 private router: Router,
@@ -26,8 +26,9 @@ export class SignUpComponent implements OnInit {
 
     ngOnInit() {
         this.form = this.fb.group({
-            'firstName': new FormControl('', [Validators.required]),
-            'lastName': new FormControl('', [Validators.required]),
+            'userName': new FormControl('', [Validators.required]),
+            'firstName': new FormControl(''),
+            'lastName': new FormControl(''),
             'email': new FormControl('', [Validators.required, Validators.email]),
             'password': new FormControl('', [Validators.required]),
             'avatarUrl': new FormControl('')
@@ -36,11 +37,12 @@ export class SignUpComponent implements OnInit {
 
     signup(signupData: any) {
         this.auth.signup({
-            firstName: signupData['firstName'],
-            lastName: signupData['lastName'],
+            username: signupData['userName'],
+            firstname: signupData['firstName'],
+            lastname: signupData['lastName'],
             email: signupData['email'],
             password: signupData['password'],
-            avatarUrl: signupData['avatarUrl']
+            avatarurl: signupData['avatarUrl']
         })
             .subscribe({
                 next: (response) => {

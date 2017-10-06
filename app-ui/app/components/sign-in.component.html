@@ -1,4 +1,4 @@
-<fieldset class="col-md-6 col-md-offset-3" ng-controller="SignInCtrl">
+<fieldset class="col-md-6 col-md-offset-3">
   <div class="page-header">
     <h1 i18n>Connection <small><a routerLink="/signUp" i18n>Or create a new account</a></small></h1>
   </div>
@@ -32,7 +32,7 @@
             <div class="actions">
                 <button type="submit" class="btn btn-primary" [disabled]="!form.valid"><span i18n>Connection</span></button>
             </div>
-            <a class="btn btn-warning"  href="/password" i18n-title title="Forgot your password ?" i18n>Forgot your password ?</a>
+            <a class="btn btn-warning"  routerLink="/forgotPassword" i18n-title title="Forgot your password ?" i18n>Forgot your password ?</a>
             
             <div class="social-providers">
                 <h3 i18n>Or login using the following provider:</h3>

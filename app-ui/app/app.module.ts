@@ -11,6 +11,7 @@ import { CalendarModule } from 'primeng/primeng';
 import { DatePipe } from '@angular/common';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { Ng2Bs3ModalModule } from 'ng2-bs3-modal/ng2-bs3-modal';
+import { TabsModule } from "ngx-tabs";
 
 import { AppRoutingModule, CLIENT_ROUTER_PROVIDERS } from './app-routing.module';
 import { MyAuthConfig } from './config';
@@ -43,6 +44,7 @@ import { EventsService } from './services/events.service';
     AppRoutingModule,
     HttpClientModule,
     Ng2Bs3ModalModule,
+    TabsModule,
     Ng2UiAuthModule.forRoot(MyAuthConfig),
     ToastModule.forRoot(),
     CookieModule.forRoot(),

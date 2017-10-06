@@ -34,6 +34,7 @@
     "ng2-toastr": "4.1.2",
     "ng2-ui-auth": "^7.0.2",
     "ngx-cookie": "1.0.0",
+    "ngx-tabs": "^0.0.13",
     "@swimlane/ngx-datatable": "^10.2.3",
     "polyfills": "^2.1.1",
     "primeng": "^4.2.1",

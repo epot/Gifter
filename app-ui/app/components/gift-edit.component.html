@@ -20,7 +20,7 @@
                           [formControl]="form.controls['name']"
                   >
               </div>
-              <div class="form-group" *ngIf="gift.to">
+              <div class="form-group">
                   <label for="to" i18n>Intended for:</label>  
                   <select class="form-control" [(ngModel)]="toId" [ngModelOptions]="{standalone: true}" required>
                       <option *ngFor="let p of participants" [ngValue]="p.user.id" i18n>{{p.user.userName}}</option>

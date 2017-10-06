@@ -11,7 +11,7 @@ import { CalendarModule } from 'primeng/primeng';
 import { DatePipe } from '@angular/common';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { Ng2Bs3ModalModule } from 'ng2-bs3-modal/ng2-bs3-modal';
-import { TabsModule } from "ngx-tabs";
+import { TabsModule } from 'ngx-tabs';
 
 import { AppRoutingModule, CLIENT_ROUTER_PROVIDERS } from './app-routing.module';
 import { MyAuthConfig } from './config';
@@ -32,6 +32,7 @@ import { FormHelperService } from './services/form-helper.service';
 import { JsonHttpGateway } from './services/json-http.service';
 import { UserService } from './services/user.service';
 import { EventsService } from './services/events.service';
+import { GiftAddComponent } from './components/gift-add.component';
 
 @NgModule({
   imports: [
@@ -60,6 +61,7 @@ import { EventsService } from './services/events.service';
     EventComponent,
     GiftViewComponent,
     GiftEditComponent,
+    GiftAddComponent,
   ],
   providers: [
     ErrorHandleService,

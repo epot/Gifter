@@ -110,7 +110,7 @@ export class EventsService {
     return Promise.reject(error.message || error);
   }
 
-  editGift(id: number, eventid: number, payload: any): Promise<Object> {
+  editGift(eventid: number, payload: any): Promise<Object> {
     return this.http.post('/api/events/' + eventid + '/gifts', payload)
       .toPromise()
       .then(response => {

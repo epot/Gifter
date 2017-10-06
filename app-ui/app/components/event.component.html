@@ -9,6 +9,9 @@
         <div class="container">
           <tabset *ngIf="event">
             <tab i18n-title title=Gifts>
+              <div>
+                <a class="btn btn-primary" [routerLink]="['addGift']" i18n>Add a gift's idea</a>
+              </div>
               <table id="gifts-table" class="table table-striped table-hover table-bordered tablesorter">
                 <thead>
                   <tr>

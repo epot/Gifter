@@ -14,10 +14,9 @@ import { TokenUser } from '../token-user';
   selector: 'my-gift-edit',
   template: require('./gift-edit.component.html')
 })
-export class GiftEditComponent implements OnInit, OnDestroy {
+export class GiftAddComponent implements OnInit, OnDestroy {
   public user: TokenUser;
   private _userSubscription: Subscription;
-  public gift: Object;
   public participants: Object[];
   public loadingGift;
   public error: any;
@@ -44,28 +43,13 @@ export class GiftEditComponent implements OnInit, OnDestroy {
         this.user = user;
     });
 
-    this.loadingGift = true;
     this.route.paramMap
       .switchMap((params: ParamMap) => {
           this.eventid = +params.get('id');
-          return this.eventsService.getGift(+params.get('giftid'));
-        }
-      )
-      .subscribe(response => {
-        this.loadingGift = false;
-        this.gift = response;
-        this.toId = this.gift['to'] ? this.gift['to'].id : '';
-        this.urls = this.gift['urls'];
-        this.form = this.fb.group({
-          'name': new FormControl(this.gift['name'], [Validators.required])
-        });
-      },
-      err => {
-        this.error = err;
-      });
-
-    this.route.paramMap
-      .switchMap((params: ParamMap) => {
+          this.form = this.fb.group({
+            'name': new FormControl('', [Validators.required])
+          });
+          this.urls = [];
           return this.eventsService.getEventParticipants(+params.get('id'));
         }
       )
@@ -85,8 +69,7 @@ export class GiftEditComponent implements OnInit, OnDestroy {
   submit(formData: any) {
     this.eventsService.editGift(this.eventid, {
         name: formData['name'],
-        id: this.gift['id'],
-        creatorid: this.gift['creator']['id'],
+        creatorid: this.user['id'],
         eventid: this.eventid,
         to: this.toId,
         urls: this.urls

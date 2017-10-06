@@ -236,10 +236,6 @@ class EventsController @Inject()(components: ControllerComponents,
             case None => giftDAO.save(new_gift)
           }
           newGift.map { gift =>
-            /*gift.to match {
-              case Some(user_to) => Redirect(routes.Events.eventWithUser(gift.eventid, user_to.id))
-              case _ => Redirect(routes.Events.event(gift.eventid))
-            }*/
             Ok(Json.toJson(gift))
           }
         }

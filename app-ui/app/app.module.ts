@@ -36,6 +36,7 @@ import { GiftAddComponent } from './components/gift-add.component';
 import { ResetPasswordComponent } from './components/reset-password.component';
 import { ForgotPasswordComponent } from './components/forgot-password.component';
 import { PasswordService } from './services/password.service';
+import { ProfileComponent } from './components/profile.component';
 
 @NgModule({
   imports: [
@@ -67,6 +68,7 @@ import { PasswordService } from './services/password.service';
     GiftAddComponent,
     ResetPasswordComponent,
     ForgotPasswordComponent,
+    ProfileComponent,
   ],
   providers: [
     ErrorHandleService,

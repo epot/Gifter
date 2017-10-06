@@ -11,6 +11,7 @@ import { GiftEditComponent } from './components/gift-edit.component';
 import { EventComponent } from './components/event.component';
 import { ForgotPasswordComponent } from './components/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password.component';
+import { ProfileComponent } from './components/profile.component';
 import { AuthGuardService } from './services/auth-guard.service';
 
 export const CLIENT_ROUTER_PROVIDERS = [
@@ -25,6 +26,7 @@ const routes: Routes = [
   { path: 'events/:id/gifts/:giftid/view', component: GiftViewComponent, canActivate: [AuthGuardService] },
   { path: 'events/:id/gifts/:giftid/edit', component: GiftEditComponent, canActivate: [AuthGuardService] },
   { path: 'newEvent', component: NewEventComponent, canActivate: [AuthGuardService] },
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuardService] },
   { path: 'signIn', component: SignInComponent },
   { path: 'signUp', component: SignUpComponent },
   { path: 'forgotPassword', component: ForgotPasswordComponent },

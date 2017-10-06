@@ -4,7 +4,7 @@ import { JwtHttp, AuthService } from 'ng2-ui-auth';
 import { Subscription } from 'rxjs/Subscription';
 
 import { TokenUser } from '../token-user';
-import { UserService } from '../services/user.service'
+import { UserService } from '../services/user.service';
 import { ErrorHandleService } from '../services/error-handle.service';
 
 @Component({

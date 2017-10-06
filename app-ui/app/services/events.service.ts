@@ -43,6 +43,15 @@ export class EventsService {
       .catch(this.handleError);
   }
 
+  deleteGift(eventid: number, giftid: number): Promise<Object> {
+    return this.http.delete('/api/events/' + eventid + '/gifts/' + giftid)
+      .toPromise()
+      .then(response => {
+          return response;
+        })
+      .catch(this.handleError);
+  }
+
   getEventWithDetails(id: number): Promise<Object> {
     return this.http.get('/api/events/' + id + '/details')
       .toPromise()

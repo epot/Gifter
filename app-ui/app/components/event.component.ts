@@ -17,6 +17,7 @@ import { FormHelperService } from '../services/form-helper.service';
 })
 export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('buyGiftModal') buyGiftModal: ModalComponent;
+  @ViewChild('deleteGiftModal') deleteGiftModal: ModalComponent;
   public user: TokenUser;
   private _userSubscription: Subscription;
   public event: Object;
@@ -28,6 +29,7 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
   public giftToBuy: Object;
   public giftToBuyNewStatus: string;
   addParticipantForm: FormGroup;
+  deleteGiftId: number;
 
   constructor(
     private userService: UserService,
@@ -107,6 +109,21 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
       this.participants.push(response);
     }
     ).catch(err => {
+      this.eh.handleError(err);
+    });
+  }
+
+  openDeleteGiftModal(id: number) {
+    this.deleteGiftId = id;
+    this.deleteGiftModal.open();
+  }
+
+  deleteGift() {
+    this.eventsService.deleteGift(this.event['id'], this.deleteGiftId).then(_ => {
+      this.gifts = this.gifts.filter(obj => obj['id'] !== this.deleteGiftId);
+      this.deleteGiftModal.close();
+    }
+  ).catch(err => {
       this.eh.handleError(err);
     });
   }

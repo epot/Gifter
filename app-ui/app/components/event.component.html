@@ -56,7 +56,7 @@
                           <button class="btn btn-default btn-sm open-gift-status-modal" data-id="{{g.id}}" [disabled]="!canBuyGift(g)">
                             <i class="glyphicon glyphicon-credit-card button-tooltip" data-toggle="tooltip" (click)="canBuyGift(g) && openBuyGiftModal(g)" i18n-title title="Buy"></i>
                           </button>
-                          <button class="btn btn-default btn-sm open-delete-modal" [disabled]="g.creator !== user" data-id="{{g.id}}" data-action="deleteGift"><i class="glyphicon glyphicon-remove"></i></button>
+                          <button class="btn btn-default btn-sm" [disabled]="g.creator.id !== user.id" (click)="openDeleteGiftModal(g.id)"><i class="glyphicon glyphicon-remove"></i></button>
                           <a 
                           [ngClass]="{'btn btn-info btn-sm open-gift-comment-modal': true, 'btn-info': hasComments[g.id], 'btn-default': !hasComments[g.id]}"
                           class="" data-id="{{g.id}}">
@@ -138,3 +138,16 @@
     </modal-footer>
   </ng-container>
 </modal>
+
+<modal #deleteGiftModal>
+    <modal-header [show-close]="true">
+        <h4 class="modal-title" i18n>Confirm deletion</h4>
+    </modal-header>
+    <modal-body>
+        <p i18n>If you delete this gift, everyone will be disappointed. Are you really sure ?</p>
+    </modal-body>
+    <modal-footer>
+      <button type="button" class="btn btn-default" data-dismiss="modal" (click)="deleteGiftModal.dismiss()" i18n>Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="deleteGift()" i18n>Confirm</button>
+    </modal-footer>
+  </modal>

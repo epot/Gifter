@@ -56,7 +56,7 @@ export class MainComponent implements OnInit, OnDestroy {
   }
 
   deleteEvent() {
-    this.eventsService.deleteEvent(this.deleteEventId).then(events => {
+    this.eventsService.deleteEvent(this.deleteEventId).then(_ => {
       this.events = this.events.filter(obj => obj['id'] !== this.deleteEventId);
       this.deleteEventModal.close();
     }

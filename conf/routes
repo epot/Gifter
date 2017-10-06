@@ -19,19 +19,19 @@ GET         /api/user                controllers.HomeController.user
 
 
 # Events actions
-POST     /api/events                    controllers.EventsController.postNewEvent
-DELETE   /api/events/:eventid           controllers.EventsController.deleteEvent(eventid: Long)
-GET      /api/events                    controllers.EventsController.getEvents
-GET      /api/events/:eventid/details   controllers.EventsController.getEventWithDetails(eventid: Long)
-GET      /api/events/:eventid/participants  controllers.EventsController.getEventParticipants(eventid: Long)
-POST     /api/events/:eventid/participants  controllers.EventsController.addParticipant(eventid: Long)
-POST     /api/events/:eventid/gifts     controllers.EventsController.postEditGift(eventid: Long)
-GET      /api/gifts/:giftid             controllers.EventsController.getGift(giftid: Long)
-GET      /api/gifts/:giftid/details     controllers.EventsController.getGiftWithDetails(giftid: Long)
-POST     /api/gifts/:giftid/status           controllers.EventsController.updateGiftStatus(giftid: Long)
-POST     /deleteGift/:giftid            controllers.EventsController.postDeleteGift(giftid: Long)
-GET      /gift/:giftid/comment          controllers.EventsController.getGiftComments(giftid: Long)
-POST     /gift/:giftid/comment          controllers.EventsController.postGiftComment(giftid: Long)
+POST     /api/events                            controllers.EventsController.postNewEvent
+DELETE   /api/events/:eventid                   controllers.EventsController.deleteEvent(eventid: Long)
+GET      /api/events                            controllers.EventsController.getEvents
+GET      /api/events/:eventid/details           controllers.EventsController.getEventWithDetails(eventid: Long)
+GET      /api/events/:eventid/participants      controllers.EventsController.getEventParticipants(eventid: Long)
+POST     /api/events/:eventid/participants      controllers.EventsController.addParticipant(eventid: Long)
+POST     /api/events/:eventid/gifts             controllers.EventsController.postEditGift(eventid: Long)
+GET      /api/gifts/:giftid                     controllers.EventsController.getGift(giftid: Long)
+GET      /api/gifts/:giftid/details             controllers.EventsController.getGiftWithDetails(giftid: Long)
+POST     /api/gifts/:giftid/status              controllers.EventsController.updateGiftStatus(giftid: Long)
+DELETE   /api/events/:eventid/gifts/:giftid     controllers.EventsController.deleteGift(eventid: Long, giftid: Long)
+GET      /gift/:giftid/comment                  controllers.EventsController.getGiftComments(giftid: Long)
+POST     /gift/:giftid/comment                  controllers.EventsController.postGiftComment(giftid: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

@@ -329,7 +329,7 @@ class EventsController @Inject()(components: ControllerComponents,
   /**
    * Delete a gift.
    */
-  def postDeleteGift(giftid: Long) = silhouette.SecuredAction(WithGiftCreatorOf[DefaultEnv#A](giftDAO, giftid)).async { implicit request =>
+  def deleteGift(eventid: Long, giftid: Long) = silhouette.SecuredAction(WithGiftCreatorOf[DefaultEnv#A](giftDAO, giftid)).async { implicit request =>
     giftDAO.find(giftid).map { maybeGift =>
       maybeGift match {
         case Some(_) => {

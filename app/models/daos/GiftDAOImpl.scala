@@ -189,7 +189,7 @@ class GiftDAOImpl @Inject()(
       Json.toJson(GiftContent(gift.name, Gift.Status.id(gift.status), toid, fromid, gift.urls)).toString)
 
     val insertQuery = (slickGifts returning slickGifts.map(_.id)).insertOrUpdate(dbGift)
-    dbConfig.db.run(insertQuery).map(id => gift.copy(id=id))
+    dbConfig.db.run(insertQuery).map(_ => gift)
   }
 
   def delete(id: Long) = {

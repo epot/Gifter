@@ -28,10 +28,17 @@
                     <td class="col-md-1">
                       <ng-container *ngIf="g.to && g.to.id !== user.id">
                         <ng-container *ngIf="g.from">
-                            <p class="bg-primary button-tooltip" data-toggle="tooltip" i18n-title title="Offered by {{g.from.userName}}" i18n>{{g.status}}</p>
+                          <ng-container *ngIf="g.status === 'Bought'">
+                            <p class="bg-primary button-tooltip" data-toggle="tooltip" i18n-title title="Offered by {{g.from.userName}}" i18n>Bought</p>
+                          </ng-container>
+                          <ng-container *ngIf="g.status === 'AboutToBeBought'">
+                            <p class="bg-primary button-tooltip" data-toggle="tooltip" i18n-title title="Offered by {{g.from.userName}}" i18n>About to be bought</p>
+                          </ng-container>
                         </ng-container>
                         <ng-container *ngIf="!g.from" i18n>
-                            {{g.status}}
+                          <ng-container *ngIf="g.status === 'New'" i18n>New</ng-container>
+                          <ng-container *ngIf="g.status === 'AboutToBeBought'" i18n>About to be bought</ng-container>
+                          <ng-container *ngIf="g.status === 'Bought'" i18n>Bought</ng-container>
                         </ng-container>
                       </ng-container>
                     </td>
@@ -43,8 +50,8 @@
                         <div class="btn-group">
                           <a class="btn btn-default btn-sm" [routerLink]="['/events', event.id, 'gifts', g.id, 'view']"><i class="glyphicon glyphicon-eye-open button-tooltip" data-toggle="tooltip" i18n-title title="Details"></i></a>
                           <a class="btn btn-default btn-sm" [routerLink]="['/events', event.id, 'gifts', g.id, 'edit']"><i class="glyphicon glyphicon-edit button-tooltip" data-toggle="tooltip" i18n-title title="Modify"></i></a>
-                          <button class="btn btn-default btn-sm open-gift-status-modal" data-id="{{g.id}}" [disabled]="g.from || g.from !== user">
-                            <i class="glyphicon glyphicon-credit-card button-tooltip" data-toggle="tooltip" (click)="openChangeGiftModal(g)" i18n-title title="Buy"></i>
+                          <button class="btn btn-default btn-sm open-gift-status-modal" data-id="{{g.id}}" [disabled]="!canBuyGift(g)">
+                            <i class="glyphicon glyphicon-credit-card button-tooltip" data-toggle="tooltip" (click)="canBuyGift(g) && openBuyGiftModal(g)" i18n-title title="Buy"></i>
                           </button>
                           <button class="btn btn-default btn-sm open-delete-modal" [disabled]="g.creator !== user" data-id="{{g.id}}" data-action="deleteGift"><i class="glyphicon glyphicon-remove"></i></button>
                           <a 
@@ -68,22 +75,22 @@
   </div>
 </div>
 
-<modal #changeGiftModal>
-  <ng-container *ngIf="giftChange">
+<modal #buyGiftModal>
+  <ng-container *ngIf="giftToBuy">
     <modal-header [show-close]="true">
-        <h4 class="modal-title" i18n>Offer "{{giftChange.name}}"</h4>
+        <h4 class="modal-title" i18n>Offer "{{giftToBuy.name}}"</h4>
     </modal-header>
     <modal-body>
         <label for="to" i18n>Change status:</label>  
-        <select class="form-control" [(ngModel)]="giftChangeNewStatus" required>
+        <select class="form-control" [(ngModel)]="giftToBuyNewStatus" required>
             <option value="New" i18n>New</option>
             <option value="AboutToBeBought" i18n>About to be bought</option>
             <option value="Bought" i18n>Bought</option>
         </select>
     </modal-body>
     <modal-footer>
-      <button type="button" class="btn btn-default" data-dismiss="modal" (click)="changeGiftModal.dismiss()" i18n>Cancel</button>
-      <button type="button" class="btn btn-primary" (click)="changeGift()" i18n>Confirm</button>
+      <button type="button" class="btn btn-default" data-dismiss="modal" (click)="buyGiftModal.dismiss()" i18n>Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="buyGift()" i18n>Confirm</button>
     </modal-footer>
   </ng-container>
 </modal>

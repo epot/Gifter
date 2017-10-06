@@ -14,7 +14,7 @@ import { ErrorHandleService } from '../services/error-handle.service'
   template: require('./event.component.html')
 })
 export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
-  @ViewChild('changeGiftModal') changeGiftModal: ModalComponent;
+  @ViewChild('buyGiftModal') buyGiftModal: ModalComponent;
   public user: TokenUser;
   private _userSubscription: Subscription;
   public event: Object;
@@ -23,8 +23,8 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
   public participants: Object[];
   public loadingEvent;
   public error: any;
-  public giftChange: Object;
-  public giftChangeNewStatus: string;
+  public giftToBuy: Object;
+  public giftToBuyNewStatus: string;
 
   constructor(
     private userService: UserService,
@@ -51,6 +51,7 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
         this.loadingEvent = false;
         this.event = response['event'];
         this.gifts = response['gifts'].map(item => item.gift);
+        console.log(this.gifts);
         for (const elt of response['gifts']) {
           this.hasComments[elt.gift.id] = elt.hasCommentNotification;
         }
@@ -65,16 +66,16 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
     ($('[data-toggle="tooltip"]') as any).tooltip();
   }
 
-  openChangeGiftModal(gift: Object) {
-    this.giftChange = gift;
-    this.giftChangeNewStatus = gift['status'];
-    this.changeGiftModal.open();
+  openBuyGiftModal(gift: Object) {
+    this.giftToBuy = gift;
+    this.giftToBuyNewStatus = gift['status'];
+    this.buyGiftModal.open();
   }
 
-  changeGift() {
-    this.eventsService.updateGiftStatus(this.giftChange['id'], this.giftChangeNewStatus).then(response => {
-      this.changeGiftModal.close();
-      const updateItem = this.gifts.find(x => x['id'] === this.giftChange['id']);
+  buyGift() {
+    this.eventsService.updateGiftStatus(this.giftToBuy['id'], this.giftToBuyNewStatus).then(response => {
+      this.buyGiftModal.close();
+      const updateItem = this.gifts.find(x => x['id'] === this.giftToBuy['id']);
       const index = this.gifts.indexOf(updateItem);
       this.gifts[index] = response;
     }
@@ -82,6 +83,11 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
       this.eh.handleError(err);
     });
   }
+
+  canBuyGift(gift: Object) {
+    return gift['to']['id'] !== this.user['id'] &&
+      (!gift['from'] || gift['from']['id'] === this.user['id']);
+   }
 
 
   ngOnDestroy() {

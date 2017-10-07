@@ -31,7 +31,7 @@ var config = {
                 use: ['style-loader', 'css-loader', 'less-loader']
             },
             {
-                test: /\.(jpg|png|woff|woff2|eot|ttf|svg)$/,
+                test: /\.(jpg|png|woff|woff2|eot|ttf|svg|gif)$/,
                 use: 'url-loader?limit=100000'
             },
             {
@@ -44,6 +44,15 @@ var config = {
                 loader: 'babel',
                 query: {
                   presets: ['es2015']
+                }
+            },
+            {
+                test: /\.(html)$/,
+                use: {
+                    loader: 'html-loader',
+                    options: {
+                    attrs: [':data-src']
+                    }
                 }
             },
             {
@@ -70,6 +79,12 @@ var config = {
         ),
         new webpack.ProvidePlugin({
             'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
+        }),
+        // Maps jquery identifiers to the jQuery package (because Bootstrap and other dependencies expects it to be a global variable)
+        new webpack.ProvidePlugin({
+            jQuery: 'jquery',
+            $: 'jquery',
+            jquery: 'jquery'
         }),
         new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.bundle.js' })
     ]

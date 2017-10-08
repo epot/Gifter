@@ -9,7 +9,8 @@
   "scripts": {
     "test": "test",
     "build": "webpack -p --config ./webpack/webpack.config.prod.js",
-    "start": "node ./webpack/webpack.server"
+    "start": "node ./webpack/webpack.server",
+    "i18n": "ng-xi18n"
   },
   "author": "Emmanuel Pot",
   "license": "Apache-2.0",
@@ -17,12 +18,15 @@
     "@angular/animations": "4.3.1",
     "@angular/common": "4.3.1",
     "@angular/compiler": "4.3.1",
+    "@angular/compiler-cli": "^4.4.4",
     "@angular/core": "4.3.1",
     "@angular/forms": "4.3.1",
     "@angular/http": "4.3.1",
     "@angular/platform-browser": "4.3.1",
     "@angular/platform-browser-dynamic": "4.3.1",
+    "@angular/platform-server": "^4.4.4",
     "@angular/router": "4.3.1",
+    "@swimlane/ngx-datatable": "^10.2.3",
     "bootstrap": "^3.3.7",
     "core-js": "2.4.1",
     "css-loader": "^0.28.4",
@@ -35,10 +39,10 @@
     "ng2-ui-auth": "^7.0.2",
     "ngx-cookie": "1.0.0",
     "ngx-tabs": "^0.0.13",
-    "@swimlane/ngx-datatable": "^10.2.3",
     "polyfills": "^2.1.1",
     "primeng": "^4.2.1",
     "reflect-metadata": "^0.1.10",
+    "raw-loader": "^0.5.1",
     "rxjs": "5.4.2",
     "style-loader": "^0.18.2",
     "symbol-observable": "1.0.1",
@@ -58,8 +62,8 @@
     "tslint-eslint-rules": "3.4.0",
     "tslint-microsoft-contrib": "4.0.0",
     "typescript": "2.4.0",
-    "webpack": "3.3.0",
-    "webpack-dev-server": "2.6.1"
+    "webpack": "^3.6.0",
+    "webpack-dev-server": "^2.9.1"
   },
   "engines": {
     "node": ">= 5",

@@ -47,13 +47,9 @@ var config = {
                 }
             },
             {
-                test: /\.(html)$/,
-                use: {
-                    loader: 'html-loader',
-                    options: {
-                    attrs: [':data-src']
-                    }
-                }
+                test: /\.html$/,
+                exclude: /node_modules/,
+                loader: 'raw-loader'
             },
             {
                 test: /\.ts(x?)$/,

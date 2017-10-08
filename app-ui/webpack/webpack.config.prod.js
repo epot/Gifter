@@ -1,4 +1,5 @@
 var webpack = require('webpack');
+const path = require('path');
 
 module.exports = exports = Object.create(require('./webpack.base.config.js'));
 

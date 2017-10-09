@@ -12,6 +12,12 @@ exports.plugins = [
         /angular(\\|\/)core(\\|\/)@angular/,
         path.resolve(__dirname, './app')
     ),
+    // Maps jquery identifiers to the jQuery package (because Bootstrap and other dependencies expects it to be a global variable)
+    new webpack.ProvidePlugin({
+        jQuery: 'jquery',
+        $: 'jquery',
+        jquery: 'jquery'
+    }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.ProvidePlugin({
         'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'

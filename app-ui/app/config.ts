@@ -1,6 +1,6 @@
 import { CustomConfig } from 'ng2-ui-auth';
 
-export const GOOGLE_CLIENT_ID = '174400993910-lubnl76hs5c6ihop7u20bnl429jvo98d.apps.googleusercontent.com';
+export const GOOGLE_CLIENT_ID = '174400993910-63csgump26j3jjh4havakk0lmhhee1tl.apps.googleusercontent.com';
 
 export class MyAuthConfig extends CustomConfig {
     defaultHeaders = {'Content-Type': 'application/json'};

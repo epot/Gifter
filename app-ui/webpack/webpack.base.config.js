@@ -47,6 +47,10 @@ var config = {
                 }
             },
             {
+                test: /\.xlf/,
+                loader: 'raw-loader'
+            },
+            {
                 test: /\.html$/,
                 exclude: /node_modules/,
                 loader: 'raw-loader'
@@ -75,12 +79,6 @@ var config = {
         ),
         new webpack.ProvidePlugin({
             'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
-        }),
-        // Maps jquery identifiers to the jQuery package (because Bootstrap and other dependencies expects it to be a global variable)
-        new webpack.ProvidePlugin({
-            jQuery: 'jquery',
-            $: 'jquery',
-            jquery: 'jquery'
         }),
         new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.bundle.js' })
     ]

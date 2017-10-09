@@ -9,9 +9,9 @@ import { ToastModule } from 'ng2-toastr/ng2-toastr';
 import { CookieModule } from 'ngx-cookie';
 import { CalendarModule } from 'primeng/primeng';
 import { DatePipe } from '@angular/common';
-import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { Ng2Bs3ModalModule } from 'ng2-bs3-modal/ng2-bs3-modal';
 import { TabsModule } from 'ngx-tabs';
+import { TooltipModule } from 'ngx-tooltip';
 
 import { AppRoutingModule, CLIENT_ROUTER_PROVIDERS } from './app-routing.module';
 import { MyAuthConfig } from './config';
@@ -40,7 +40,6 @@ import { ProfileComponent } from './components/profile.component';
 
 @NgModule({
   imports: [
-    NgxDatatableModule,
     BrowserModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
@@ -50,6 +49,7 @@ import { ProfileComponent } from './components/profile.component';
     HttpClientModule,
     Ng2Bs3ModalModule,
     TabsModule,
+    TooltipModule,
     Ng2UiAuthModule.forRoot(MyAuthConfig),
     ToastModule.forRoot(),
     CookieModule.forRoot(),

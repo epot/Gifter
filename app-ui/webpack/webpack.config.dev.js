@@ -1,6 +1,7 @@
 /* global __dirname */
 const path = require('path');
 const webpack = require('webpack');
+const { AotPlugin } = require('@ngtools/webpack');
 
 module.exports = exports = Object.create(require('./webpack.base.config.js'));
 
@@ -12,13 +13,16 @@ exports.plugins = [
         path.resolve(__dirname, './app')
     ),
     new webpack.HotModuleReplacementPlugin(),
-    // Maps jquery identifiers to the jQuery package (because Bootstrap and other dependencies expects it to be a global variable)
-    new webpack.ProvidePlugin({
-        jQuery: 'jquery',
-        $: 'jquery',
-        jquery: 'jquery'
-    }),
     new webpack.ProvidePlugin({
         'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
+    }),
+    new AotPlugin({
+        "mainPath": "app/main.ts",
+        "i18nFile": "app/locale/messages.fr.xlf",
+        "i18nFormat": "xlf",
+        "locale": "fr",
+        "replaceExport": false,
+        "exclude": [],
+        "tsConfigPath": "tsconfig.json"
     })
 ];

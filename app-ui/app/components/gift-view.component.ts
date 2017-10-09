@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import * as $ from 'jquery';
 
 import { UserService } from '../services/user.service';
 import { EventsService } from '../services/events.service';

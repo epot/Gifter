@@ -3,7 +3,6 @@ import { Subscription } from 'rxjs/Subscription';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
-import * as $ from 'jquery';
 
 import { UserService } from '../services/user.service';
 import { EventsService } from '../services/events.service';
@@ -15,7 +14,7 @@ import { FormHelperService } from '../services/form-helper.service';
   selector: 'my-event',
   templateUrl: 'templates/event.component.html'
 })
-export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
+export class EventComponent implements OnInit, OnDestroy {
   @ViewChild('buyGiftModal') buyGiftModal: ModalComponent;
   @ViewChild('deleteGiftModal') deleteGiftModal: ModalComponent;
   @ViewChild('commentGiftModal') commentGiftModal: ModalComponent;
@@ -76,10 +75,6 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
       });
   }
 
-  ngAfterViewInit() {
-    ($('[data-toggle="tooltip"]') as any).tooltip();
-  }
-
   openBuyGiftModal(gift: Object) {
     this.giftToBuy = gift;
     this.giftToBuyNewStatus = gift['status'];
@@ -104,7 +99,6 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
    }
 
   addParticipant(formData: any) {
-    console.log('coin ' + formData['email']);
     this.eventsService.addParticipant(this.event['id'], {
       email: formData['email'],
       role: 'Owner' // hardcoded for now

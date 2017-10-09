@@ -6,14 +6,14 @@ import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.impl.providers.OAuth2Info
 import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.concurrent.Execution.Implicits._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * The DAO to store the OAuth2 information.
  */
-class OAuth2InfoDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
+class OAuth2InfoDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider,
+                               implicit val ex: ExecutionContext)
     extends DelegableAuthInfoDAO[OAuth2Info] with DAOSlick {
 
   import profile.api._

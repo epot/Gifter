@@ -6,14 +6,14 @@ import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.impl.providers.OpenIDInfo
 import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.concurrent.Execution.Implicits._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * The DAO to store the OpenID information.
  */
-class OpenIDInfoDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
+class OpenIDInfoDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider,
+                               implicit val ex: ExecutionContext)
     extends DelegableAuthInfoDAO[OpenIDInfo] with DAOSlick {
 
   import profile.api._

@@ -1,5 +1,6 @@
 var webpack = require('webpack');
 const path = require('path');
+const { AotPlugin } = require('@ngtools/webpack');
 
 module.exports = exports = Object.create(require('./webpack.base.config.js'));
 

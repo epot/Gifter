@@ -2,7 +2,7 @@ package modules
 
 import com.google.inject.AbstractModule
 import models.daos._
-import models.services.{AuthTokenService, AuthTokenServiceImpl}
+import models.services.{AuthTokenService, AuthTokenServiceImpl, EventNotificationService, EventNotificationServiceImpl}
 import net.codingwell.scalaguice.ScalaModule
 
 /**
@@ -22,5 +22,6 @@ class BaseModule extends AbstractModule with ScalaModule {
     bind[ParticipantDAO].to[ParticipantDAOImpl]
     bind[CommentDAO].to[CommentDAOImpl]
     bind[NotificationDAO].to[NotificationDAOImpl]
+    bind[EventNotificationService].to[EventNotificationServiceImpl]
   }
 }

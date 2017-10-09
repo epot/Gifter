@@ -39,7 +39,8 @@ libraryDependencies ++= Seq(
   "net.codingwell" %% "scala-guice" % "4.1.0",
   "com.typesafe.play" %% "play-slick" % "3.0.1",
   "com.typesafe.play" %% "play-slick-evolutions" % "3.0.1",
-  "com.github.tototoshi" %% "slick-joda-mapper" % "2.3.0"
+  "com.github.tototoshi" %% "slick-joda-mapper" % "2.3.0",
+  "com.github.etaty" %% "rediscala" % "1.8.0"
 )
 
 enablePlugins(NpmSettings)

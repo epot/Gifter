@@ -1,21 +1,28 @@
 package controllers
 
+import java.net.URL
 import javax.inject.Inject
 import java.util.UUID
 
+import actors.EventActor
+import akka.actor.ActorSystem
+import akka.stream.Materializer
 import models.gift._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import org.joda.time.DateTime
 import play.api.i18n.I18nSupport
-import com.mohiva.play.silhouette.api.Silhouette
+import com.mohiva.play.silhouette.api.{HandlerResult, Silhouette}
 import models.daos._
-import models.services.UserService
+import models.services.{EventNotificationService, UserService}
 import models.user.User
 import play.api.libs.json.{JsArray, Json}
 import utils.auth._
 import models.JsonFormat._
+import play.api.Logger
+import play.api.libs.streams.ActorFlow
+import com.github.nscala_time.time.OrderingImplicits.DateTimeOrdering
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -27,8 +34,11 @@ class EventsController @Inject()(components: ControllerComponents,
                                  notificationDAO: NotificationDAO,
                                  giftDAO: GiftDAO,
                                  historyDAO: HistoryDAO,
+                                 eventNotificationService: EventNotificationService,
                                  silhouette: Silhouette[DefaultEnv])(
-   implicit ex: ExecutionContext
+  implicit val system: ActorSystem,
+  implicit val mat: Materializer,
+  implicit val ex: ExecutionContext
 )
   extends AbstractController(components) with I18nSupport {
 
@@ -96,7 +106,7 @@ class EventsController @Inject()(components: ControllerComponents,
                          case true => Gift.Status.New
                          case _ => g.gift.status
                        }))
-                   },
+                   }.sortBy(_.gift.creationDate).reverse,
                    "participants" -> participants))
               }
             }
@@ -236,6 +246,7 @@ class EventsController @Inject()(components: ControllerComponents,
             case None => giftDAO.save(new_gift)
           }
           newGift.map { gift =>
+            eventNotificationService.publishGift(gift)
             Ok(Json.toJson(gift))
           }
         }
@@ -392,11 +403,13 @@ class EventsController @Inject()(components: ControllerComponents,
         Future.successful(BadRequest(Json.obj("errors" -> form.errors.map{_.messages.mkString(", ")})))
       },
       comment => {
-        commentDAO.save(Comment(
+        val commentObj = Comment(
           objectid=giftid,
           user=request.identity,
           category=Comment.Category.Gift,
-          content=comment)).flatMap { _ =>
+          content=comment)
+        commentDAO.save(commentObj).flatMap { _ =>
+          eventNotificationService.publishComment(eventid, commentObj)
           commentDAO.findByCategoryAndId(Comment.Category.Gift, giftid).map { comments =>
             Ok(Json.obj("comments" -> JsArray(comments.map{p => Json.toJson(p)})))
           }
@@ -433,6 +446,7 @@ class EventsController @Inject()(components: ControllerComponents,
                   )
 
                   giftDAO.save(gift.copy(status=statusValue, from=from)).map { newGift =>
+                    eventNotificationService.publishGift(newGift)
                     Ok(Json.toJson(newGift))
                   }
                 }
@@ -443,6 +457,72 @@ class EventsController @Inject()(components: ControllerComponents,
         }
       }
     )
+  }
+
+  def eventWs(eventid: Long) =
+    WebSocket.acceptOrResult[String, String] {
+      case rh if sameOriginCheck(rh) =>
+        implicit val req = Request(rh, AnyContentAsEmpty)
+        silhouette.SecuredRequestHandler { securedRequest =>
+          Future.successful(HandlerResult(Ok, Some(securedRequest.identity)))
+        }.flatMap {
+          case HandlerResult(r, Some(user)) =>
+            eventDAO.find(eventid).map {
+              case maybeEvent =>
+                maybeEvent match {
+                  case Some(event) =>
+                    Right(ActorFlow.actorRef(out => EventActor.props(event, user, out, eventDAO)))
+                  case _ => Left(r)
+                }
+            }
+          case HandlerResult(r, None) => Future.successful(Left(r))
+        }
+
+      case rejected =>
+        Logger.error(s"Request ${rejected} failed same origin check")
+        Future.successful {
+          Left(Forbidden("forbidden"))
+        }
+    }
+
+  /**
+    * Checks that the WebSocket comes from the same origin.  This is necessary to protect
+    * against Cross-Site WebSocket Hijacking as WebSocket does not implement Same Origin Policy.
+    *
+    * See https://tools.ietf.org/html/rfc6455#section-1.3 and
+    * http://blog.dewhurstsecurity.com/2013/08/30/security-testing-html5-websockets.html
+    */
+  private def sameOriginCheck(implicit rh: RequestHeader): Boolean = {
+    // The Origin header is the domain the request originates from.
+    // https://tools.ietf.org/html/rfc6454#section-7
+    Logger.debug("Checking the ORIGIN ")
+
+    rh.headers.get("Origin") match {
+      case Some(originValue) if originMatches(originValue) =>
+        Logger.debug(s"originCheck: originValue = $originValue")
+        true
+
+      case Some(badOrigin) =>
+        Logger.error(s"originCheck: rejecting request because Origin header value ${badOrigin} is not in the same origin")
+        false
+
+      case None =>
+        Logger.error("originCheck: rejecting request because no Origin header found")
+        false
+    }
+  }
+
+  /**
+    * Returns true if the value of the Origin header contains an acceptable value.
+    */
+  private def originMatches(origin: String): Boolean = {
+    try {
+      val url = new URL(origin)
+      (url.getHost == "localhost" || url.getHost() == "giftyou.herokuapp.com") &&
+        (url.getPort match { case 9000 | 9001 | -1 | 19001 => true; case _ => false })
+    } catch {
+      case _: Exception => false
+    }
   }
 }
 

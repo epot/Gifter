@@ -63,7 +63,7 @@ class ForgotPasswordController @Inject() (
               ))
               Ok
             }
-          case None => Future.successful(Ok)
+          case _ => Future.successful(Ok)
         }
       }
     )

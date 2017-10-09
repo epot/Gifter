@@ -36,6 +36,7 @@ import { GiftAddComponent } from './components/gift-add.component';
 import { ResetPasswordComponent } from './components/reset-password.component';
 import { ForgotPasswordComponent } from './components/forgot-password.component';
 import { PasswordService } from './services/password.service';
+import { WSService } from './services/ws.service';
 import { ProfileComponent } from './components/profile.component';
 
 @NgModule({
@@ -82,6 +83,7 @@ import { ProfileComponent } from './components/profile.component';
     EventsService,
     DatePipe,
     PasswordService,
+    WSService,
   ],
   bootstrap: [AppComponent]
 })

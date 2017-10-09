@@ -241,6 +241,7 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
                                    clock: Clock): AuthenticatorService[JWTAuthenticator] = {
 
     val config = configuration.underlying.as[JWTAuthenticatorSettings]("silhouette.authenticator")
+
     val encoder = new CrypterAuthenticatorEncoder(crypter)
 
     new JWTAuthenticatorService(config, None, encoder, idGenerator, clock)

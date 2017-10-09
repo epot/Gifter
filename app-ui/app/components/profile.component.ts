@@ -7,7 +7,7 @@ import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'my-profile',
-  template: require('./profile.component.html')
+  templateUrl: 'templates/profile.component.html'
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   public user: TokenUser;

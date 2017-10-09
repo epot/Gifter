@@ -9,7 +9,7 @@ import { PasswordService } from '../services/password.service';
 
 @Component({
   selector: 'my-password-reset',
-  template: require('./reset-password.component.html')
+  templateUrl: 'templates/reset-password.component.html'
 })
 export class ResetPasswordComponent implements OnInit {
   form: FormGroup;

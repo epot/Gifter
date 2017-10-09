@@ -9,7 +9,7 @@ import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'my-signup',
-  template: require('./sign-up.component.html')
+  templateUrl: 'templates/sign-up.component.html'
 })
 export class SignUpComponent implements OnInit {
   form: FormGroup;

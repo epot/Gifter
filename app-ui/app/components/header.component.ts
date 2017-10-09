@@ -9,7 +9,7 @@ import { ErrorHandleService } from '../services/error-handle.service';
 
 @Component({
   selector: 'app-header',
-  template: require('./header.component.html')
+  templateUrl: 'templates/header.component.html'
 })
 export class HeaderComponent implements OnDestroy {
 

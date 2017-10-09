@@ -1,5 +1,6 @@
 package controllers
 
+import java.io.File
 import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api.Silhouette
@@ -8,8 +9,8 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
 import play.api.mvc._
-import scala.concurrent.{ExecutionContext, Future}
 
+import scala.concurrent.{ExecutionContext, Future}
 import models.daos.EventDAO
 import models.JsonFormat._
 import utils.auth.DefaultEnv
@@ -43,7 +44,18 @@ class HomeController @Inject() (
     }
   }
   else {
-    assets.at("public/bundles", file)
+    assets.at("/public/bundles", file)
+  }
+
+  def bundles(file: String): Action[AnyContent] = {
+    val caca = new File("app-ui/app/components/templates", "sign-up.component.html")
+    val test = caca.exists
+    val prout = caca.getCanonicalPath
+    val caca2 = new File("/app-ui/app/components/templates", "sign-up.component.html")
+    val test2 = caca2.exists
+    val prout2 = caca2.getCanonicalPath
+    val test3 = assets.at("/app-ui/app/components/templates", file)
+    test3
   }
 
   /**

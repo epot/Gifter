@@ -13,7 +13,7 @@ import { FormHelperService } from '../services/form-helper.service';
 
 @Component({
   selector: 'my-event',
-  template: require('./event.component.html')
+  templateUrl: 'templates/event.component.html'
 })
 export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('buyGiftModal') buyGiftModal: ModalComponent;

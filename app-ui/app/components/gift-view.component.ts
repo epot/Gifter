@@ -9,7 +9,7 @@ import { TokenUser } from '../token-user';
 
 @Component({
   selector: 'my-gift-view',
-  template: require('./gift-view.component.html')
+  templateUrl: 'templates/gift-view.component.html'
 })
 export class GiftViewComponent implements OnInit, OnDestroy {
   public user: TokenUser;

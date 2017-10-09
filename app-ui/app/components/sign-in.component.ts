@@ -11,7 +11,7 @@ import { MyAuthConfig } from '../config';
 
 @Component({
     selector: 'my-login',
-    template: require('./sign-in.component.html')
+    templateUrl: 'templates/sign-in.component.html'
 })
 export class SignInComponent implements OnInit {
     form: FormGroup;

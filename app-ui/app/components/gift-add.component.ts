@@ -12,7 +12,7 @@ import { TokenUser } from '../token-user';
 
 @Component({
   selector: 'my-gift-edit',
-  template: require('./gift-edit.component.html')
+  templateUrl: 'templates/gift-edit.component.html'
 })
 export class GiftAddComponent implements OnInit, OnDestroy {
   public user: TokenUser;

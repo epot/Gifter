@@ -5,11 +5,11 @@ import { ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
 import { UserService } from '../services/user.service';
 import { EventsService } from '../services/events.service';
 import { TokenUser } from '../token-user';
-import { ErrorHandleService } from '../services/error-handle.service'
+import { ErrorHandleService } from '../services/error-handle.service';
 
 @Component({
   selector: 'my-main',
-  template: require('./main.component.html')
+  templateUrl: 'templates/main.component.html'
 })
 export class MainComponent implements OnInit, OnDestroy {
   @ViewChild('deleteEventModal') deleteEventModal: ModalComponent;

@@ -9,7 +9,7 @@ import { EventsService } from '../services/events.service';
 
 @Component({
     selector: 'new-event',
-    template: require('./new-event.component.html')
+    templateUrl: 'templates/new-event.component.html'
 })
 export class NewEventComponent implements OnInit {
     form: FormGroup;

@@ -1,4 +1,4 @@
-@()
+@(l: Lang)()
 <!doctype html>
 <html lang="en" data-framework="angular2">
 <head>
@@ -11,6 +11,9 @@
 </head>
 <body>
     <my-root>Loading...</my-root>
+    <script>
+        document.locale = '@l.language';
+    </script>
     <script type="text/javascript" src="/bundles/bundle.js" charset="utf-8"></script>
 </body>
 </html>

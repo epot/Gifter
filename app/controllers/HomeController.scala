@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api.Silhouette
 import play.api.{Environment, Mode}
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
 import play.api.mvc._
@@ -16,14 +16,16 @@ import models.JsonFormat._
 import utils.auth.DefaultEnv
 
 
+
 class HomeController @Inject() (
   ws: WSClient,
   assets: Assets,
   components: ControllerComponents,
   eventDAO: EventDAO,
   environment: Environment,
+  messagesApi: MessagesApi,
   silhouette: Silhouette[DefaultEnv])(
-  implicit ex: ExecutionContext
+  implicit val ex: ExecutionContext
 ) extends AbstractController(components) with I18nSupport {
 
   /*
@@ -32,7 +34,7 @@ class HomeController @Inject() (
    * @return The result to display.
    */
   def index = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
-    Future.successful(Ok(views.html.index()))
+    Future.successful(Ok(views.html.index(messagesApi.preferred(request).lang)))
   }
 
   def bundle(file: String): Action[AnyContent] = if (environment.mode == Mode.Dev) Action.async {

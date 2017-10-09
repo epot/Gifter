@@ -5,7 +5,6 @@ declare var System: any;
 export function getTranslationProviders(): Promise<Object[]> {
 
   // Get the locale id from the global
-  document['locale'] = 'fr';
   const locale = document['locale'] as string;
 
   // return no providers if fail to get translation file for locale

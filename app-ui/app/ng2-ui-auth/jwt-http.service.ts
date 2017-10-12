@@ -117,11 +117,9 @@ export class JwtHttp {
                 }
             });
         }
-        console.log('this.cookieService coin = ' + this._cookieService);
         // Add CSRF token for the Play CSRF filter
         const token = this._cookieService.get('PLAY_CSRF_TOKEN');
         if (token) {
-            console.log('token ' + token);
             // Play looks for a token with the name Csrf-Token
             // https://www.playframework.com/documentation/2.4.x/ScalaCsrf
             obj.headers.set('Csrf-Token', token);

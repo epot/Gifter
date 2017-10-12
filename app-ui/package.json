@@ -37,7 +37,6 @@
     "jquery": "^3.2.1",
     "ng2-bs3-modal": "^0.10.4",
     "ng2-toastr": "4.1.2",
-    "ng2-ui-auth": "^7.0.2",
     "ngx-cookie": "1.0.0",
     "ngx-tabs": "^0.0.13",
     "ngx-tooltip": "0.0.9",

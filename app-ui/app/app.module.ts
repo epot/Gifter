@@ -4,7 +4,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS  } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Ng2UiAuthModule } from 'ng2-ui-auth';
+// import { Ng2UiAuthModule } from 'ng2-ui-auth';
 import { ToastModule } from 'ng2-toastr/ng2-toastr';
 import { CookieModule } from 'ngx-cookie';
 import { CalendarModule } from 'primeng/primeng';
@@ -12,6 +12,7 @@ import { DatePipe } from '@angular/common';
 import { Ng2Bs3ModalModule } from 'ng2-bs3-modal/ng2-bs3-modal';
 import { TabsModule } from 'ngx-tabs';
 import { TooltipModule } from 'ngx-tooltip';
+import { Ng2UiAuthModule } from './ng2-ui-auth/ng2-ui-auth.module';
 
 import { AppRoutingModule, CLIENT_ROUTER_PROVIDERS } from './app-routing.module';
 import { MyAuthConfig } from './config';
@@ -51,9 +52,9 @@ import { ProfileComponent } from './components/profile.component';
     Ng2Bs3ModalModule,
     TabsModule,
     TooltipModule,
-    Ng2UiAuthModule.forRoot(MyAuthConfig),
     ToastModule.forRoot(),
     CookieModule.forRoot(),
+    Ng2UiAuthModule.forRoot(MyAuthConfig),
   ],
   declarations: [
     AppComponent,

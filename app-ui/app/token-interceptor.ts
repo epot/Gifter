@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
-import { AuthService } from 'ng2-ui-auth';
+import { AuthService } from './ng2-ui-auth/auth.service';
 import { CookieService } from 'ngx-cookie';
 import { Observable } from 'rxjs/Observable';
 
@@ -21,9 +21,12 @@ export class TokenInterceptor implements HttpInterceptor {
         });
     }
 
+    console.log('Adding stuff to request ' + request.url + ' / ' + request.method);
+
     // Add CSRF token for the Play CSRF filter
     const token = this.cookieService.get('PLAY_CSRF_TOKEN');
     if (token) {
+        console.log('Adding cookie to request ' + request.url + ' / ' + request.method);
         // Play looks for a token with the name Csrf-Token
         // https://www.playframework.com/documentation/2.4.x/ScalaCsrf
         request = request.clone({

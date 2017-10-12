@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { JwtHttp, AuthService } from 'ng2-ui-auth';
+import { AuthService } from '../ng2-ui-auth/auth.service';
+import { JwtHttp } from '../ng2-ui-auth/jwt-http.service';
 import { Subscription } from 'rxjs/Subscription';
 
 import { TokenUser } from '../token-user';

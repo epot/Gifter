@@ -6,7 +6,7 @@ import 'primeng/resources/themes/omega/theme.css';
 
 import { AfterViewChecked, Component, OnInit, ViewContainerRef, OnDestroy } from '@angular/core';
 import { ToastsManager } from 'ng2-toastr/ng2-toastr';
-import { AuthService } from 'ng2-ui-auth';
+import { AuthService } from '../ng2-ui-auth/auth.service';
 import { Subscription } from 'rxjs/Subscription';
 
 import { UserService } from '../services/user.service';

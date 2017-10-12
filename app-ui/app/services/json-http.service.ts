@@ -1,4 +1,4 @@
-import { JwtHttp } from 'ng2-ui-auth';
+import { JwtHttp } from '../ng2-ui-auth/jwt-http.service';
 import { Observable } from 'rxjs/Rx';
 import { RequestOptionsArgs, URLSearchParams } from '@angular/http';
 import { Injectable } from '@angular/core';

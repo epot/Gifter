@@ -69,11 +69,11 @@ class EventDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
         val creator = User(
           result._2.userID,
           Nil,
-          user.firstName,
-          user.lastName,
-          user.fullName,
-          user.email,
-          user.avatarURL)
+          result._2.firstName,
+          result._2.lastName,
+          result._2.fullName,
+          result._2.email,
+          result._2.avatarURL)
         val event = result._1
         Event(event.id, creator, event.name, event.date, Event.Type.fromId(event.eventType))
       }).distinct.toList.sortBy(_.date).reverse

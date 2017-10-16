@@ -60,12 +60,11 @@ class RegistrationController @Inject() (
       u <- userService.save(user)
       _ <- authInfoRepository.add(loginInfo, authInfo)
       authenticator <- silhouette.env.authenticatorService.create(loginInfo)
-      value <- silhouette.env.authenticatorService.init(authenticator)
-      result <- silhouette.env.authenticatorService.embed(value, r)
+      token <- silhouette.env.authenticatorService.init(authenticator)
     } yield {
       silhouette.env.eventBus.publish(SignUpEvent(u, request))
       silhouette.env.eventBus.publish(LoginEvent(u, request))
-      result
+      Ok(Json.obj("token" -> token))
     }
   }
 }

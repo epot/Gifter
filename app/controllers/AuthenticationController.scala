@@ -69,11 +69,11 @@ class AuthenticationController @Inject() (
         }
       }.recover {
         case _: ProviderException =>
-          Unauthorized(Json.obj("message" -> Messages("invalid.credentials")))
+          BadRequest(Json.obj("message" -> Messages("invalid.credentials")))
       }
     }.recoverTotal {
       case _ =>
-        Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.credentials"))))
+        Future.successful(BadRequest(Json.obj("message" -> Messages("invalid.credentials"))))
     }
   }
 

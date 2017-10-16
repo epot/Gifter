@@ -1,102 +1,10 @@
 
-close=Fermer
-submit=Soumettre
-cancel=Annuler
-connection=Connexion
-add=Ajouter
-details=Voir détails
-modify=Modifier
-profile=Profile
-logout=Déconnexion
+email.from = Rene Coty <rene@coty.com>
 
-gift.to=Destiné à:
-gift.add=Ajouter une idée de cadeau
-gift.status.new=Nouveau
-gift.status.abouttobebought=En cours d''achat
-gift.status.bought=Acheté
-gift.status.markedfordeletion=Supprimé
-gift.creator=Idée de:
-gift.view=Détails d'un cadeau
-gift.new=Gifter nouvelle idée de cadeau
-gift.comment=Commenter
-gift.comment.add=Ajouter
-gift.comment.your=Votre commentaire...
-gift.comment.modal.title=Commenter à propos de "{0}"
-gift.gifts=Cadeaux
-gift.buy=Acheter
+# Reset Password
+email.reset.password.subject = Reinitialiser le mot de passe
+email.reset.password.hello = Bonjour {0},
+email.reset.password.html.text = Merci de suivre ce lien <a href="{0}">this link</a> pour reinitialiser votre mot de passe
+email.reset.password.txt.text = Merci de suivre ce lien pour reinitialiser votre mot de passe: {0}
 
-gift.description=Description du cadeau:
-gift.add.link=Ajouter un lien
-
-gift.column.description=Description
-gift.column.for=Pour
-gift.column.status=Statut
-gift.column.links=Liens
-gift.column.actions=Actions
-
-gift.filter.name=Filtrer par nom
-gift.filter.status=Filtrer par statut
-
-gift.delete.confirm.title=Confirmer la suppression
-gift.delete.confirm.message=Si vous supprimez ce cadeau, tout le monde va être déçu. Etes vous bien sur ?
-
-event.delete.confirm.title=Confirmer la suppression
-event.delete.confirm.message=Si vous supprimez cet événement, tout le monde va être déçu. Etes vous bien sur ?
-
-event.list=Evénements
-event.new=Nouvel événement
-
-event.name=Nom de l''événement:
-event.create=Créer
-
-error.date=Date obligatoire
-
-event.column.name=Evénement
-event.column.creator=Créateur
-event.column.date=Date
-event.column.type=Type
-event.column.actions=Actions
-
-forgot.password.title = Mot de passe oublié
-reset.password.title = Reset mot de passe
-change.password.title = Changement de mot de passe
-
-forgot.your.password = J''ai oublié mon super mot de passe
-forgot.password = Mot de passe oublié
-reset.password = Reset du mot de passe
-change.password = Changement de mot de passe
-
-remember.me = Se souvenir de moi
-forgot.password.info = Merci de rentrer votre adresse email et nous vous enverrons un email avec les instructions pour changer de mot de passe.
-reset.email.sent = Nous vous avons envoyé un email a l''adresse entrée. Si vous n'avez pas recu un email dans les 5 minutes, verifiez que l''email entré était le bon.
-invalid.reset.link = Ce lien n'est plus valide ! Merci de refaire la procédure.
-password.reset = Le mot de passe a bien ete change, merci de vous authentifier avec le nouveau.
-password.changed = Votre mot de passe a bien été changé.
-strong.password.info = Un mot de passe complexe inclue de la ponctuation, des nombres et de la ponctuation.
-
-participant.addemail=Ajouter un nom d'utilisateur...
-participant.status.owner=Administrateur
-participant.status.gifter=Acheteur de cadeaux
-participant.status.reader=Lecteur
-participant.participants=Participants
-
-participant.column.name=Nom
-participant.column.status=Statut
-
-event.type.birthday=Annniversaire
-event.type.christmas=Noël
-
-signin.header=Création de nouveau compte
-signin.password=Mot de passe
-signin.password.confirm=Confirmation du mot de passe
-signin.name=Nom d''utilisateur
-signin.firstname=Prénom
-signin.lastname=Nom de famille
-signin.email=E-mail
-signin.avatarurl=URL de votre avatar
-
-index.create.account=Ou créer un nouveau compte
-index.sign.providers=Ou connectez vous avec l'un des fournisseurs suivants
-
-form.errors=Corrigez toutes les erreurs
-could.not.authenticate = Impossible de s'identifier avec ce fournisseur ! Merci d'essayer a nouveau !
+invalid.credentials = Identifiant/mot de passe invalide

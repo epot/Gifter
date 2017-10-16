@@ -55,8 +55,17 @@ export class ErrorHandleService {
   handleError(err: any) {
       if (typeof err === 'string') {
           this._toastr.error(err);
-      } else if (err && err.message) {
-          this._toastr.error(err.message);
+      } else if (err instanceof Response) { // for ng2-ui-auth errors
+        const res: Response = err;
+        if (res.json().message) {
+            this._toastr.error(res.json().message, res.statusText);
+        } else {
+            this._toastr.error(res.statusText);
+        }
+      } else if (err && err['message']) {
+          this._toastr.error(err['message']);
+      } else if (err && err['errors']) {
+          this._toastr.error(err['errors'].join(', '));
       } else if (err) {
           this._toastr.error(err.toString());
       } else {

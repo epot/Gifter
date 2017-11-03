@@ -1,0 +1,18 @@
+dist: trusty
+sudo: false
+language: scala
+cache:
+  directories:
+  - $HOME/.ivy2
+env:
+  - NODE_VERSION=6
+scala:
+  - 2.12.2
+jdk:
+  - oraclejdk8
+before_script:
+  - cd src/main/g8
+script:
+  - nvm use $NODE_VERSION
+  - cd app-ui && npm install && cd ..
+  - sbt stage -DtsCompileMode=stage

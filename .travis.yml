@@ -10,8 +10,6 @@ scala:
   - 2.12.2
 jdk:
   - oraclejdk8
-before_script:
-  - cd src/main/g8
 script:
   - nvm use $NODE_VERSION
   - cd app-ui && npm install && cd ..

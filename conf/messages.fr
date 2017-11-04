@@ -2,9 +2,10 @@
 email.from = Rene Coty <rene@coty.com>
 
 # Reset Password
-email.reset.password.subject = Reinitialiser le mot de passe
+email.reset.password.subject = Réinitialiser le mot de passe
 email.reset.password.hello = Bonjour {0},
-email.reset.password.html.text = Merci de suivre ce lien <a href="{0}">this link</a> pour reinitialiser votre mot de passe
-email.reset.password.txt.text = Merci de suivre ce lien pour reinitialiser votre mot de passe: {0}
+email.reset.password.html.text = Merci de suivre ce lien <a href="{0}">this link</a> pour réinitialiser votre mot de passe
+email.reset.password.txt.text = Merci de suivre ce lien pour réinitialiser votre mot de passe: {0}
 
 invalid.credentials = Identifiant/mot de passe invalide
+could.not.authenticate = Echec durant l'authentification, merci de réessayer plus tard

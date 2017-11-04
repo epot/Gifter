@@ -9,3 +9,4 @@ email.reset.password.html.text = Please follow <a href="{0}">this link</a> to re
 email.reset.password.txt.text = Please follow the link to reset your password: {0}
 
 invalid.credentials = Incorrect login/password
+could.not.authenticate = Failed to authenticate, please retry later

@@ -62,8 +62,8 @@ export class Oauth2Service {
         }
 
         return openPopup
-            .switchMap((oauthData) => {
-                console.log('response ' + url + ' , ' + this.defaults.name);
+            .switchMap((oauthData) => {                
+                console.log('response ' + JSON.stringify(oauthData));
                 // when no server URL provided, return popup params as-is.
                 // this is for a scenario when someone wishes to opt out from
                 // satellizer's magic by doing authorization code exchange and

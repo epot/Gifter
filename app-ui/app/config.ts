@@ -14,7 +14,8 @@ export class MyAuthConfig extends CustomConfig {
     providers = {
         google: {
             clientId: GOOGLE_CLIENT_ID,
-            url: '/authenticate/google'
+            url: '/authenticate/google',
+            scopeDelimiter: '+'
         }
     };
 }

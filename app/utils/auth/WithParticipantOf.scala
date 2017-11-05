@@ -4,9 +4,10 @@ import com.mohiva.play.silhouette.api.{Authenticator, Authorization}
 import models.daos.ParticipantDAO
 import models.user.User
 import play.api.mvc.Request
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
-case class WithParticipantOf[A <: Authenticator](participantDAO: ParticipantDAO, eventid: Long) extends Authorization[User, A] {
+import scala.concurrent.ExecutionContext
+
+case class WithParticipantOf[A <: Authenticator](participantDAO: ParticipantDAO, eventid: Long)(implicit ec: ExecutionContext) extends Authorization[User, A] {
 
   def isAuthorized[B](user: User, authenticator: A)(
     implicit request: Request[B]) = {

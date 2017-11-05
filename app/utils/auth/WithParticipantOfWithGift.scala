@@ -5,10 +5,9 @@ import models.daos.{GiftDAO, ParticipantDAO}
 import models.user.User
 import play.api.mvc.Request
 
-import scala.concurrent.Future
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import scala.concurrent.{ExecutionContext, Future}
 
-case class WithParticipantOfWithGift[A <: Authenticator](giftDAO: GiftDAO, participantDAO: ParticipantDAO, giftid: Long) extends Authorization[User, A] {
+case class WithParticipantOfWithGift[A <: Authenticator](giftDAO: GiftDAO, participantDAO: ParticipantDAO, giftid: Long)(implicit ec: ExecutionContext) extends Authorization[User, A] {
 
   def isAuthorized[B](user: User, authenticator: A)(
     implicit request: Request[B]) = {

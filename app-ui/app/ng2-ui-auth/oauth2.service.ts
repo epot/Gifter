@@ -49,8 +49,6 @@ export class Oauth2Service {
 
         url = [this.defaults.authorizationEndpoint, this.buildQueryString()].join('?');
 
-        console.log('pop up ' + url);
-
         if (this.config.cordova) {
             openPopup = this.popup
                 .open(url, this.defaults.name, this.defaults.popupOptions/*, this.defaults.redirectUri*/)

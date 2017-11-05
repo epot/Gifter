@@ -107,7 +107,7 @@ export class ConfigService {
             name: 'google',
             url: '/auth/google',
             authorizationEndpoint: 'https://accounts.google.com/o/oauth2/auth',
-            redirectUri: this.getHttpHost(),
+            redirectUri: this.getHttpHost('/oauth2'),
             requiredUrlParams: ['scope'],
             optionalUrlParams: ['display', 'state', 'prompt', 'login_hint', 'access_type', 'include_granted_scopes', 'openid.realm', 'hd'],
             scope: ['profile', 'email'],

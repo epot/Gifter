@@ -49,13 +49,13 @@ export class Oauth2Service {
 
         url = [this.defaults.authorizationEndpoint, this.buildQueryString()].join('?');
 
+        console.log('pop up ' + url);
+
         if (this.config.cordova) {
             openPopup = this.popup
                 .open(url, this.defaults.name, this.defaults.popupOptions/*, this.defaults.redirectUri*/)
                 .eventListener(this.defaults.redirectUri);
         } else {
-            console.log('pop up ' + url + ' , ' + this.defaults.name);
-            
             openPopup = this.popup
                 .open(url, this.defaults.name, this.defaults.popupOptions/*, this.defaults.redirectUri*/)
                 .pollPopup();
@@ -63,7 +63,6 @@ export class Oauth2Service {
 
         return openPopup
             .switchMap((oauthData) => {                
-                console.log('response ' + JSON.stringify(oauthData));
                 // when no server URL provided, return popup params as-is.
                 // this is for a scenario when someone wishes to opt out from
                 // satellizer's magic by doing authorization code exchange and

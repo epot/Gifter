@@ -15,7 +15,8 @@ export class MyAuthConfig extends CustomConfig {
         google: {
             clientId: GOOGLE_CLIENT_ID,
             url: '/authenticate/google',
-            scopeDelimiter: '+'
+            scopeDelimiter: '+',
+            redirectUri: 'http://localhost:9000/slip'
         }
     };
 }

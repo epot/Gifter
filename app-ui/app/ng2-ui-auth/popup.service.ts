@@ -94,7 +94,6 @@ export class PopupService {
                     // error instanceof DOMException && error.name === 'SecurityError'
                 }
                 if (popupWindowOrigin === documentOrigin && (this.popupWindow.location.search || this.popupWindow.location.hash)) {
-                    console.log('coin ' + this.popupWindow.location);
                     const queryParams = this.popupWindow.location.search.substring(1).replace(/\/$/, '');
                     const hashParams = this.popupWindow.location.hash.substring(1).replace(/[\/$]/, '');
                     const hash = this.parseQueryString(hashParams);

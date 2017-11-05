@@ -16,7 +16,7 @@ export class MyAuthConfig extends CustomConfig {
             clientId: GOOGLE_CLIENT_ID,
             url: '/authenticate/google',
             scopeDelimiter: '+',
-            redirectUri: 'http://localhost:9000/slip'
+            redirectUri: 'https://giftyou.herokuapp.com/slip'
         }
     };
 }

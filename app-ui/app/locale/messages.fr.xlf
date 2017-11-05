@@ -550,6 +550,14 @@
           <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="0786cd30b3c46be764b298e5e319b82c97c5bc23" datatype="html">
+        <source><x id="START_PARAGRAPH" ctype="x-p"/>New<x id="CLOSE_PARAGRAPH" ctype="x-p"/></source>
+        <target><x id="START_PARAGRAPH" ctype="x-p"/>Nouveau<x id="CLOSE_PARAGRAPH" ctype="x-p"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">38</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="81b97b8ea996ad1e4f9fca8415021850214884b1" datatype="html">
         <source>Status</source>
         <target>Statut</target>

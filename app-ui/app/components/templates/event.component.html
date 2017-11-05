@@ -22,17 +22,20 @@
               </p-column>
               <p-column field="status" i18n-header header="Status">
                 <ng-template let-col let-g="rowData" pTemplate="body">
-                  <ng-container *ngIf="g.to && g.to.id !== user.id">
+                  <ng-template #elseTemplate>
+                    <ng-container><p class="gift-status bg-warning">?</p></ng-container>
+                  </ng-template>
+                  <ng-container *ngIf="g.to && g.to.id !== user.id; else elseTemplate">
                       <ng-container *ngIf="g.from">
                         <ng-container *ngIf="g.status === 'Bought'">
-                          <p class="bg-primary" tooltip="Offered by {{g.from.userName}}" i18n>Bought</p>
+                          <p class="gift-status bg-primary" tooltip="Offered by {{g.from.userName}}" i18n>Bought</p>
                         </ng-container>
                         <ng-container *ngIf="g.status === 'AboutToBeBought'">
-                          <p class="bg-primary" i18n-tooltip tooltip="Offered by {{g.from.userName}}" i18n>About to be bought</p>
+                          <p class="gift-status bg-primary" i18n-tooltip tooltip="Offered by {{g.from.userName}}" i18n>About to be bought</p>
                         </ng-container>
                       </ng-container>
                       <ng-container *ngIf="!g.from">
-                        <ng-container *ngIf="g.status === 'New'" i18n>New</ng-container>
+                        <ng-container *ngIf="g.status === 'New'" i18n><p class="gift-status bg-info">New</p></ng-container>
                         <ng-container *ngIf="g.status === 'AboutToBeBought'" i18n>About to be bought</ng-container>
                         <ng-container *ngIf="g.status === 'Bought'" i18n>Bought</ng-container>
                       </ng-container>

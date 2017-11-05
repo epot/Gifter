@@ -5,7 +5,7 @@
     </div>
     <div class="row">
       <app-left-menu></app-left-menu>
-      <div class="col-md-10">
+      <div class="col-md-4">
         <div class="container">
           <tabset *ngIf="event">
             <tab i18n-title title=Gifts>
@@ -14,24 +14,16 @@
                 <a class="btn btn-primary" [routerLink]="['addGift']" i18n>Add a gift's idea</a>
               </div>
               <br/>
-              <table id="gifts-table" class="table table-striped table-hover table-bordered tablesorter">
-                <thead>
-                  <tr>
-                    <th i18n>Description</th>
-                    <th *ngIf="event.eventType == 'Christmas'" class="filter-select filter-exact" data-placeholder="name" i18n>For</th>
-                    <th class="filter-select filter-exact" data-placeholder="status" i18n>Status</th>
-                    <th i18n>Links</th>
-                    <th i18n>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let g of gifts">
-                    <td class="col-md-4">{{g.name}}</td>
-                    <td class="col-md-1">
-                      <span *ngIf="g.to">{{g.to.userName}}</span>
-                    </td>
-                    <td class="col-md-1">
-                      <ng-container *ngIf="g.to && g.to.id !== user.id">
+              <p-dataTable tableStyleClass="table table-striped table-hover table-bordered" [value]="gifts" [rows]="20" [paginator]="true" #dt>
+                <p-column field="name" i18n-header header="Description" [filter]="true" i18n-filterPlaceholder filterPlaceholder="Search"></p-column>
+                <p-column  *ngIf="event.eventType == 'Christmas'" field="to.userName" [filter]="true" filterMatchMode="equals" i18n-header header="For">
+                  <ng-template pTemplate="filter" let-col>
+                    <p-dropdown [options]="recipients" [style]="{'width':'100%'}" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)" styleClass="ui-column-filter"></p-dropdown>
+                  </ng-template>
+                </p-column>
+                <p-column field="status" i18n-header header="Status">
+                  <ng-template let-col let-g="rowData" pTemplate="body">
+                    <ng-container *ngIf="g.to && g.to.id !== user.id">
                         <ng-container *ngIf="g.from">
                           <ng-container *ngIf="g.status === 'Bought'">
                             <p class="bg-primary" tooltip="Offered by {{g.from.userName}}" i18n>Bought</p>
@@ -46,30 +38,33 @@
                           <ng-container *ngIf="g.status === 'Bought'" i18n>Bought</ng-container>
                         </ng-container>
                       </ng-container>
-                    </td>
-                    <td class="col-md-1">
-                      <li *ngFor="let url of g.urls"><a href="{{url}}" target="_blank\" i18n>Link</a></li>
-                    </td>
-                    <td class="col-md-5">
-                      <div class="text-centered">
+                  </ng-template>
+                </p-column>
+                <p-column field="links" i18n-header header="Links">
+                  <ng-template let-col let-gift="rowData" pTemplate="body">
+                    <li *ngFor="let url of gift.urls"><a href="{{url}}" target="_blank\" i18n>Link</a></li>
+                  </ng-template>
+                </p-column>
+                <p-column field="actions" i18n-header header="Actions">
+                  <ng-template let-col let-g="rowData" pTemplate="body">
+                    <div class="text-centered">
                         <div class="btn-group">
-                          <a class="btn btn-default btn-sm" [routerLink]="['/events', event.id, 'gifts', g.id, 'view']"><i class="glyphicon glyphicon-eye-open" i18n-tooltip tooltip="Details"></i></a>
-                          <a class="btn btn-default btn-sm" [routerLink]="['/events', event.id, 'gifts', g.id, 'edit']"><i class="glyphicon glyphicon-edit" i18n-tooltip tooltip="Modify"></i></a>
+                          <button class="btn btn-default btn-sm" [routerLink]="['/events', event.id, 'gifts', g.id, 'view']"><i class="glyphicon glyphicon-eye-open" i18n-tooltip tooltip="Details"></i></button>
+                          <button class="btn btn-default btn-sm" [routerLink]="['/events', event.id, 'gifts', g.id, 'edit']"><i class="glyphicon glyphicon-edit" i18n-tooltip tooltip="Modify"></i></button>
                           <button class="btn btn-default btn-sm open-gift-status-modal" data-id="{{g.id}}" [disabled]="!canBuyGift(g)">
                             <i class="glyphicon glyphicon-credit-card" (click)="canBuyGift(g) && openBuyGiftModal(g)" i18n-tooltip tooltip="Buy"></i>
                           </button>
                           <button class="btn btn-default btn-sm" [disabled]="g.creator.id !== user.id" (click)="openDeleteGiftModal(g.id)"><i class="glyphicon glyphicon-remove"></i></button>
-                          <a 
+                          <button 
                           [ngClass]="{'btn btn-info btn-sm open-gift-comment-modal': true, 'btn-info': hasComments[g.id], 'btn-default': !hasComments[g.id]}"
                           (click)="openCommentGiftModal(g)">
                             <i class="glyphicon glyphicon-comment" i18n-tooltip tooltip="Comment"></i>
-                          </a>
+                          </button>
                         </div>
                       </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                  </ng-template>
+                </p-column>
+              </p-dataTable>
             </tab>
             <tab i18n-title title=Participants>
               <table id="participants-table" class="table table-striped table-hover table-bordered tablesorter">

@@ -34,6 +34,7 @@ export class EventComponent implements OnInit, OnDestroy {
   addParticipantForm: FormGroup;
   deleteGiftId: number;
   currentComment: string;
+  recipients: any[];
 
   constructor(
     private userService: UserService,
@@ -70,6 +71,18 @@ export class EventComponent implements OnInit, OnDestroy {
         for (const elt of response['gifts']) {
           this.hasComments[elt.gift.id] = elt.hasCommentNotification;
         }
+        this.recipients = [];
+        this.recipients.push({label: 'Everyone', value: null});
+        const uniqueRecipients = new Set();
+        for (const g of this.gifts) {
+          if (g['to']) {
+            uniqueRecipients.add(g['to']['userName']);
+          }
+        }
+        for (const r of uniqueRecipients) {
+          this.recipients.push({label: r, value: r});
+        }
+
         this.participants = response['participants'];
         this.wsService.connectEventWS(location, +this.event['id']).subscribe(
           value => {

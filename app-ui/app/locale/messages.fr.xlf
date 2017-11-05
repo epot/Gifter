@@ -534,6 +534,14 @@
           <context context-type="linenumber">20</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html">
+        <source>Search</source>
+        <target>Chercher</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="94e14b37828786677cc5eb46727e9278f72e1d54" datatype="html">
         <source>For</source>
         <target>Pour</target>

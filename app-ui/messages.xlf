@@ -10,7 +10,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">78</context>
+          <context context-type="linenumber">129</context>
         </context-group>
       </trans-unit>
       <trans-unit id="a20424156b8816671f61879f0574a4f27d7b16b9" datatype="html">
@@ -42,7 +42,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">24</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">75</context>
         </context-group>
       </trans-unit>
       <trans-unit id="409adc47d32b4f33e6b9dbf174669f2f43e10eed" datatype="html">
@@ -69,7 +73,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">146</context>
+          <context context-type="linenumber">197</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9c8cc15e40958fd156beed8d156532662d60927f" datatype="html">
@@ -99,11 +103,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">138</context>
+          <context context-type="linenumber">189</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">152</context>
+          <context context-type="linenumber">203</context>
         </context-group>
       </trans-unit>
       <trans-unit id="68e710782ccb5398b3acb8844caf0b199da2c3da" datatype="html">
@@ -114,11 +118,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">139</context>
+          <context context-type="linenumber">190</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">153</context>
+          <context context-type="linenumber">204</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2d12511248455cac10541f85cb7af43c971dc83b" datatype="html">
@@ -140,7 +144,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">105</context>
+          <context context-type="linenumber">156</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/forgot-password.component.ts</context>
@@ -258,7 +262,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">106</context>
+          <context context-type="linenumber">157</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/forgot-password.component.ts</context>
@@ -479,115 +483,182 @@
         <source>Description</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html">
+        <source>Search</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">18</context>
         </context-group>
       </trans-unit>
       <trans-unit id="94e14b37828786677cc5eb46727e9278f72e1d54" datatype="html">
         <source>For</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">21</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="81b97b8ea996ad1e4f9fca8415021850214884b1" datatype="html">
-        <source>Status</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">19</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">79</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="dc60677d5a906e69f38a5cf9da7f2eb03931bea0" datatype="html">
-        <source>Links</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">23</context>
+          <context context-type="linenumber">72</context>
         </context-group>
       </trans-unit>
       <trans-unit id="af9d0d81e627049804748055715389cab9d39238" datatype="html">
         <source>Bought</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">37</context>
+          <context context-type="linenumber">29</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="linenumber">38</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">134</context>
+          <context context-type="linenumber">88</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">97</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">185</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4874ea92faaca9041ff0ac2a4e50c44e8dd82d49" datatype="html">
         <source>About to be bought</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">32</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">45</context>
+          <context context-type="linenumber">37</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">133</context>
+          <context context-type="linenumber">91</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">96</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">184</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4824792e87f6f8db2f3b1fa4a922c84fcdf2c1ca" datatype="html">
         <source>Offered by <x id="INTERPOLATION"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">32</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">91</context>
         </context-group>
       </trans-unit>
       <trans-unit id="d81f00c85d3b507f3e3d78bfc617a2c66e028391" datatype="html">
         <source>New</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">44</context>
+          <context context-type="linenumber">36</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">132</context>
+          <context context-type="linenumber">95</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">183</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="81b97b8ea996ad1e4f9fca8415021850214884b1" datatype="html">
+        <source>Status</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">73</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">130</context>
         </context-group>
       </trans-unit>
       <trans-unit id="e03b6cba7c88318e4f91a60a079870e8fba4bee7" datatype="html">
         <source>Link</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">51</context>
+          <context context-type="linenumber">45</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">102</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dc60677d5a906e69f38a5cf9da7f2eb03931bea0" datatype="html">
+        <source>Links</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">74</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4f8b2bb476981727ab34ed40fde1218361f92c45" datatype="html">
         <source>Details</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">56</context>
+          <context context-type="linenumber">52</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">107</context>
         </context-group>
       </trans-unit>
       <trans-unit id="b2623aee44b70c9a4ba1fce16c8a593b0a4c7974" datatype="html">
         <source>Modify</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">57</context>
+          <context context-type="linenumber">53</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">108</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1befce3c6f0c468b06ae5199116e5b096a35a3ef" datatype="html">
         <source>Buy</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">59</context>
+          <context context-type="linenumber">55</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">110</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5a5d7ee2acbfa9c91ab7f41d26bda9ff0cafe42f" datatype="html">
         <source>Comment</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">65</context>
+          <context context-type="linenumber">61</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">116</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5b036018241f9f87e0040470f5ba2fac5b0e1091" datatype="html">
@@ -601,93 +672,93 @@
         <source>Owner</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">138</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">92</context>
+          <context context-type="linenumber">143</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9a7b72cecd949271843506f2b11195b52c38dd75" datatype="html">
         <source>Gifts buyer</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">88</context>
+          <context context-type="linenumber">139</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">93</context>
+          <context context-type="linenumber">144</context>
         </context-group>
       </trans-unit>
       <trans-unit id="083338c1e13796fd0259d89493ec7b75be0d14d0" datatype="html">
         <source>Read only</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">89</context>
+          <context context-type="linenumber">140</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">94</context>
+          <context context-type="linenumber">145</context>
         </context-group>
       </trans-unit>
       <trans-unit id="f6755cff4957d5c3c89bafce5651f1b6fa2b1fd9" datatype="html">
         <source>Add</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">114</context>
+          <context context-type="linenumber">165</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">179</context>
+          <context context-type="linenumber">230</context>
         </context-group>
       </trans-unit>
       <trans-unit id="303cf04ca5c12a60d676b6a00ceaf852799c1af4" datatype="html">
         <source>Participants</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">74</context>
+          <context context-type="linenumber">125</context>
         </context-group>
       </trans-unit>
       <trans-unit id="651bdd12ad06a7f9cc29600824c355a4f65bb118" datatype="html">
         <source>Offer &quot;<x id="INTERPOLATION"/>&quot;</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">127</context>
+          <context context-type="linenumber">178</context>
         </context-group>
       </trans-unit>
       <trans-unit id="351f3cd5ebe2010c97142eb1390f762b500bb134" datatype="html">
         <source>Change status:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">130</context>
+          <context context-type="linenumber">181</context>
         </context-group>
       </trans-unit>
       <trans-unit id="97b203c750f65b585c0db6c991ad0aa71e07dbc0" datatype="html">
         <source>If you delete this gift, everyone will be disappointed. Are you really sure ?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">149</context>
+          <context context-type="linenumber">200</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ab292eb240a0b9c2b97b3724fe505626c8d53800" datatype="html">
         <source>Comment on <x id="INTERPOLATION"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">160</context>
+          <context context-type="linenumber">211</context>
         </context-group>
       </trans-unit>
       <trans-unit id="430f61ce03f131d7ea47b1d079a02d8f867df73f" datatype="html">
         <source>Your comment...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">176</context>
+          <context context-type="linenumber">227</context>
         </context-group>
       </trans-unit>
       <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html">
         <source>Close</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
-          <context context-type="linenumber">187</context>
+          <context context-type="linenumber">238</context>
         </context-group>
       </trans-unit>
       <trans-unit id="60bc066798b1d811f4a5c07cc3ec985261c887f6" datatype="html">
@@ -722,7 +793,7 @@
         <source>Reset password</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/reset-password.component.ts</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3ac9a098a34b04923bf20ec0c754bab138750b79" datatype="html">

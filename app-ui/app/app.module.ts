@@ -7,7 +7,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // import { Ng2UiAuthModule } from 'ng2-ui-auth';
 import { ToastModule } from 'ng2-toastr/ng2-toastr';
 import { CookieModule } from 'ngx-cookie';
-import { CalendarModule } from 'primeng/primeng';
+import { CalendarModule, DataTableModule, SharedModule } from 'primeng/primeng';
+import { DropdownModule } from 'primeng/components/dropdown/dropdown';
+
 import { DatePipe } from '@angular/common';
 import { Ng2Bs3ModalModule } from 'ng2-bs3-modal/ng2-bs3-modal';
 import { TabsModule } from 'ngx-tabs';
@@ -46,7 +48,10 @@ import { ProfileComponent } from './components/profile.component';
     BrowserAnimationsModule,
     ReactiveFormsModule,
     CalendarModule,
+    DataTableModule,
+    SharedModule,
     FormsModule,
+    DropdownModule,
     AppRoutingModule,
     HttpClientModule,
     Ng2Bs3ModalModule,

@@ -78,7 +78,6 @@ class AuthenticationController @Inject() (
   }
 
   def authenticateSocial(provider: String) = Action.async { r =>
-    Logger.info(s"authenticateSocial $r ${r.body} ")
     cacheAuthTokenForOauth1(r) { implicit request =>
       (socialProviderRegistry.get[SocialProvider](provider) match {
         case Some(p: SocialProvider with CommonSocialProfileBuilder) =>

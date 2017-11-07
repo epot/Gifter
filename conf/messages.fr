@@ -9,3 +9,4 @@ email.reset.password.txt.text = Merci de suivre ce lien pour réinitialiser votr
 
 invalid.credentials = Identifiant/mot de passe invalide
 could.not.authenticate = Echec durant l'authentification, merci de réessayer plus tard
+oauth2.wait = Authentification effectuée, merci de patienter...

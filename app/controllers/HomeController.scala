@@ -37,6 +37,10 @@ class HomeController @Inject() (
     Future.successful(Ok(views.html.index(messagesApi.preferred(request).lang)))
   }
 
+  def oauth2 = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
+    Future.successful(Ok(views.html.oauth2()))
+  }
+
   def bundle(file: String): Action[AnyContent] = if (environment.mode == Mode.Dev) Action.async {
     ws.url(s"http://localhost:8080/bundles/$file").get().map { response =>
       val contentType = response.headers.get("Content-Type").flatMap(_.headOption).getOrElse("application/octet-stream")

@@ -10,3 +10,4 @@ email.reset.password.txt.text = Please follow the link to reset your password: {
 
 invalid.credentials = Incorrect login/password
 could.not.authenticate = Failed to authenticate, please retry later
+oauth2.wait = Authentication done, please wait...

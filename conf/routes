@@ -3,6 +3,7 @@
 # ~~~~
 
 GET         /                        controllers.HomeController.index
+GET         /oauth2                  controllers.HomeController.oauth2
 
 # Login action
 POST        /signUp                  controllers.RegistrationController.register

@@ -44,7 +44,11 @@
               </p-column>
               <p-column field="links" i18n-header header="Links">
                 <ng-template let-col let-gift="rowData" pTemplate="body">
-                  <li *ngFor="let url of gift.urls"><a href="{{url}}" target="_blank\" i18n>Link</a></li>
+                  <div class="btn-group btn-group-sm" role="group" aria-label="...">
+                    <a *ngFor="let url of gift.urls" type="button" class="btn btn-default" href="{{url}}" target="_blank\">
+                      <i class="glyphicon glyphicon-link"></i>
+                    </a>
+                  </div>
                 </ng-template>
               </p-column>
               <p-column field="actions" i18n-header header="Actions">

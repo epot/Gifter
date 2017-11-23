@@ -13,7 +13,7 @@
               <a class="btn btn-primary" [routerLink]="['addGift']" i18n>Add a gift's idea</a>
             </div>
             <br/>
-            <p-dataTable rowHover="true" [value]="gifts" [rows]="20" [paginator]="true" #dt>
+            <p-dataTable *ngIf="visible" rowHover="true" [value]="gifts" [rows]="20" [paginator]="true" #dt>
               <p-column field="name" i18n-header header="Description" [filter]="true" i18n-filterPlaceholder filterPlaceholder="Search"></p-column>
               <p-column  *ngIf="event.eventType == 'Christmas'" field="to.userName" [filter]="true" filterMatchMode="equals" i18n-header header="For">
                 <ng-template pTemplate="filter" let-col>

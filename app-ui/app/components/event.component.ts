@@ -35,6 +35,7 @@ export class EventComponent implements OnInit, OnDestroy {
   deleteGiftId: number;
   currentComment: string;
   recipients: any[];
+  visible = true;
 
   constructor(
     private userService: UserService,
@@ -109,6 +110,12 @@ export class EventComponent implements OnInit, OnDestroy {
       });
   }
 
+  // ugly hack https://stackoverflow.com/questions/40077150/how-to-programmaticaly-trigger-refresh-primeng-datatable-when-a-button-is-clicke
+  updateTable(): void {
+    this.visible = false;
+    setTimeout(() => this.visible = true, 0);
+  }
+
   openBuyGiftModal(gift: Object) {
     this.giftToBuy = gift;
     this.giftToBuyNewStatus = gift['status'];
@@ -125,6 +132,7 @@ export class EventComponent implements OnInit, OnDestroy {
       this.gifts.push(gift);
       this.hasComments[id] = false;
     }
+    this.updateTable();
   }
 
   buyGift() {

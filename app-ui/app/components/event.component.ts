@@ -117,6 +117,9 @@ export class EventComponent implements OnInit, OnDestroy {
   }
 
   openBuyGiftModal(gift: Object) {
+    if (!this.canBuyGift(gift)) {
+      return;
+    }
     this.giftToBuy = gift;
     this.giftToBuyNewStatus = gift['status'];
     this.buyGiftModal.open();

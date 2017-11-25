@@ -57,8 +57,8 @@
                       <div class="btn-group">
                         <button class="btn btn-default btn-sm" [routerLink]="['/events', event.id, 'gifts', g.id, 'view']"><i class="glyphicon glyphicon-eye-open" i18n-tooltip tooltip="Details"></i></button>
                         <button class="btn btn-default btn-sm" [routerLink]="['/events', event.id, 'gifts', g.id, 'edit']"><i class="glyphicon glyphicon-edit" i18n-tooltip tooltip="Modify"></i></button>
-                        <button class="btn btn-default btn-sm open-gift-status-modal" data-id="{{g.id}}" [disabled]="!canBuyGift(g)">
-                          <i class="glyphicon glyphicon-credit-card" (click)="canBuyGift(g) && openBuyGiftModal(g)" i18n-tooltip tooltip="Buy"></i>
+                        <button class="btn btn-default btn-sm open-gift-status-modal" data-id="{{g.id}}" [disabled]="!canBuyGift(g)" (click)="openBuyGiftModal(g)">
+                          <i class="glyphicon glyphicon-credit-card" i18n-tooltip tooltip="Buy"></i>
                         </button>
                         <button class="btn btn-default btn-sm" [disabled]="g.creator.id !== user.id" (click)="openDeleteGiftModal(g.id)"><i class="glyphicon glyphicon-remove"></i></button>
                         <button 

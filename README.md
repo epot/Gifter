@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/epot/Gifter.svg?branch=master)](https://travis-ci.org/epot/Gifter)
+
 Gifter
 ======
 

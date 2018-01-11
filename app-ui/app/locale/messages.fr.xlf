@@ -578,6 +578,14 @@
           <context context-type="linenumber">23</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="b42a59071f198ab183deecdc2358d97800f2c849" datatype="html">
+        <source>This is a surprise!</source>
+        <target>C'est une surprise !</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="af9d0d81e627049804748055715389cab9d39238" datatype="html">
         <source>Bought</source>
         <target>Acheté</target>
@@ -664,6 +672,14 @@
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/event.component.ts</context>
           <context context-type="linenumber">59</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="e71c52c237e7d6229993cc3b9d661ad1213e0f02" datatype="html">
+        <source>Remove gift</source>
+        <target>Supprimer</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/event.component.ts</context>
+          <context context-type="linenumber">64</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5a5d7ee2acbfa9c91ab7f41d26bda9ff0cafe42f" datatype="html">
@@ -886,6 +902,14 @@
         <context-group purpose="location">
           <context context-type="sourcefile">app/components/header.component.ts</context>
           <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="a0132c44f5b1972ef14678f1355466c2df8a9808" datatype="html">
+        <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/> Home</source>
+        <target><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/> Accueil</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/components/header.component.ts</context>
+          <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
       <trans-unit id="994363f08f9fbfa3b3994ff7b35c6904fdff18d8" datatype="html">

@@ -13,8 +13,10 @@ import 'primeng/resources/themes/omega/theme.css';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { getTranslationProviders } from './i18n-providers';
 import { AppModule } from './app.module';
+import { enableProdMode, TRANSLATIONS, TRANSLATIONS_FORMAT } from '@angular/core';
 
 getTranslationProviders().then(providers => {
-  const options = { providers };
-  platformBrowserDynamic().bootstrapModule(AppModule/*, options*/);
+  platformBrowserDynamic().bootstrapModule(AppModule, {
+    providers: providers
+  });
 });

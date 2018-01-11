@@ -28,7 +28,7 @@
                     <td>
                       <div class="btn-toolbar">
                         <div class="btn-group">
-                          <a class="btn btn-light btn-sm" [routerLink]="['/events', event.id]"><i class="fa fa-eye button-tooltip" data-toggle="tooltip" i18n-title title="details"></i></a>
+                          <a class="btn btn-light btn-sm" [routerLink]="['/events', event.id]"><i class="fa fa-eye" i18n-ngbTooltip ngbTooltip="details"></i></a>
                           <a *ngIf="event.creator.id === user.id" class="btn btn-light btn-sm" (click)="openDeleteEventModal(event.id)"><i class="fa fa-remove"></i></a>
                         </div>
                       </div>

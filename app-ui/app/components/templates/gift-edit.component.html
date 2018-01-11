@@ -31,7 +31,7 @@
                 <div class="input input-group" *ngFor="let url of urls; let i = index; trackBy:trackByFn">
                   <input type="text" class="form-control" [(ngModel)]="urls[i]" [ngModelOptions]="{standalone: true}" value="{{urls[i]}}"> 
                   <span class="input-group-btn">
-                    <button class="btn btn-secondary" (click)="removeLink(i)" type="button"><i class="fa fa-remove"></i></button>
+                    <button class="btn btn-danger" (click)="removeLink(i)" type="button"><i class="fa fa-remove"></i></button>
                   </span>
                 </div>
               </div>

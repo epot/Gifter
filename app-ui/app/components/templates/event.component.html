@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container">
   <div class="content">
     <div class="page-header">
       <h1></h1>
@@ -24,15 +24,15 @@
                 <p-column field="status" i18n-header header="Status">
                   <ng-template let-col let-g="rowData" pTemplate="body">
                     <ng-template #elseTemplate>
-                      <ng-container><p class="gift-status bg-warning">?</p></ng-container>
+                      <ng-container><p class="gift-status bg-warning" i18n-ngbTooltip ngbTooltip="This is a surprise!">?</p></ng-container>
                     </ng-template>
                     <ng-container *ngIf="g.to && g.to.id !== user.id; else elseTemplate">
                         <ng-container *ngIf="g.from">
                           <ng-container *ngIf="g.status === 'Bought'">
-                            <p class="gift-status bg-primary" tooltip="Offered by {{g.from.userName}}" i18n>Bought</p>
+                            <p class="gift-status bg-primary" i18n-ngbTooltip ngbTooltip="Offered by {{g.from.userName}}" i18n>Bought</p>
                           </ng-container>
                           <ng-container *ngIf="g.status === 'AboutToBeBought'">
-                            <p class="gift-status bg-primary" i18n-tooltip tooltip="Offered by {{g.from.userName}}" i18n>About to be bought</p>
+                            <p class="gift-status bg-primary" i18n-ngbTooltip ngbTooltip="Offered by {{g.from.userName}}" i18n>About to be bought</p>
                           </ng-container>
                         </ng-container>
                         <ng-container *ngIf="!g.from">
@@ -55,18 +55,18 @@
                 <p-column field="actions" i18n-header header="Actions">
                   <ng-template let-col let-g="rowData" pTemplate="body">
                     <div class="text-centered">
-                        <div class="btn-group">
-                          <button class="btn btn-light btn-sm" [routerLink]="['/events', event.id, 'gifts', g.id, 'view']"><i class="fa fa-eye" i18n-tooltip tooltip="Details"></i></button>
-                          <button class="btn btn-light btn-sm" [routerLink]="['/events', event.id, 'gifts', g.id, 'edit']"><i class="fa fa-edit" i18n-tooltip tooltip="Modify"></i></button>
-                          <button class="btn btn-light btn-sm open-gift-status-modal" data-id="{{g.id}}" [disabled]="!canBuyGift(g)" (click)="openBuyGiftModal(g)">
-                            <i class="fa fa-credit-card" i18n-tooltip tooltip="Buy"></i>
+                        <div class="btn-group btn-group-sm">
+                          <button class="btn btn-light" [routerLink]="['/events', event.id, 'gifts', g.id, 'view']"><i class="fa fa-eye" i18n-ngbTooltip ngbTooltip="Details"></i></button>
+                          <button class="btn btn-light" [routerLink]="['/events', event.id, 'gifts', g.id, 'edit']"><i class="fa fa-edit" i18n-ngbTooltip ngbTooltip="Modify"></i></button>
+                          <button class="btn btn-light open-gift-status-modal" data-id="{{g.id}}" [disabled]="!canBuyGift(g)" (click)="openBuyGiftModal(g)">
+                            <i class="fa fa-credit-card" i18n-ngbTooltip ngbTooltip="Buy"></i>
                           </button>
-                          <button class="btn btn-light btn-sm" [disabled]="g.creator.id !== user.id" (click)="openDeleteGiftModal(g.id)"><i class="fa fa-remove"></i></button>
+                          <button class="btn btn-light" [disabled]="g.creator.id !== user.id" (click)="openDeleteGiftModal(g.id)"><i class="fa fa-remove" i18n-ngbTooltip ngbTooltip="Remove gift"></i></button>
                           <button 
-                          [ngClass]="{'btn btn-info btn-sm open-gift-comment-modal': true, 'btn-info': hasComments[g.id], 'btn-light': !hasComments[g.id]}"
+                          [ngClass]="{'btn btn-info open-gift-comment-modal': true, 'btn-info': hasComments[g.id], 'btn-light': !hasComments[g.id]}"
                           (click)="openCommentGiftModal(g)">
-                            <i class="fa fa-comment-o" i18n-tooltip tooltip="Comment"></i>
-                          </button>
+                            <i class="fa fa-comment-o" i18n-ngbTooltip ngbTooltip="Comment"></i>
+                        </button>
                         </div>
                       </div>
                   </ng-template>
@@ -184,11 +184,11 @@
               </div>
             </div>
           </div>
-          <div class="comment-form form-group">
-            <div class="col-sm-10">
+          <div class="comment-form form-group row">
+            <div class="col-10">
               <input type="text" class="form-control" [(ngModel)]="currentComment" id="comment" name="comment" i18n-placeholder placeholder="Your comment...">
             </div>
-            <div class="col-sm-2">
+            <div class="col-2">
               <button class="btn btn-primary" [disabled]="!currentComment" (click)="currentComment && addComment()" i18n>Add</button>
             </div>
           </div>

@@ -11,8 +11,6 @@ import { CalendarModule, DataTableModule, SharedModule } from 'primeng/primeng';
 import { DropdownModule } from 'primeng/components/dropdown/dropdown';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DatePipe } from '@angular/common';
-import { TabsModule } from 'ngx-tabs';
-import { TooltipModule } from 'ngx-tooltip';
 
 import { AppRoutingModule, CLIENT_ROUTER_PROVIDERS } from './app-routing.module';
 import { TokenInterceptor } from './token-interceptor';
@@ -53,8 +51,6 @@ export const GOOGLE_CLIENT_ID = '174400993910-63csgump26j3jjh4havakk0lmhhee1tl.a
     AppRoutingModule,
     HttpClientModule,
     NgbModule.forRoot(),
-    TabsModule,
-    TooltipModule,
     ToastrModule.forRoot(),
     CookieModule.forRoot(),
     Ng2UiAuthModule.forRoot({

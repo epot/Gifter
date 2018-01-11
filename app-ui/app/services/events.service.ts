@@ -42,7 +42,7 @@ export class EventsService {
         })
       .catch(this.handleError);
   }
-  
+
   getGiftComments(eventid: number, giftid: number): Promise<Object> {
     return this.http.get('/api/events/' + eventid + '/gifts/' + giftid + '/comments')
       .toPromise()

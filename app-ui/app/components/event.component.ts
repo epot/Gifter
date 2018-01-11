@@ -2,7 +2,7 @@ import { Component, Input, OnInit, OnDestroy, AfterViewInit, ViewChild } from '@
 import { Subscription } from 'rxjs/Subscription';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
-import { ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { UserService } from '../services/user.service';
 import { EventsService } from '../services/events.service';
@@ -16,9 +16,9 @@ import { FormHelperService } from '../services/form-helper.service';
   templateUrl: 'templates/event.component.html'
 })
 export class EventComponent implements OnInit, OnDestroy {
-  @ViewChild('buyGiftModal') buyGiftModal: ModalComponent;
-  @ViewChild('deleteGiftModal') deleteGiftModal: ModalComponent;
-  @ViewChild('commentGiftModal') commentGiftModal: ModalComponent;
+  @ViewChild('buyGiftModal') buyGiftModal;
+  @ViewChild('deleteGiftModal') deleteGiftModal;
+  @ViewChild('commentGiftModal') commentGiftModal;
   public user: TokenUser;
   private _userSubscription: Subscription;
   public event: Object;
@@ -44,7 +44,8 @@ export class EventComponent implements OnInit, OnDestroy {
     private eh: ErrorHandleService,
     private fb: FormBuilder,
     public fh: FormHelperService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private modalService: NgbModal
   ) {
   }
 
@@ -88,7 +89,9 @@ export class EventComponent implements OnInit, OnDestroy {
         this.wsService.connectEventWS(location, +this.event['id']).subscribe(
           value => {
             const json = JSON.parse(value.data.toString());
-            if (json['comment'] && this.user && json['user']['id'] !== this.user['id']) {
+            console.log(json);
+            console.log(json['user']);
+            if (json['comment'] && this.user && json['comment']['user']['id'] !== this.user['id']) {
               if (json['comment']['category'] === 'Gift') {
                 this.hasComments[json['comment']['objectid']] = true;
               }
@@ -122,10 +125,16 @@ export class EventComponent implements OnInit, OnDestroy {
     }
     this.giftToBuy = gift;
     this.giftToBuyNewStatus = gift['status'];
-    this.buyGiftModal.open();
+
+    this.modalService.open(this.buyGiftModal).result.then((result) => {
+      this.buyGift();
+    }, (reason) => {
+      return;
+    });
   }
 
   updateGift(gift: Object) {
+    console.log(gift);
     const id = gift['id'];
     const updateItem = this.gifts.find(x => x['id'] === id);
     if (updateItem) {
@@ -140,7 +149,6 @@ export class EventComponent implements OnInit, OnDestroy {
 
   buyGift() {
     this.eventsService.updateGiftStatus(this.giftToBuy['id'], this.giftToBuyNewStatus).then(response => {
-      this.buyGiftModal.close();
       this.updateGift(response);
     }
   ).catch(err => {
@@ -168,13 +176,16 @@ export class EventComponent implements OnInit, OnDestroy {
 
   openDeleteGiftModal(id: number) {
     this.deleteGiftId = id;
-    this.deleteGiftModal.open();
+    this.modalService.open(this.deleteGiftModal).result.then((result) => {
+      this.deleteGift();
+    }, (reason) => {
+      return;
+    });
   }
 
   deleteGift() {
     this.eventsService.deleteGift(this.event['id'], this.deleteGiftId).then(_ => {
       this.gifts = this.gifts.filter(obj => obj['id'] !== this.deleteGiftId);
-      this.deleteGiftModal.close();
     }
     ).catch(err => {
       this.eh.handleError(err);
@@ -185,7 +196,8 @@ export class EventComponent implements OnInit, OnDestroy {
     this.giftToComment = gift;
     this.currentComment = '';
     this.hasComments[gift['id']] = false;
-    this.commentGiftModal.open();
+
+    this.modalService.open(this.commentGiftModal);
     this.eventsService.getGiftComments(this.event['id'], gift['id']).then(response => {
       this.comments = response['comments'];
     }
@@ -195,6 +207,8 @@ export class EventComponent implements OnInit, OnDestroy {
   }
 
   addComment() {
+    console.log(this.event);
+    console.log(this.giftToComment);
     this.eventsService.addGiftComments(this.event['id'], this.giftToComment['id'], this.currentComment).then(response => {
       this.currentComment = '';
       this.comments = response['comments'];

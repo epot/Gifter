@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { UserService } from '../services/user.service';
 import { EventsService } from '../services/events.service';
@@ -12,7 +12,7 @@ import { ErrorHandleService } from '../services/error-handle.service';
   templateUrl: 'templates/main.component.html'
 })
 export class MainComponent implements OnInit, OnDestroy {
-  @ViewChild('deleteEventModal') deleteEventModal: ModalComponent;
+  @ViewChild('deleteEventModal') deleteEventModal;
   public user: TokenUser;
   private _userSubscription: Subscription;
   public events: Object[];
@@ -23,7 +23,8 @@ export class MainComponent implements OnInit, OnDestroy {
   constructor(
     private userService: UserService,
     private eventsService: EventsService,
-    private eh: ErrorHandleService
+    private eh: ErrorHandleService,
+    private modalService: NgbModal
   ) {
   }
 
@@ -52,13 +53,16 @@ export class MainComponent implements OnInit, OnDestroy {
 
   openDeleteEventModal(eventid: number) {
     this.deleteEventId = eventid;
-    this.deleteEventModal.open();
+    this.modalService.open(this.deleteEventModal).result.then((result) => {
+      this.deleteEvent();
+    }, (reason) => {
+      return;
+    });
   }
 
   deleteEvent() {
     this.eventsService.deleteEvent(this.deleteEventId).then(_ => {
       this.events = this.events.filter(obj => obj['id'] !== this.deleteEventId);
-      this.deleteEventModal.close();
     }
   ).catch(err => {
       this.eh.handleError(err);

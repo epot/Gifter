@@ -1,6 +1,5 @@
 package controllers
 
-import java.io.File
 import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api.Silhouette
@@ -46,22 +45,11 @@ class HomeController @Inject() (
       val contentType = response.headers.get("Content-Type").flatMap(_.headOption).getOrElse("application/octet-stream")
       val headers = response.headers
         .toSeq.filter(p => List("Content-Type", "Content-Length").indexOf(p._1) < 0).map(p => (p._1, p._2.mkString))
-      Ok(response.body).withHeaders(headers: _*).as(contentType)
+      Ok(response.bodyAsBytes).withHeaders(headers: _*).as(contentType)
     }
   }
   else {
     assets.at("/public/bundles", file)
-  }
-
-  def bundles(file: String): Action[AnyContent] = {
-    val caca = new File("app-ui/app/components/templates", "sign-up.component.html")
-    val test = caca.exists
-    val prout = caca.getCanonicalPath
-    val caca2 = new File("/app-ui/app/components/templates", "sign-up.component.html")
-    val test2 = caca2.exists
-    val prout2 = caca2.getCanonicalPath
-    val test3 = assets.at("/app-ui/app/components/templates", file)
-    test3
   }
 
   /**

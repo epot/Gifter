@@ -9,9 +9,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { CookieModule } from 'ngx-cookie';
 import { CalendarModule, DataTableModule, SharedModule } from 'primeng/primeng';
 import { DropdownModule } from 'primeng/components/dropdown/dropdown';
-
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DatePipe } from '@angular/common';
-import { Ng2Bs3ModalModule } from 'ng2-bs3-modal/ng2-bs3-modal';
 import { TabsModule } from 'ngx-tabs';
 import { TooltipModule } from 'ngx-tooltip';
 
@@ -53,7 +52,7 @@ export const GOOGLE_CLIENT_ID = '174400993910-63csgump26j3jjh4havakk0lmhhee1tl.a
     DropdownModule,
     AppRoutingModule,
     HttpClientModule,
-    Ng2Bs3ModalModule,
+    NgbModule.forRoot(),
     TabsModule,
     TooltipModule,
     ToastrModule.forRoot(),

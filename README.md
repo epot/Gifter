@@ -11,4 +11,4 @@ organize for the Chrismas Gifts.
 
 It is based on Postgres and Slick to handle the persistent storage, and Silhouette for authentication.
 
-This is deployed with heroku here: http://giftyou.heroku.com
+This is deployed with heroku here: https://giftyou.herokuapp.com/

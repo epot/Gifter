@@ -1,6 +1,6 @@
 var webpack = require('webpack');
 const path = require('path');
-const { AotPlugin } = require('@ngtools/webpack');
+const { AngularCompilerPlugin } = require('@ngtools/webpack');
 
 module.exports = exports = Object.create(require('./webpack.base.config.js'));
 
@@ -19,7 +19,7 @@ exports.plugins = [
             keep_fnames: true
         }
     }),
-    new AotPlugin({
+    new AngularCompilerPlugin({
         "mainPath": "app/main.ts",
         "i18nFile": "app/locale/messages.fr.xlf",
         "i18nFormat": "xlf",
@@ -27,5 +27,10 @@ exports.plugins = [
         "replaceExport": false,
         "exclude": [],
         "tsConfigPath": "tsconfig.json"
-    })
+    }),
+    new webpack.DefinePlugin({
+        'process.env': {
+          'REDIRECTURI': JSON.stringify('https://giftyou.herokuapp.com/oauth2')
+        }
+      })
 ];

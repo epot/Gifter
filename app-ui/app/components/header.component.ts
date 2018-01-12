@@ -1,7 +1,6 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../ng2-ui-auth/auth.service';
-import { JwtHttp } from '../ng2-ui-auth/jwt-http.service';
+import { AuthService } from 'ng2-ui-auth';
 import { Subscription } from 'rxjs/Subscription';
 
 import { TokenUser } from '../token-user';
@@ -17,8 +16,7 @@ export class HeaderComponent implements OnDestroy {
   public user: TokenUser;
   private userSubscription: Subscription;
 
-  constructor(private http: JwtHttp,
-              private router: Router,
+  constructor(private router: Router,
               private userService: UserService,
               private eh: ErrorHandleService) {
     this.userSubscription = userService.userChanged$.subscribe(

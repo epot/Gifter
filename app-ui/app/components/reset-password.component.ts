@@ -1,7 +1,7 @@
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
-import { AuthService } from '../ng2-ui-auth/auth.service';
+import { AuthService } from 'ng2-ui-auth';
 
 import { FormHelperService } from '../services/form-helper.service';
 import { ErrorHandleService } from '../services/error-handle.service';

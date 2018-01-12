@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as Rx from 'rxjs/Rx';
-import { AuthService } from '../ng2-ui-auth/auth.service';
+import { AuthService } from 'ng2-ui-auth';
 
 @Injectable()
 export class WSService {

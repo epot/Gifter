@@ -1,6 +1,6 @@
 import { Injectable, ViewContainerRef } from '@angular/core';
 import { Response } from '@angular/http';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class ErrorHandleService {
@@ -8,11 +8,7 @@ export class ErrorHandleService {
   private _savedSeverity: string;
   private _savedMessage: string;
 
-  constructor(private _toastr: ToastsManager) {
-  }
-
-  setRootViewContainerRef(vcr: ViewContainerRef) {
-    this._toastr.setRootViewContainerRef(vcr);
+  constructor(private _toastr: ToastrService) {
   }
 
   saveMessage(severity: string, message: string) {

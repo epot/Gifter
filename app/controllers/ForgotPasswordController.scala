@@ -6,7 +6,6 @@ import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import forms.ForgotPasswordForm
 import models.services.{AuthTokenService, UserService}
-import org.webjars.play.WebJarAssets
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.libs.json.Json
 import play.api.libs.mailer.{Email, MailerClient}
@@ -32,8 +31,7 @@ class ForgotPasswordController @Inject() (
   authTokenService: AuthTokenService,
   mailerClient: MailerClient
  )(
-  implicit val webJarAssets: WebJarAssets,
-  ex: ExecutionContext)
+  implicit val ex: ExecutionContext)
   extends AbstractController(components) with I18nSupport {
 
   /**

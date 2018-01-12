@@ -1,17 +1,23 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector, forwardRef } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
-import { AuthService } from './ng2-ui-auth/auth.service';
+import { AuthService } from 'ng2-ui-auth';
 import { CookieService } from 'ngx-cookie';
 import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
+  private auth: AuthService;
 
   constructor(
-      public auth: AuthService,
-      private cookieService: CookieService) {}
+      private injector: Injector,
+      private cookieService: CookieService) {
+      }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+
+    if (!this.auth) {
+        this.auth = this.injector.get(AuthService);
+    }
 
     if (this.auth.isAuthenticated()) {
         request = request.clone({
@@ -32,6 +38,7 @@ export class TokenInterceptor implements HttpInterceptor {
             }
         });
     }
+
 
     return next.handle(request);
   }

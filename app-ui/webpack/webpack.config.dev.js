@@ -1,7 +1,7 @@
 /* global __dirname */
 const path = require('path');
 const webpack = require('webpack');
-const { AotPlugin } = require('@ngtools/webpack');
+const { AngularCompilerPlugin } = require('@ngtools/webpack');
 
 module.exports = exports = Object.create(require('./webpack.base.config.js'));
 
@@ -22,7 +22,7 @@ exports.plugins = [
     new webpack.ProvidePlugin({
         'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
     }),
-    new AotPlugin({
+    new AngularCompilerPlugin({
         "mainPath": "app/main.ts",
         "i18nFile": "app/locale/messages.fr.xlf",
         "i18nFormat": "xlf",
@@ -30,5 +30,10 @@ exports.plugins = [
         "replaceExport": false,
         "exclude": [],
         "tsConfigPath": "tsconfig.json"
-    })
+    }),
+    new webpack.DefinePlugin({
+        'process.env': {
+          'REDIRECTURI': JSON.stringify('http://localhost:9000/oauth2')
+        }
+      })
 ];

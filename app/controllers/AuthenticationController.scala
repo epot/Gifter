@@ -8,7 +8,7 @@ import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import net.ceedubs.ficus.Ficus._
 import play.api.{Configuration, Logger}
 import com.mohiva.play.silhouette.api.util.{Clock, Credentials}
-import com.mohiva.play.silhouette.api.{Logger, LoginEvent, LogoutEvent, Silhouette}
+import com.mohiva.play.silhouette.api.{LoginEvent, LogoutEvent, Silhouette}
 import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
 import com.mohiva.play.silhouette.impl.providers._
 import forms.SignInForm
@@ -81,7 +81,27 @@ class AuthenticationController @Inject() (
     cacheAuthTokenForOauth1(r) { implicit request =>
       (socialProviderRegistry.get[SocialProvider](provider) match {
         case Some(p: SocialProvider with CommonSocialProfileBuilder) =>
-          p.authenticate().flatMap {
+          val jsonBody: Option[JsValue] = request.body.asJson
+          val authorizationData = jsonBody.map { body =>
+            body.\("authorizationData").as[JsObject]
+          }.get
+          val oauthData = jsonBody.map { body =>
+            body.\("oauthData").as[JsObject]
+          }
+          val userData  = jsonBody.map { body =>
+            body.\("userData").as[JsObject]
+          }
+          val merge = oauthData match {
+            case Some(arg2) =>
+              val merge = userData match {
+                case Some(arg3) =>
+                  arg2 ++ arg3
+                case _ => arg2
+              }
+              merge ++ authorizationData
+            case _ => authorizationData
+          }
+          p.authenticate()(request.withBody(AnyContentAsJson(merge))).flatMap {
             case Left(result) => Future.successful(result)
             case Right(authInfo) => for {
               profile <- p.retrieveProfile(authInfo)

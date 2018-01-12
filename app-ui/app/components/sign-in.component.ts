@@ -1,13 +1,12 @@
 import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators, FormGroup } from '@angular/forms';
-import { AuthService } from '../ng2-ui-auth/auth.service';
+import { AuthService } from 'ng2-ui-auth';
 
 import { FormHelperService } from '../services/form-helper.service';
 import { ErrorHandleService } from '../services/error-handle.service';
 import { UserService } from '../services/user.service';
 import { LoginData } from '../login-data';
-import { MyAuthConfig } from '../config';
 
 @Component({
     selector: 'my-login',
@@ -15,7 +14,6 @@ import { MyAuthConfig } from '../config';
 })
 export class SignInComponent implements OnInit {
     form: FormGroup;
-    providers: MyAuthConfig;
 
     constructor(private auth: AuthService,
                 private router: Router,

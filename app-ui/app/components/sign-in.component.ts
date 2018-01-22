@@ -29,6 +29,9 @@ export class SignInComponent implements OnInit {
             password: new FormControl('', [Validators.required]),
             rememberMe: new FormControl(true),
         });
+        if (this.auth.isAuthenticated()) {
+            this.router.navigateByUrl('/');
+        }
     }
 
     login(loginData: LoginData) {

@@ -4,7 +4,7 @@ version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.12.3"
+scalaVersion := "2.12.6"
 
 resolvers ++= Seq(
   "Atlassian Releases" at "https://maven.atlassian.com/public/",
@@ -38,7 +38,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "3.0.1",
   "com.typesafe.play" %% "play-slick-evolutions" % "3.0.1",
   "com.github.tototoshi" %% "slick-joda-mapper" % "2.3.0",
-  "com.github.etaty" %% "rediscala" % "1.8.0"
+  "com.github.etaty" %% "rediscala" % "1.8.0",
+  "com.github.gphat" %% "censorinus" % "2.1.13"
 )
 
 enablePlugins(NpmSettings)

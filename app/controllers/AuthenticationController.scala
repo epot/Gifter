@@ -1,7 +1,6 @@
 package controllers
 
 import javax.inject.Inject
-
 import com.mohiva.play.silhouette.api.Authenticator.Implicits._
 import com.mohiva.play.silhouette.api.exceptions.ProviderException
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
@@ -19,6 +18,7 @@ import utils.auth.DefaultEnv
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import utils.Metrics
 
 import scala.language.postfixOps
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,6 +37,8 @@ class AuthenticationController @Inject() (
   clock: Clock)(
  implicit ex: ExecutionContext
 ) extends AbstractController(components) with I18nSupport {
+
+  val c = Metrics.client
 
   /**
     * Converts the JSON into a `SignInForm.Data` object.
@@ -62,6 +64,7 @@ class AuthenticationController @Inject() (
           }.flatMap { authenticator =>
             silhouette.env.eventBus.publish(LoginEvent(user, request))
             silhouette.env.authenticatorService.init(authenticator).map { token =>
+              c.increment(name = "giftyou.events.login", tags=Seq("provider:credentials", "user-id:" + user.id))
               Ok(Json.obj("token" -> token))
             }
           }
@@ -111,6 +114,7 @@ class AuthenticationController @Inject() (
               token <- silhouette.env.authenticatorService.init(authenticator)
             } yield {
               silhouette.env.eventBus.publish(LoginEvent(user, request))
+              c.increment(name = "giftyou.events.login", tags=Seq("provider:" + provider, "user-id:" + user.id))
               Ok(Json.obj("token" -> token))
             }
           }

@@ -1,6 +1,7 @@
 package controllers
 
 import java.net.URL
+
 import javax.inject.Inject
 import java.util.UUID
 
@@ -23,6 +24,7 @@ import models.JsonFormat._
 import play.api.Logger
 import play.api.libs.streams.ActorFlow
 import com.github.nscala_time.time.OrderingImplicits.DateTimeOrdering
+import utils.Metrics
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,6 +43,8 @@ class EventsController @Inject()(components: ControllerComponents,
   implicit val ex: ExecutionContext
 )
   extends AbstractController(components) with I18nSupport {
+
+  val c = Metrics.client
 
   val eventForm = Form[EventSimple](
     tuple(
@@ -71,7 +75,8 @@ class EventsController @Inject()(components: ControllerComponents,
 
            participantDAO.save(
              Participant(eventid=new_event.id.get, user=request.identity, role=Participant.Role.Owner)).map { p =>
-             Ok(Json.toJson(new_event))
+              c.increment(name = "giftyou.events.events.created", tags=Seq("creator-id" + request.identity.id))
+              Ok(Json.toJson(new_event))
            }
         }
       }
@@ -243,7 +248,10 @@ class EventsController @Inject()(components: ControllerComponents,
                 giftDAO.save(new_gift)
               }
             }
-            case None => giftDAO.save(new_gift)
+            case None => {
+              c.increment(name = "giftyou.events.gifts.created", tags=Seq("creator-id:" + s(2).get.id))
+              giftDAO.save(new_gift)
+            }
           }
           newGift.map { gift =>
             eventNotificationService.publishGift(gift)
@@ -345,6 +353,7 @@ class EventsController @Inject()(components: ControllerComponents,
       maybeGift match {
         case Some(_) => {
           giftDAO.delete(giftid)
+          c.increment(name = "giftyou.events.gifts.deleted")
           Ok
         }
         case None => BadRequest
@@ -411,6 +420,7 @@ class EventsController @Inject()(components: ControllerComponents,
         commentDAO.save(commentObj).flatMap { _ =>
           eventNotificationService.publishComment(eventid, commentObj)
           commentDAO.findByCategoryAndId(Comment.Category.Gift, giftid).map { comments =>
+            c.increment(name = "giftyou.events.gifts.comments", tags=Seq("gift-id:" + giftid, "user-id" + request.identity.id))
             Ok(Json.obj("comments" -> JsArray(comments.map{p => Json.toJson(p)})))
           }
         }
@@ -437,6 +447,8 @@ class EventsController @Inject()(components: ControllerComponents,
                     case Gift.Status.New => None
                     case _ => Some(request.identity)
                   }
+
+                  c.increment(name = "giftyou.events.gifts.updated", tags=Seq("gift-id:" + giftid, "status:" + statusValue))
 
                   historyDAO.save(
                     History(objectid = giftid,

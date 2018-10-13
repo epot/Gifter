@@ -7,7 +7,8 @@ import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
 case class EventSimple(
   name: String,
   date: DateTime,
-  eventtype: Event.Type
+  eventtype: Event.Type,
+  maybeEventId: Option[Long]
 )
 
 case class Event(

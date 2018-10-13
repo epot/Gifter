@@ -15,6 +15,9 @@ export class NewEventComponent implements OnInit {
     form: FormGroup;
     passwordFieldName = 'password';
     repeatedPasswordFieldName = 'passwordConfirmation';
+    loadingEvents;
+    events: Object[];
+    cloneFromId: string;
 
     constructor(private eventsService: EventsService,
                 private router: Router,
@@ -30,13 +33,29 @@ export class NewEventComponent implements OnInit {
             'date': new FormControl('', [Validators.required]),
             'type': new FormControl('', [Validators.required])
         });
+        this.getEvents();
     }
+
+    getEvents(): void {
+        this.loadingEvents = true;
+        this.eventsService
+            .getEvents()
+            .then(events => {
+                this.loadingEvents = false;
+                this.events = events;
+              }
+            ).catch(err => {
+                this.loadingEvents = false;
+                this.eh.handleError(err);
+            });
+      }
 
     submit(formData: any) {
         this.eventsService.newEvent({
             name: formData['name'],
             dateStr: this.datepipe.transform(formData['date'], 'dd-MM-yyyy'),
-            type: formData['type']
+            type: formData['type'],
+            cloneFromEvent: this.cloneFromId
         })
         .then(response => {
             this.router.navigateByUrl('/events/' + response['id']);

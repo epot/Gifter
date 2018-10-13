@@ -34,6 +34,12 @@
                     <option [value]="2" i18n>Christmas</option>
                 </select>
             </div>
+            <div class="form-group">
+              <label for="type" i18n>Clone from:</label>  
+              <select class="form-control" [(ngModel)]="cloneFromId" [ngModelOptions]="{standalone: true}">
+                  <option *ngFor="let e of events" [ngValue]="e.id">{{e.name}}</option>
+              </select>
+          </div>
             <div class="actions">
               <button type="submit" class="btn btn-primary"[disabled]="!form.valid"><span i18n>Create</span></button>
               <a routerLink="/">

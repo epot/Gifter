@@ -51,16 +51,18 @@ class EventsController @Inject()(components: ControllerComponents,
       "name" -> nonEmptyText
       ,"dateStr" -> date("dd-MM-yyyy")
       ,"type" -> number(min = Event.Type.min, max = Event.Type.max)
+      , "cloneFromEvent" -> optional(longNumber)
       ).transform(
     {/*apply*/
-      case (name, dateStr, eventtype) => {
-        EventSimple(name=name, date=new DateTime(dateStr), eventtype=Event.Type.fromId(eventtype))
+      case (name, dateStr, eventtype, maybeEventId) => {
+        EventSimple(name=name, date=new DateTime(dateStr), eventtype=Event.Type.fromId(eventtype), maybeEventId)
       }
     },{ /*unapply*/
       event: EventSimple => (
             event.name,
             event.date.toDate,
-            Event.Type.id(event.eventtype))
+            Event.Type.id(event.eventtype),
+            event.maybeEventId)
     })
   )  
 
@@ -68,6 +70,10 @@ class EventsController @Inject()(components: ControllerComponents,
     eventForm.bindFromRequest.fold(
       form => Future.successful(BadRequest(Json.obj("errors" -> form.errors.map{_.messages.mkString(", ")}))),
       event => {
+        //val participantsCloned = event.maybeEventId.map(id => eventDAO.find(id)).map { event =>
+        //  event.
+        //}
+
          eventDAO.save(Event(creator = request.identity,
           name= event.name,
           date= event.date,

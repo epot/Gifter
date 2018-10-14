@@ -85,7 +85,7 @@
                 </thead>
                 <tbody>
                   <tr *ngFor="let p of participants">
-                    <td>{{p.user.userName}}</td>
+                    <td><i ngbTooltip="{{p.user.email}}">{{p.user.userName}}</i></td>
                     <td>
                       <select *ngIf="event.creator.id != p.user.id && p.user.id != user.id && p.role === 'Owner';else other_content" name="role">
                         <option value="Owner" [selected]="p.role === 'Owner'" i18n>Owner</option>

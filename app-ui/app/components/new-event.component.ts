@@ -42,7 +42,8 @@ export class NewEventComponent implements OnInit {
             .getEvents()
             .then(events => {
                 this.loadingEvents = false;
-                this.events = events;
+                this.events = [{id: null, name: "None"}];
+                this.events = this.events.concat(events);
               }
             ).catch(err => {
                 this.loadingEvents = false;

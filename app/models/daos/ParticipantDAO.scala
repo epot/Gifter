@@ -16,4 +16,5 @@ trait ParticipantDAO {
   def find(eventid: Long, user: User): Future[Option[Participant]]
 
   def save(participant: Participant): Future[Participant]
+  def insert(participants: List[Participant]): Future[Unit]
 }

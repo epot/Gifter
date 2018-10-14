@@ -70,20 +70,24 @@ class EventsController @Inject()(components: ControllerComponents,
     eventForm.bindFromRequest.fold(
       form => Future.successful(BadRequest(Json.obj("errors" -> form.errors.map{_.messages.mkString(", ")}))),
       event => {
-        //val participantsCloned = event.maybeEventId.map(id => eventDAO.find(id)).map { event =>
-        //  event.
-        //}
+        val maybeParticipantsCloned = event.maybeEventId match {
+          case None => Future.successful(Nil)
+          case Some(id) => participantDAO.find(id)
+        }
+        maybeParticipantsCloned.flatMap { participants =>
+          eventDAO.save(Event(creator = request.identity,
+            name= event.name,
+            date= event.date,
+            eventType= event.eventtype)).flatMap { new_event =>
 
-         eventDAO.save(Event(creator = request.identity,
-          name= event.name,
-          date= event.date,
-          eventType= event.eventtype)).flatMap { new_event =>
+            val allParticipants = participants.filter(_.user.id != request.identity.id).map(p => p.copy(id=None, eventid=new_event.id.get)) :+
+              Participant(eventid=new_event.id.get, user=request.identity, role=Participant.Role.Owner)
 
-           participantDAO.save(
-             Participant(eventid=new_event.id.get, user=request.identity, role=Participant.Role.Owner)).map { p =>
+            participantDAO.insert(allParticipants).map { _ =>
               c.increment(name = "giftyou.events.events.created", tags=Seq("creator-id" + request.identity.id))
               Ok(Json.toJson(new_event))
-           }
+            }
+          }
         }
       }
     )

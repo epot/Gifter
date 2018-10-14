@@ -98,4 +98,18 @@ class ParticipantDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfi
     val insertQuery = (slickParticipants returning slickParticipants.map(_.id)).insertOrUpdate(dbParticipant)
     dbConfig.db.run(insertQuery).map(id => participant.copy(id=id))
   }
+
+  def insert(participants: List[Participant]) = {
+    val dbParticipants = participants.map { participant =>
+      DBParticipant(
+        participant.id,
+        participant.user.id,
+        participant.eventid,
+        Participant.Role.id(participant.role))
+    }
+
+    val toBeInserted = dbParticipants.map { row => (slickParticipants returning slickParticipants.map(_.id)).insertOrUpdate(row) }
+    val inOneGo = DBIO.sequence(toBeInserted)
+    dbConfig.db.run(inOneGo).map { _ => }
+  }
 }

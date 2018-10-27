@@ -31,15 +31,15 @@ libraryDependencies ++= Seq(
   "com.beachape" %% "enumeratum" % "1.5.12",
   "com.beachape" %% "enumeratum-play" % "1.5.12",
   // async postgres
-  "org.postgresql" % "postgresql" % "42.1.4",
+  "org.postgresql" % "postgresql" % "42.2.5",
   "com.mohiva" %% "play-silhouette-password-bcrypt" % "5.0.0",
   "com.iheart" %% "ficus" % "1.4.2",
   "net.codingwell" %% "scala-guice" % "4.1.0",
-  "com.typesafe.play" %% "play-slick" % "3.0.1",
-  "com.typesafe.play" %% "play-slick-evolutions" % "3.0.1",
+  "com.typesafe.play" %% "play-slick" % "3.0.3",
+  "com.typesafe.play" %% "play-slick-evolutions" % "3.0.3",
   "com.github.tototoshi" %% "slick-joda-mapper" % "2.3.0",
   "com.github.etaty" %% "rediscala" % "1.8.0",
-  "com.github.gphat" %% "censorinus" % "2.1.13",
+  "com.github.gphat" %% "censorinus" % "2.1.15",
   "org.apache.commons" % "commons-lang3" % "3.8.1"
 )
 

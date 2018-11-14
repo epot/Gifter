@@ -430,7 +430,7 @@ class EventsController @Inject()(components: ControllerComponents,
         commentDAO.save(commentObj).flatMap { _ =>
           eventNotificationService.publishComment(eventid, commentObj)
           commentDAO.findByCategoryAndId(Comment.Category.Gift, giftid).map { comments =>
-            c.increment(name = "giftyou.events.gifts.comments", tags=Seq("gift-id:" + giftid, "user-id" + request.identity.id))
+            c.increment(name = "giftyou.events.gifts.comments", tags=Seq("gift-id:" + giftid, "user-id:" + request.identity.id))
             Ok(Json.obj("comments" -> JsArray(comments.map{p => Json.toJson(p)})))
           }
         }

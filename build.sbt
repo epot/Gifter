@@ -43,8 +43,6 @@ libraryDependencies ++= Seq(
   "org.apache.commons" % "commons-lang3" % "3.8.1"
 )
 
-enablePlugins(NpmSettings)
-
 includeFilter in (Assets, LessKeys.less) := "*.less"
 
 excludeFilter in (Assets, LessKeys.less) := "_*.less"

@@ -3,7 +3,7 @@ package controllers
 import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api.Silhouette
-import play.api.{Environment, Mode}
+import play.api.{Environment, Mode, Configuration}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
@@ -21,35 +21,46 @@ class HomeController @Inject() (
   assets: Assets,
   components: ControllerComponents,
   eventDAO: EventDAO,
+  conf: Configuration,
   environment: Environment,
   messagesApi: MessagesApi,
   silhouette: Silhouette[DefaultEnv])(
   implicit val ex: ExecutionContext
 ) extends AbstractController(components) with I18nSupport {
 
-  /*
-   * Handles the index action.
-   *
-   * @return The result to display.
-   */
-  def index = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
-    Future.successful(Ok(views.html.index(messagesApi.preferred(request).lang)))
-  }
+  /**
+    * Renders the UI component with the index route.
+    *
+    * @return The ui component.
+    */
+  def index: Action[AnyContent] = serveUI("index.html")
 
-  def oauth2 = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
-    Future.successful(Ok(views.html.oauth2()))
-  }
+  /**
+    * Renders the UI component with the given route.
+    *
+    * @param route The UI route.
+    * @return The ui component.
+    */
+  def route(route: String): Action[AnyContent] = serveUI(route)
 
-  def bundle(file: String): Action[AnyContent] = if (environment.mode == Mode.Dev) Action.async {
-    ws.url(s"http://localhost:8080/bundles/$file").get().map { response =>
-      val contentType = response.headers.get("Content-Type").flatMap(_.headOption).getOrElse("application/octet-stream")
-      val headers = response.headers
-        .toSeq.filter(p => List("Content-Type", "Content-Length").indexOf(p._1) < 0).map(p => (p._1, p._2.mkString))
-      Ok(response.bodyAsBytes).withHeaders(headers: _*).as(contentType)
+
+  /**
+    * Serves the UI.
+    *
+    * In development mode it serves the ui app through the started node.js server. In production Play serves
+    * the files through the asset pipeline.
+    *
+    * @param route The UI route.
+    * @return The ui component.
+    */
+  private def serveUI(route: String): Action[AnyContent] = Action.async { request =>
+    environment.mode match {
+      case Mode.Prod => assets.versioned("/public", "ui/" + route)(request)
+      case _ =>
+        Future.successful(Redirect(conf.getOptional[String]("ui.dev.url").getOrElse(
+          throw new RuntimeException("Cannot get `ui.dev.url` from config")
+        )))
     }
-  }
-  else {
-    assets.at("/public/bundles", file)
   }
 
   /**

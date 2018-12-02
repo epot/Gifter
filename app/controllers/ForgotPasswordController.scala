@@ -1,7 +1,6 @@
 package controllers
 
 import javax.inject.Inject
-
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import forms.ForgotPasswordForm
@@ -10,6 +9,7 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.libs.json.Json
 import play.api.libs.mailer.{Email, MailerClient}
 import play.api.mvc.{AbstractController, ControllerComponents}
+import utils.JSRouter
 import utils.auth.DefaultEnv
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -23,13 +23,15 @@ import scala.concurrent.{ExecutionContext, Future}
  * @param authTokenService The auth token service implementation.
  * @param mailerClient     The mailer client.
  * @param webJarAssets     The WebJar assets locator.
+ * @param jsRouter         The JS router helper.
  */
 class ForgotPasswordController @Inject() (
   components: ControllerComponents,
   silhouette: Silhouette[DefaultEnv],
   userService: UserService,
   authTokenService: AuthTokenService,
-  mailerClient: MailerClient
+  mailerClient: MailerClient,
+  jsRouter: JSRouter
  )(
   implicit val ex: ExecutionContext)
   extends AbstractController(components) with I18nSupport {
@@ -50,7 +52,7 @@ class ForgotPasswordController @Inject() (
         userService.retrieve(loginInfo).flatMap {
           case Some(user) if user.email.isDefined =>
             authTokenService.create(user.id).map { authToken =>
-              val url = s"${routes.HomeController.index.absoluteURL}#/resetPassword/${authToken.id}"
+              val url = jsRouter.absoluteURL("/resetPassword/" + authToken.id)
 
               mailerClient.send(Email(
                 subject = Messages("email.reset.password.subject"),

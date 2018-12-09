@@ -32,8 +32,5 @@ GET      /api/events/:eventid/gifts/:giftid/comments controllers.EventsControlle
 POST     /api/events/:eventid/gifts/:giftid/comments controllers.EventsController.postGiftComment(eventid: Long, giftid: Long)
 GET      /api/ws/events/:eventid                controllers.EventsController.eventWs(eventid: Long)
 
-# Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                    controllers.Assets.at(path="/public", file)
-
 # Server all JS routes
 GET         /*route                          controllers.HomeController.route(route)

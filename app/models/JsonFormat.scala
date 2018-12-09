@@ -1,7 +1,5 @@
 package models
 
-import java.util.UUID
-
 import models.gift.Gift.{GiftContent, GiftWithNotification}
 import models.gift._
 import models.user.User

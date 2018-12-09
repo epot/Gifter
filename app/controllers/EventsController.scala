@@ -187,9 +187,10 @@ class EventsController @Inject()(components: ControllerComponents,
       ,"name" -> nonEmptyText
       ,"urls" -> list(text)
       ,"to" -> optional(nonEmptyText)
+      ,"secret" -> boolean
     ).transform(
     {/*apply*/
-      case (optid, creatorid, eventid, name, urls, toid) => {        
+      case (optid, creatorid, eventid, name, urls, toid, secret) => {
         
         val pkid = optid
 
@@ -200,7 +201,8 @@ class EventsController @Inject()(components: ControllerComponents,
             eventid=eventid,
             name=name, 
             urls=urls.filter(!_.isEmpty),
-            toid = toid_uuid
+            toid = toid_uuid,
+            secret = secret
             )
       }
     },{ /*unapply*/
@@ -211,7 +213,8 @@ class EventsController @Inject()(components: ControllerComponents,
           gift.eventid,
           gift.name,
           gift.urls,
-          toid)
+          toid,
+          gift.secret)
       }
     })
   }
@@ -245,7 +248,8 @@ class EventsController @Inject()(components: ControllerComponents,
             status = gift.status,
             to = s(0),
             from = s(1),
-            urls = gift.urls)
+            urls = gift.urls,
+            secret = gift.secret)
 
           val newGift = gift.id match {
             case Some(id) => {

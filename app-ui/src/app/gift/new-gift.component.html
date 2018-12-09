@@ -32,6 +32,16 @@
               />
             </div>
             <div class="form-group">
+              <label for="secret" translate>Secret:</label>
+              <input
+                class="form-control"
+                type="checkbox"
+                id="secret"
+                name="secret"
+                [formControl]="form.controls['secret']"
+              />
+            </div>
+            <div class="form-group">
               <label for="to" translate>Intended for:</label>
               <select
                 class="form-control"

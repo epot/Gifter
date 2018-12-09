@@ -92,7 +92,8 @@ class GiftDAOImpl @Inject()(
               status = Gift.Status.fromId(giftContent.status),
               to = to,
               from = from,
-              urls = giftContent.urls
+              urls = giftContent.urls,
+              secret = giftContent.secret.getOrElse(false),
             ))
           }
         }
@@ -157,7 +158,8 @@ class GiftDAOImpl @Inject()(
               status = Gift.Status.fromId(giftContent.status),
               to = to,
               from = from,
-              urls = giftContent.urls
+              urls = giftContent.urls,
+              secret = giftContent.secret.getOrElse(false)
             )
 
             notificationDAO.hasNotification(userConnected, Notification.Category.GiftComment, gift.id.get).map { value =>
@@ -186,7 +188,7 @@ class GiftDAOImpl @Inject()(
       gift.creator.id,
       gift.eventid,
       gift.creationDate,
-      Json.toJson(GiftContent(gift.name, Gift.Status.id(gift.status), toid, fromid, gift.urls)).toString)
+      Json.toJson(GiftContent(gift.name, Gift.Status.id(gift.status), toid, fromid, gift.urls, Some(gift.secret))).toString)
 
     val insertQuery = (slickGifts returning slickGifts.map(_.id)).insertOrUpdate(dbGift)
     dbConfig.db.run(insertQuery).map(_ => gift)

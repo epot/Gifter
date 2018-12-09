@@ -15,7 +15,9 @@ case class GiftSimple(
   status: Gift.Status = Gift.Status.New,
   toid: Option[UUID] = None,
   fromid: Option[UUID] = None,
-  urls: List[String]=Nil)
+  urls: List[String]=Nil,
+  secret: Boolean = false
+)
 
 case class Gift(
   id: Option[Long] = None,
@@ -26,7 +28,8 @@ case class Gift(
   status: Gift.Status = Gift.Status.New,
   to: Option[User] = None,
   from: Option[User] = None,
-  urls: List[String]=Nil)
+  urls: List[String]=Nil,
+  secret: Boolean = false)
 
 object Gift {
   case class GiftWithNotification(gift: Gift, hasCommentNotification: Boolean)
@@ -63,8 +66,9 @@ object Gift {
     status: Int,
     to: Option[UUID],
     from: Option[UUID],
-    urls: List[String]
-    )
+    urls: List[String],
+    secret: Option[Boolean]
+  )
 
   case class BaseGift(
     id: Option[Long] = None,

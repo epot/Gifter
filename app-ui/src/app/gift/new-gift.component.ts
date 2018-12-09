@@ -50,7 +50,8 @@ export class NewGiftComponent implements OnInit, OnDestroy {
     this.route.params.forEach((params: Params) => {
       this.eventid = +params['id'];
       this.form = this.fb.group({
-        name: new FormControl('', [Validators.required])
+        name: new FormControl('', [Validators.required]),
+        secret: new FormControl('', [Validators.required])
       });
       this.urls = [];
       this.eventsService.getEventParticipants(this.eventid).then(
@@ -73,6 +74,7 @@ export class NewGiftComponent implements OnInit, OnDestroy {
     this.eventsService
       .editGift(this.eventid, {
         name: formData['name'],
+        secret: formData['secret'],
         creatorid: this.user['id'],
         eventid: this.eventid,
         to: this.toId,

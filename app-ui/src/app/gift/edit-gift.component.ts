@@ -57,7 +57,8 @@ export class EditGiftComponent implements OnInit, OnDestroy {
           this.toId = this.gift['to'] ? this.gift['to'].id : '';
           this.urls = this.gift['urls'];
           this.form = this.fb.group({
-            name: new FormControl(this.gift['name'], [Validators.required])
+            name: new FormControl(this.gift['name'], [Validators.required]),
+            secret: new FormControl(this.gift['secret'], [Validators.required])
           });
         },
         err => {
@@ -82,9 +83,11 @@ export class EditGiftComponent implements OnInit, OnDestroy {
   }
 
   submit(formData: any) {
+    console.log('coincoinc' + formData['secret']);
     this.eventsService
       .editGift(this.eventid, {
         name: formData['name'],
+        secret: formData['secret'],
         id: this.gift['id'],
         creatorid: this.gift['creator']['id'],
         eventid: this.eventid,

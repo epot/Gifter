@@ -43,7 +43,10 @@
                       >
                     </ng-template>
                     <div *ngIf="canEditGift(g); else elseBlock">
-                      {{ g.name }}
+                      <ng-template #elseBlock>{{ g.name }}</ng-template>
+                      <ng-container *ngIf="g.secret; else elseBlock"
+                        ><i class="fa fa-gift"></i>{{ g.name }}</ng-container
+                      >
                     </div>
                   </ng-template>
                 </p-column>

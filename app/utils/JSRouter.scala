@@ -22,7 +22,7 @@ class JSRouter @Inject() (env: Environment, conf: Configuration) {
     */
   def absoluteURL(route: String)(implicit request: RequestHeader): String = {
     env.mode match {
-      case Mode.Dev => Call("GET", route).absoluteURL()
+      case Mode.Prod => Call("GET", route).absoluteURL()
       case _ =>
         val host = conf.getOptional[String]("ui.dev.url")
           .getOrElse(throw new RuntimeException("Cannot get `ui.dev.url` from config"))

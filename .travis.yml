@@ -5,12 +5,13 @@ cache:
   directories:
     - $HOME/.ivy2
 env:
-  - NODE_VERSION=10
+  - NODE_VERSION=11
 scala:
   - 2.12.6
 jdk:
   - oraclejdk8
 script:
+  - nvm install $NODE_VERSION
   - nvm use $NODE_VERSION
   - cd app-ui && npm install && npm run-script build && cd ..
   - sbt stage -DtsCompileMode=stage

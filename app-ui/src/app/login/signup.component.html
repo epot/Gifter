@@ -1,0 +1,130 @@
+<div class="container">
+  <fieldset class="col" ng-controller="SignUpCtrl">
+    <div class="page-header"><h1 translate>Sign up</h1></div>
+    <form class="col" [formGroup]="form" (ngSubmit)="signup(form.value)">
+      <div
+        class="form-group"
+        [ngClass]="{ 'has-error': fh.hasError(form, 'userName') }"
+      >
+        <label for="userName" translate>User name</label>
+        <div
+          class="alert alert-danger"
+          *ngIf="fh.hasError(form, 'userName')"
+          translate
+        >
+          Field required
+        </div>
+        <input
+          class="form-control"
+          id="userName"
+          name="userName"
+          [formControl]="form.controls['userName']"
+        />
+      </div>
+      <div
+        class="form-group"
+        [ngClass]="{ 'has-error': fh.hasError(form, 'firstName') }"
+      >
+        <label for="firstName" translate>First name</label>
+        <div
+          class="alert alert-danger"
+          *ngIf="fh.hasError(form, 'firstName')"
+          translate
+        >
+          Field required
+        </div>
+        <input
+          class="form-control"
+          id="firstName"
+          name="firstName"
+          [formControl]="form.controls['firstName']"
+        />
+      </div>
+      <div
+        class="form-group"
+        [ngClass]="{ 'has-error': fh.hasError(form, 'lastName') }"
+      >
+        <label for="lastName" translate>Last name</label>
+        <div
+          class="alert alert-danger"
+          *ngIf="fh.hasError(form, 'lastName')"
+          translate
+        >
+          Field required
+        </div>
+        <input
+          class="form-control"
+          id="lastName"
+          name="email"
+          [formControl]="form.controls['lastName']"
+        />
+      </div>
+      <div
+        class="form-group"
+        [ngClass]="{ 'has-error': fh.hasError(form, 'email') }"
+      >
+        <label for="email" translate>Email</label>
+        <div
+          class="alert alert-danger"
+          *ngIf="fh.hasError(form, 'email')"
+          translate
+        >
+          Invalid email
+        </div>
+        <input
+          class="form-control"
+          id="email"
+          name="email"
+          [formControl]="form.controls['email']"
+        />
+      </div>
+      <div
+        class="form-group"
+        [ngClass]="{ 'has-error': fh.hasError(form, 'password') }"
+      >
+        <label for="pwd" translate>Password</label>
+        <div
+          class="alert alert-danger"
+          *ngIf="fh.hasError(form, 'password')"
+          translate
+        >
+          Field required
+        </div>
+        <input
+          type="password"
+          class="form-control"
+          id="pwd"
+          name="password"
+          [formControl]="form.controls['password']"
+        />
+      </div>
+      <div class="form-group">
+        <label for="pwd" translate>Avatar URL</label>
+        <input
+          class="form-control"
+          id="avatarUrl"
+          name="avatarUrl"
+          [formControl]="form.controls['avatarUrl']"
+        />
+      </div>
+
+      <div class="form-group">
+        <button
+          ng-disabled="form.$invalid"
+          id="submit"
+          value="submit"
+          class="btn btn-lg btn-primary btn-block"
+          translate
+        >
+          Sign up
+        </button>
+      </div>
+
+      <div>
+        <p class="already-member" translate>
+          Already a member? <a routerLink="/signIn">Sign in</a>
+        </p>
+      </div>
+    </form>
+  </fieldset>
+</div>

@@ -1,0 +1,446 @@
+<div class="container">
+  <div class="content">
+    <div class="page-header"><h1></h1></div>
+    <div class="row">
+      <app-left-menu></app-left-menu>
+      <div class="col-md-10">
+        <ngb-tabset *ngIf="event">
+          <ngb-tab translate-title title="Gifts">
+            <ng-template ngbTabContent>
+              <br />
+              <div>
+                <a class="btn btn-primary" [routerLink]="['gift/new']" translate
+                  >Add a gift's idea</a
+                >
+              </div>
+              <br />
+              <p-dataTable
+                *ngIf="visible"
+                rowHover="true"
+                [value]="gifts"
+                [rows]="20"
+                [paginator]="true"
+                #dt
+              >
+                <p-column
+                  field="name"
+                  translate-header
+                  header="Description"
+                  [filter]="true"
+                  translate-filterPlaceholder
+                  filterPlaceholder="Search"
+                ></p-column>
+                <p-column
+                  *ngIf="event.eventType == 'Christmas'"
+                  field="to.userName"
+                  [filter]="true"
+                  filterMatchMode="equals"
+                  translate-header
+                  header="For"
+                >
+                  <ng-template pTemplate="filter" let-col>
+                    <p-dropdown
+                      [options]="recipients"
+                      [style]="{ width: '100%' }"
+                      (onChange)="
+                        dt.filter($event.value, col.field, col.filterMatchMode)
+                      "
+                      styleClass="ui-column-filter"
+                    ></p-dropdown>
+                  </ng-template>
+                </p-column>
+                <p-column field="status" translate-header header="Status">
+                  <ng-template let-col let-g="rowData" pTemplate="body">
+                    <ng-template #elseTemplate>
+                      <ng-container
+                        ><p
+                          class="gift-status bg-warning"
+                          translate-ngbTooltip
+                          ngbTooltip="This is a surprise!"
+                        >
+                          ?
+                        </p></ng-container
+                      >
+                    </ng-template>
+                    <ng-container
+                      *ngIf="g.to && g.to.id !== user.id; else elseTemplate"
+                    >
+                      <ng-container *ngIf="g.from">
+                        <ng-container *ngIf="g.status === 'Bought'">
+                          <p
+                            class="gift-status bg-primary"
+                            translate-ngbTooltip
+                            ngbTooltip="Offered by {{ g.from.userName }}"
+                            translate
+                          >
+                            Bought
+                          </p>
+                        </ng-container>
+                        <ng-container *ngIf="g.status === 'AboutToBeBought'">
+                          <p
+                            class="gift-status bg-primary"
+                            translate-ngbTooltip
+                            ngbTooltip="Offered by {{ g.from.userName }}"
+                            translate
+                          >
+                            About to be bought
+                          </p>
+                        </ng-container>
+                      </ng-container>
+                      <ng-container *ngIf="!g.from">
+                        <ng-container *ngIf="g.status === 'New'" translate
+                          ><p class="gift-status bg-info">New</p></ng-container
+                        >
+                        <ng-container
+                          *ngIf="g.status === 'AboutToBeBought'"
+                          translate
+                          >About to be bought</ng-container
+                        >
+                        <ng-container *ngIf="g.status === 'Bought'" translate
+                          >Bought</ng-container
+                        >
+                      </ng-container>
+                    </ng-container>
+                  </ng-template>
+                </p-column>
+                <p-column field="links" translate-header header="Links">
+                  <ng-template let-col let-gift="rowData" pTemplate="body">
+                    <div
+                      class="btn-group btn-group-sm"
+                      role="group"
+                      aria-label="..."
+                    >
+                      <a
+                        *ngFor="let url of gift.urls"
+                        type="button"
+                        class="btn btn-light"
+                        href="{{ url }}"
+                        target="_blank\"
+                      >
+                        <i class="fa fa-link"></i>
+                      </a>
+                    </div>
+                  </ng-template>
+                </p-column>
+                <p-column field="actions" translate-header header="Actions">
+                  <ng-template let-col let-g="rowData" pTemplate="body">
+                    <div class="text-centered">
+                      <div class="btn-group btn-group-sm">
+                        <button
+                          class="btn btn-light"
+                          [routerLink]="[
+                            '/events',
+                            event.id,
+                            'gifts',
+                            g.id,
+                            'view'
+                          ]"
+                        >
+                          <i
+                            class="fa fa-eye"
+                            translate-ngbTooltip
+                            ngbTooltip="Details"
+                          ></i>
+                        </button>
+                        <button
+                          class="btn btn-light"
+                          [routerLink]="[
+                            '/events',
+                            event.id,
+                            'gifts',
+                            g.id,
+                            'edit'
+                          ]"
+                        >
+                          <i
+                            class="fa fa-edit"
+                            translate-ngbTooltip
+                            ngbTooltip="Modify"
+                          ></i>
+                        </button>
+                        <button
+                          class="btn btn-light open-gift-status-modal"
+                          data-id="{{ g.id }}"
+                          [disabled]="!canBuyGift(g)"
+                          (click)="openBuyGiftModal(g)"
+                        >
+                          <i
+                            class="fa fa-credit-card"
+                            translate-ngbTooltip
+                            ngbTooltip="Buy"
+                          ></i>
+                        </button>
+                        <button
+                          class="btn btn-light"
+                          [disabled]="g.creator.id !== user.id"
+                          (click)="openDeleteGiftModal(g.id)"
+                        >
+                          <i
+                            class="fa fa-times"
+                            translate-ngbTooltip
+                            ngbTooltip="Remove gift"
+                          ></i>
+                        </button>
+                        <button
+                          [ngClass]="{
+                            'btn btn-info open-gift-comment-modal': true,
+                            'btn-info': hasComments[g.id],
+                            'btn-light': !hasComments[g.id]
+                          }"
+                          (click)="openCommentGiftModal(g)"
+                        >
+                          <i
+                            class="fa fa-comment-o"
+                            translate-ngbTooltip
+                            ngbTooltip="Comment"
+                          ></i>
+                        </button>
+                      </div>
+                    </div>
+                  </ng-template>
+                </p-column>
+              </p-dataTable>
+            </ng-template>
+          </ngb-tab>
+          <ngb-tab translate-title title="Participants">
+            <ng-template ngbTabContent>
+              <table
+                id="participants-table"
+                class="table table-striped table-hover table-bordered tablesorter"
+              >
+                <thead>
+                  <tr>
+                    <th translate>Name</th>
+                    <th translate>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let p of participants">
+                    <td>
+                      <i ngbTooltip="{{ p.user.email }}">{{
+                        p.user.userName
+                      }}</i>
+                    </td>
+                    <td>
+                      <select
+                        *ngIf="
+                          event.creator.id != p.user.id &&
+                            p.user.id != user.id &&
+                            p.role === 'Owner';
+                          else other_content
+                        "
+                        name="role"
+                      >
+                        <option
+                          value="Owner"
+                          [selected]="p.role === 'Owner'"
+                          translate
+                          >Owner</option
+                        >
+                        <option
+                          value="Gifter"
+                          [selected]="p.role === 'Gifter'"
+                          translate
+                          >Gifts buyer</option
+                        >
+                        <option
+                          value="Reader"
+                          [selected]="p.role === 'Reader'"
+                          translate
+                          >Read only</option
+                        >
+                      </select>
+                      <ng-template #other_content>
+                        <ng-container *ngIf="p.role === 'Owner'" translate
+                          >Owner</ng-container
+                        >
+                        <ng-container *ngIf="p.role === 'Gifter'" translate
+                          >Gifts buyer</ng-container
+                        >
+                        <ng-container *ngIf="p.role === 'Reader'" translate
+                          >Read only</ng-container
+                        >
+                      </ng-template>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div id="add-participant-form">
+                <form
+                  class="form-search form-inline"
+                  *ngIf="addParticipantForm"
+                  class="col-lg-12"
+                  [formGroup]="addParticipantForm"
+                  (ngSubmit)="addParticipant(addParticipantForm.value)"
+                >
+                  <div
+                    class="form-group"
+                    [ngClass]="{
+                      'has-error': fh.hasError(addParticipantForm, 'email')
+                    }"
+                  >
+                    <label for="email" translate>Email</label>
+                    <div
+                      class="alert alert-danger"
+                      *ngIf="fh.hasError(addParticipantForm, 'email')"
+                      translate
+                    >
+                      Field required
+                    </div>
+                    <input
+                      class="form-control"
+                      id="email"
+                      name="email"
+                      [formControl]="addParticipantForm.controls['email']"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    [disabled]="!addParticipantForm.valid"
+                  >
+                    <span translate>Add</span>
+                  </button>
+                </form>
+              </div>
+            </ng-template>
+          </ngb-tab>
+        </ngb-tabset>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #buyGiftModal let-c="close" let-d="dismiss">
+    <ng-container *ngIf="giftToBuy">
+      <div class="modal-header">
+        <h4 class="modal-title" translate>Offer "{{ giftToBuy.name }}"</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <label for="to" translate>Change status:</label>
+        <select class="form-control" [(ngModel)]="giftToBuyNewStatus" required>
+          <option value="New" translate>New</option>
+          <option value="AboutToBeBought" translate>About to be bought</option>
+          <option value="Bought" translate>Bought</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+          (click)="d()"
+          translate
+        >
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary" (click)="c()" translate>
+          Confirm
+        </button>
+      </div>
+    </ng-container>
+  </ng-template>
+
+  <ng-template #deleteGiftModal let-c="close" let-d="dismiss">
+    <div class="modal-header">
+      <h4 class="modal-title" translate>Confirm deletion</h4>
+      <button type="button" class="close" aria-label="Close" (click)="d()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p translate>
+        If you delete this gift, everyone will be disappointed. Are you really
+        sure ?
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        data-dismiss="modal"
+        (click)="d()"
+        translate
+      >
+        Cancel
+      </button>
+      <button type="button" class="btn btn-primary" (click)="c()" translate>
+        Confirm
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template #commentGiftModal let-d="dismiss">
+    <ng-container *ngIf="giftToComment">
+      <div class="modal-header">
+        <h4 class="modal-title" translate>
+          Comment on {{ giftToComment.name }}
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="d()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="gift-comment-form" *ngIf="!loadingComments">
+          <div
+            class="modal-body modal-comment-body form-horizontal navbar-fixed-bottom"
+          >
+            <div class="comments">
+              <div class="media" *ngFor="let comment of comments">
+                <p class="pull-right">
+                  <small>{{
+                    comment.creationDate | date: 'dd/MM/yyyy hh:mm:ss'
+                  }}</small>
+                </p>
+                <div class="media-body">
+                  <h4 class="media-heading user-name">
+                    {{ comment.user.userName }}
+                  </h4>
+                  {{ comment.content }}
+                </div>
+              </div>
+            </div>
+            <div class="comment-form form-group row">
+              <div class="col-10">
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="currentComment"
+                  id="comment"
+                  name="comment"
+                  translate-placeholder
+                  placeholder="Your comment..."
+                />
+              </div>
+              <div class="col-2">
+                <button
+                  class="btn btn-primary"
+                  [disabled]="!currentComment"
+                  (click)="currentComment && addComment()"
+                  translate
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+        <div *ngIf="loadingComments">Fetching comments...</div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+          (click)="d()"
+          translate
+        >
+          Close
+        </button>
+      </div>
+    </ng-container>
+  </ng-template>
+</div>

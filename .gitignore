@@ -12,6 +12,7 @@ tmp
 /bin/
 
 /app-ui/node_modules
+/public/ui
 npm.debug.log
 /public/bundles
 

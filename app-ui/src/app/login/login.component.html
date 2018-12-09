@@ -1,0 +1,92 @@
+<div class="container">
+  <fieldset class="col">
+    <div class="page-header">
+      <h1 translate>
+        Connection
+        <small
+          ><a routerLink="/signup" translate>Or create a new account</a></small
+        >
+      </h1>
+    </div>
+    <div class="row">
+      <div class="span14">
+        <form class="col" [formGroup]="form" (ngSubmit)="login(form.value)">
+          <div
+            class="form-group"
+            [ngClass]="{ 'has-error': fh.hasError(form, 'email') }"
+          >
+            <label for="email" translate>Email</label>
+            <div
+              class="alert alert-danger"
+              *ngIf="fh.hasError(form, 'email')"
+              translate
+            >
+              Valid email required
+            </div>
+            <input
+              class="form-control"
+              id="email"
+              name="email"
+              [formControl]="form.controls['email']"
+            />
+          </div>
+          <div
+            class="form-group"
+            [ngClass]="{ 'has-error': fh.hasError(form, 'password') }"
+          >
+            <label for="pwd" translate>Password</label>
+            <div
+              class="alert alert-danger"
+              *ngIf="fh.hasError(form, 'password')"
+              translate
+            >
+              Password required
+            </div>
+            <input
+              type="password"
+              class="form-control"
+              id="pwd"
+              name="password"
+              [formControl]="form.controls['password']"
+            />
+          </div>
+
+          <div class="actions">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="!form.valid"
+            >
+              <span translate>Connection</span>
+            </button>
+          </div>
+          <a
+            class="btn btn-warning"
+            routerLink="/forgot-password"
+            translate-title
+            title="Forgot your password ?"
+            translate
+            >Forgot your password ?</a
+          >
+
+          <div class="social-providers">
+            <h3 translate>Or login using the following provider:</h3>
+            <div>
+              <a
+                (click)="authenticate('google')"
+                class="provider google"
+                translate-title
+                title="Sign in with Google"
+                ><img
+                  src="assets/providers/google.png"
+                  width="64px"
+                  height="64px"
+                  alt="Google"
+              /></a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </fieldset>
+</div>

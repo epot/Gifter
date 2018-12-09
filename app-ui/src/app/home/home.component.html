@@ -1,0 +1,92 @@
+<div class="container">
+  <div class="content">
+    <div class="page-header"><h1></h1></div>
+    <div class="row">
+      <app-left-menu></app-left-menu>
+      <div class="col-md-10">
+        <div class="container">
+          <div *ngIf="user" class="bs-docs-example">
+            <table class="table table-striped table-hover table-bordered">
+              <thead>
+                <tr>
+                  <th translate>Name</th>
+                  <th translate>Creator</th>
+                  <th translate>Date</th>
+                  <th translate>Type</th>
+                  <th translate>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngIf="events">
+                  <tr *ngFor="let event of events">
+                    <td>
+                      <a [routerLink]="['/events', event.id]">{{
+                        event.name
+                      }}</a>
+                    </td>
+                    <td>{{ event.creator.firstName }}</td>
+                    <td>{{ event.date | date: 'dd/MM/yyyy' }}</td>
+                    <td>{{ event.eventType }}</td>
+                    <td>
+                      <div class="btn-toolbar">
+                        <div class="btn-group">
+                          <a
+                            class="btn btn-light btn-sm"
+                            [routerLink]="['/events', event.id]"
+                            ><i
+                              class="fa fa-eye"
+                              translate-ngbTooltip
+                              ngbTooltip="details"
+                            ></i
+                          ></a>
+                          <a
+                            *ngIf="event.creator.id === user.id"
+                            class="btn btn-light btn-sm"
+                            (click)="openDeleteEventModal(event.id)"
+                            ><i class="fa fa-times"></i
+                          ></a>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-container>
+                <tr *ngIf="!events" translate>
+                  Fetching events...
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #deleteEventModal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" translate>Confirm deletion</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p translate>
+      If you delete this event, everyone will be disappointed. Are you really
+      sure ?
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      data-dismiss="modal"
+      (click)="d()"
+      translate
+    >
+      Cancel
+    </button>
+    <button type="button" class="btn btn-primary" (click)="c()" translate>
+      Confirm
+    </button>
+  </div>
+</ng-template>

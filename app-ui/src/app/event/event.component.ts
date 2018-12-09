@@ -173,6 +173,14 @@ export class EventComponent implements OnInit, OnDestroy {
     );
   }
 
+  canEditGift(gift: Object) {
+    return (
+      !gift['secret'] &&
+      gift['to']['id'] !== this.user['id'] &&
+      (!gift['from'] || gift['from']['id'] === this.user['id'])
+    );
+  }
+
   addParticipant(formData: any) {
     this.eventsService
       .addParticipant(this.event['id'], {

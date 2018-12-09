@@ -61,6 +61,26 @@ object Gift {
     }
   }
 
+  def obfuscate(g: Gift, toUser: Boolean): Gift = {
+    g.copy(
+      name = toUser match {
+        case true if g.secret => ""
+        case _ => g.name
+      },
+      from = toUser match {
+        case true => None
+        case _ => g.from
+      },
+      status = toUser match {
+        case true => Gift.Status.New
+        case _ => g.status
+      },
+      urls = toUser match {
+        case true if g.secret => Nil
+        case _ => g.urls
+      })
+  }
+
   case class GiftContent(
     name: String,
     status: Int,

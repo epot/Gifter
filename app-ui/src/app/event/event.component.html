@@ -29,7 +29,22 @@
                   [filter]="true"
                   translate-filterPlaceholder
                   filterPlaceholder="Search"
-                ></p-column>
+                >
+                  <ng-template let-col let-g="rowData" pTemplate="body">
+                    <ng-template #elseBlock>
+                      <ng-container
+                        ><p
+                          class="gift-status bg-warning"
+                          translate-ngbTooltip
+                          ngbTooltip="This is a surprise!"
+                        >
+                          ?
+                        </p></ng-container
+                      >
+                    </ng-template>
+                    <div *ngIf="!g.secret; else elseBlock">{{ g.name }}</div>
+                  </ng-template>
+                </p-column>
                 <p-column
                   *ngIf="event.eventType == 'Christmas'"
                   field="to.userName"
@@ -144,6 +159,7 @@
                         </button>
                         <button
                           class="btn btn-light"
+                          [disabled]="!canEditGift(g)"
                           [routerLink]="[
                             '/events',
                             event.id,

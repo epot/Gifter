@@ -112,15 +112,7 @@ class EventsController @Inject()(components: ControllerComponents,
                        case Some(user) if user.id == request.identity.id => true
                        case _ => false
                      }
-                     g.copy(gift=g.gift.copy(
-                       from = toUser match {
-                         case true => None
-                         case _ => g.gift.from
-                       },
-                       status = toUser match {
-                         case true => Gift.Status.New
-                         case _ => g.gift.status
-                       }))
+                     g.copy(gift=Gift.obfuscate(g.gift, toUser))
                    }.sortBy(_.gift.creationDate).reverse,
                    "participants" -> participants))
               }
@@ -225,51 +217,56 @@ class EventsController @Inject()(components: ControllerComponents,
         Future.successful(BadRequest(Json.obj("errors" -> form.errors.map{_.messages.mkString(", ")})))
       },
       gift => {
-        
-        // quickwin
-        val to = gift.toid match {
-          case Some(id) => userService.retrieveById(id)
-          case None => Future[Option[User]](None)
-        }
-        val from = gift.fromid match {
-          case Some(id) => userService.retrieveById(id)
-          case None => Future[Option[User]](None)
-        }
 
-        val creator = userService.retrieveById(gift.creatorid)
+        if(gift.secret && gift.toid.isDefined && gift.toid.get.equals(request.identity.id)) {
+          Future.successful(Forbidden(Json.obj("errors" -> "please do not edit a secret gift for you dude!")))
+        } else {
 
-        Future.sequence(List(to, from, creator)).flatMap { s =>
-          val new_gift = Gift(
-            id = gift.id,
-            creator = s(2).get,
-            eventid = gift.eventid,
-            creationDate = gift.creationDate,
-            name = gift.name,
-            status = gift.status,
-            to = s(0),
-            from = s(1),
-            urls = gift.urls,
-            secret = gift.secret)
+          // quickwin
+          val to = gift.toid match {
+            case Some(id) => userService.retrieveById(id)
+            case None => Future[Option[User]](None)
+          }
+          val from = gift.fromid match {
+            case Some(id) => userService.retrieveById(id)
+            case None => Future[Option[User]](None)
+          }
 
-          val newGift = gift.id match {
-            case Some(id) => {
-              historyDAO.save(
-                History(
-                  objectid=id,
-                  user=request.identity,
-                  category="Gift",
-                  content="Update gift from " + gift + " to " +  new_gift)).flatMap { _ =>
+          val creator = userService.retrieveById(gift.creatorid)
+
+          Future.sequence(List(to, from, creator)).flatMap { s =>
+            val new_gift = Gift(
+              id = gift.id,
+              creator = s(2).get,
+              eventid = gift.eventid,
+              creationDate = gift.creationDate,
+              name = gift.name,
+              status = gift.status,
+              to = s(0),
+              from = s(1),
+              urls = gift.urls,
+              secret = gift.secret)
+
+            val newGift = gift.id match {
+              case Some(id) => {
+                historyDAO.save(
+                  History(
+                    objectid=id,
+                    user=request.identity,
+                    category="Gift",
+                    content="Update gift from " + gift + " to " +  new_gift)).flatMap { _ =>
+                  giftDAO.save(new_gift)
+                }
+              }
+              case None => {
+                c.increment(name = "giftyou.events.gifts.created", tags=Seq("creator-id:" + s(2).get.id))
                 giftDAO.save(new_gift)
               }
             }
-            case None => {
-              c.increment(name = "giftyou.events.gifts.created", tags=Seq("creator-id:" + s(2).get.id))
-              giftDAO.save(new_gift)
+            newGift.map { gift =>
+              eventNotificationService.publishGift(gift)
+              Ok(Json.toJson(gift))
             }
-          }
-          newGift.map { gift =>
-            eventNotificationService.publishGift(gift)
-            Ok(Json.toJson(gift))
           }
         }
       }
@@ -316,11 +313,7 @@ class EventsController @Inject()(components: ControllerComponents,
             case _ => false
           }
 
-          Ok(Json.toJson(gift.copy(
-            from = toUser match {
-              case true => None
-              case _ => gift.from
-            })))
+          Ok(Json.toJson(Gift.obfuscate(gift, toUser)))
         case _ =>
           NotFound
       }
@@ -342,15 +335,7 @@ class EventsController @Inject()(components: ControllerComponents,
               case _ => history
             }
 
-            Ok(Json.obj("gift" -> gift.copy(
-              from = toUser match {
-                case true => None
-                case _ => gift.from
-              },
-              status = toUser match {
-                case true => Gift.Status.New
-                case _ => gift.status
-              }),
+            Ok(Json.obj("gift" -> Gift.obfuscate(gift, toUser),
               "history" -> maybeHistory))
           }
         case _ =>

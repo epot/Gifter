@@ -5,9 +5,9 @@ cache:
   directories:
     - $HOME/.ivy2
 env:
-  - NODE_VERSION=6
+  - NODE_VERSION=11
 scala:
-  - 2.12.2
+  - 2.12.6
 jdk:
   - oraclejdk8
 script:

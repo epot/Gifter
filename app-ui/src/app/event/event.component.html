@@ -42,7 +42,9 @@
                         </p></ng-container
                       >
                     </ng-template>
-                    <div *ngIf="!g.secret; else elseBlock">{{ g.name }}</div>
+                    <div *ngIf="canEditGift(g); else elseBlock">
+                      {{ g.name }}
+                    </div>
                   </ng-template>
                 </p-column>
                 <p-column

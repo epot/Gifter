@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "postinstall": "cd app-ui && npm install"
+    "postinstall": "cd app-ui && npm install && npm run-script build"
   },
   "author": "Emmanuel Pot",
   "license": "Apache-2.0",

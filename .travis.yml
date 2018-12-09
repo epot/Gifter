@@ -3,7 +3,7 @@ sudo: false
 language: scala
 cache:
   directories:
-  - $HOME/.ivy2
+    - $HOME/.ivy2
 env:
   - NODE_VERSION=6
 scala:
@@ -12,5 +12,5 @@ jdk:
   - oraclejdk8
 script:
   - nvm use $NODE_VERSION
-  - cd app-ui && npm install && cd ..
+  - cd app-ui && npm install && npm run-script build && cd ..
   - sbt stage -DtsCompileMode=stage

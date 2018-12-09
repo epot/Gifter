@@ -34,7 +34,7 @@
                     <ng-template #elseBlock>
                       <ng-container
                         ><p
-                          class="gift-status bg-warning"
+                          class="gift-status bg-warning text-center"
                           translate-ngbTooltip
                           ngbTooltip="This is a surprise!"
                         >
@@ -71,7 +71,7 @@
                     <ng-template #elseTemplate>
                       <ng-container
                         ><p
-                          class="gift-status bg-warning"
+                          class="gift-status bg-warning text-center"
                           translate-ngbTooltip
                           ngbTooltip="This is a surprise!"
                         >
@@ -85,7 +85,7 @@
                       <ng-container *ngIf="g.from">
                         <ng-container *ngIf="g.status === 'Bought'">
                           <p
-                            class="gift-status bg-primary"
+                            class="gift-status bg-primary text-center"
                             translate-ngbTooltip
                             ngbTooltip="Offered by {{ g.from.userName }}"
                             translate
@@ -95,7 +95,7 @@
                         </ng-container>
                         <ng-container *ngIf="g.status === 'AboutToBeBought'">
                           <p
-                            class="gift-status bg-primary"
+                            class="gift-status bg-primary text-center"
                             translate-ngbTooltip
                             ngbTooltip="Offered by {{ g.from.userName }}"
                             translate
@@ -106,7 +106,9 @@
                       </ng-container>
                       <ng-container *ngIf="!g.from">
                         <ng-container *ngIf="g.status === 'New'" translate
-                          ><p class="gift-status bg-info">New</p></ng-container
+                          ><p class="gift-status bg-info text-center">
+                            New
+                          </p></ng-container
                         >
                         <ng-container
                           *ngIf="g.status === 'AboutToBeBought'"

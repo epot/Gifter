@@ -5,7 +5,7 @@
       <app-left-menu></app-left-menu>
       <div class="col-md-10">
         <ngb-tabset *ngIf="event">
-          <ngb-tab translate-title title="Gifts">
+          <ngb-tab title="{{ 'GIFTS' | translate }}">
             <ng-template ngbTabContent>
               <br />
               <div>
@@ -225,7 +225,7 @@
               </p-dataTable>
             </ng-template>
           </ngb-tab>
-          <ngb-tab translate-title title="Your dashboard">
+          <ngb-tab title="{{ 'DASHBOARD' | translate }}">
             <ng-template ngbTabContent>
               <table
                 class="table table-striped table-hover table-bordered tablesorter"
@@ -258,7 +258,7 @@
               </table>
             </ng-template>
           </ngb-tab>
-          <ngb-tab translate-title title="Participants">
+          <ngb-tab title="{{ 'PARTICIPANTS' | translate }}">
             <ng-template ngbTabContent>
               <table
                 id="participants-table"

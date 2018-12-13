@@ -231,8 +231,6 @@ export class EventComponent implements OnInit, OnDestroy {
   }
 
   addComment() {
-    console.log(this.event);
-    console.log(this.giftToComment);
     this.eventsService
       .addGiftComments(
         this.event['id'],

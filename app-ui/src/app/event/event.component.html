@@ -225,6 +225,39 @@
               </p-dataTable>
             </ng-template>
           </ngb-tab>
+          <ngb-tab translate-title title="Your dashboard">
+            <ng-template ngbTabContent>
+              <table
+                class="table table-striped table-hover table-bordered tablesorter"
+              >
+                <thead>
+                  <tr>
+                    <th translate>For</th>
+                    <th translate>What</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let g of gifts">
+                    <ng-container *ngIf="g.from && g.from.id === user.id">
+                      <td>{{ g.to.userName }}</td>
+                      <td>
+                        <a
+                          [routerLink]="[
+                            '/events',
+                            event.id,
+                            'gifts',
+                            g.id,
+                            'edit'
+                          ]"
+                          >{{ g.name }}</a
+                        >
+                      </td>
+                    </ng-container>
+                  </tr>
+                </tbody>
+              </table>
+            </ng-template>
+          </ngb-tab>
           <ngb-tab translate-title title="Participants">
             <ng-template ngbTabContent>
               <table

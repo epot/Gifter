@@ -45,8 +45,7 @@
               <label for="to" translate>Intended for:</label>
               <select
                 class="form-control"
-                [(ngModel)]="toId"
-                [ngModelOptions]="{ standalone: true }"
+                [formControl]="form.controls['toId']"
                 required
               >
                 <option

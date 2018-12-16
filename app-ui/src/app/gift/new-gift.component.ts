@@ -27,7 +27,6 @@ export class NewGiftComponent implements OnInit, OnDestroy {
   public loadingGift;
   public error: any;
   public eventid: number;
-  public toId: string;
   public urls: string[];
   form: FormGroup;
 
@@ -51,6 +50,7 @@ export class NewGiftComponent implements OnInit, OnDestroy {
       this.eventid = +params['id'];
       this.form = this.fb.group({
         name: new FormControl('', [Validators.required]),
+        toId: new FormControl('', [Validators.required]),
         secret: new FormControl(false, [Validators.required])
       });
       this.urls = [];
@@ -77,7 +77,7 @@ export class NewGiftComponent implements OnInit, OnDestroy {
         secret: formData['secret'],
         creatorid: this.user['id'],
         eventid: this.eventid,
-        to: this.toId,
+        to: formData['toId'],
         urls: this.urls
       })
       .then(response => {

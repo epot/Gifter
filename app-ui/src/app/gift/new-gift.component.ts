@@ -51,7 +51,7 @@ export class NewGiftComponent implements OnInit, OnDestroy {
       this.eventid = +params['id'];
       this.form = this.fb.group({
         name: new FormControl('', [Validators.required]),
-        secret: new FormControl('', [Validators.required])
+        secret: new FormControl(false, [Validators.required])
       });
       this.urls = [];
       this.eventsService.getEventParticipants(this.eventid).then(

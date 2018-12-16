@@ -217,8 +217,10 @@ class EventsController @Inject()(components: ControllerComponents,
         Future.successful(BadRequest(Json.obj("errors" -> form.errors.map{_.messages.mkString(", ")})))
       },
       gift => {
-
-        if(gift.secret && gift.toid.isDefined && gift.toid.get.equals(request.identity.id)) {
+        if(!gift.toid.isDefined) {
+          Future.successful(BadRequest(Json.obj("errors" -> "please select someone!")))
+        }
+        else if(gift.secret && gift.toid.isDefined && gift.toid.get.equals(request.identity.id)) {
           Future.successful(Forbidden(Json.obj("errors" -> "please do not edit a secret gift for you dude!")))
         } else {
 

@@ -64,7 +64,7 @@ class AuthenticationController @Inject() (
           }.flatMap { authenticator =>
             silhouette.env.eventBus.publish(LoginEvent(user, request))
             silhouette.env.authenticatorService.init(authenticator).map { token =>
-              c.increment(name = "giftyou.events.login", tags=Seq("provider:credentials", "user-id:" + user.id))
+              c.incrementCounter("giftyou.events.login", "provider:credentials", "user-id:" + user.id)
               Ok(Json.obj("token" -> token))
             }
           }
@@ -114,7 +114,7 @@ class AuthenticationController @Inject() (
               token <- silhouette.env.authenticatorService.init(authenticator)
             } yield {
               silhouette.env.eventBus.publish(LoginEvent(user, request))
-              c.increment(name = "giftyou.events.login", tags=Seq("provider:" + provider, "user-id:" + user.id))
+              c.incrementCounter("giftyou.events.login", "provider:" + provider, "user-id:" + user.id)
               Ok(Json.obj("token" -> token))
             }
           }

@@ -1,6 +1,8 @@
 package utils
-import github.gphat.censorinus.DogStatsDClient
+
+import com.timgroup.statsd.NonBlockingStatsDClient
+
 
 object Metrics {
-  def client = new DogStatsDClient()
+  def client = new NonBlockingStatsDClient("")
 }

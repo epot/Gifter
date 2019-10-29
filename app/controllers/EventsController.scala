@@ -84,7 +84,7 @@ class EventsController @Inject()(components: ControllerComponents,
               Participant(eventid=new_event.id.get, user=request.identity, role=Participant.Role.Owner)
 
             participantDAO.insert(allParticipants).map { _ =>
-              c.increment(name = "giftyou.events.events.created", tags=Seq("creator-id" + request.identity.id))
+              c.incrementCounter("giftyou.events.events.created", "creator-id" + request.identity.id)
               Ok(Json.toJson(new_event))
             }
           }
@@ -261,7 +261,7 @@ class EventsController @Inject()(components: ControllerComponents,
                 }
               }
               case None => {
-                c.increment(name = "giftyou.events.gifts.created", tags=Seq("creator-id:" + s(2).get.id))
+                c.incrementCounter("giftyou.events.gifts.created", "creator-id:" + s(2).get.id)
                 giftDAO.save(new_gift)
               }
             }
@@ -354,7 +354,7 @@ class EventsController @Inject()(components: ControllerComponents,
       maybeGift match {
         case Some(_) => {
           giftDAO.delete(giftid)
-          c.increment(name = "giftyou.events.gifts.deleted")
+          c.incrementCounter("giftyou.events.gifts.deleted")
           Ok
         }
         case None => BadRequest
@@ -421,7 +421,7 @@ class EventsController @Inject()(components: ControllerComponents,
         commentDAO.save(commentObj).flatMap { _ =>
           eventNotificationService.publishComment(eventid, commentObj)
           commentDAO.findByCategoryAndId(Comment.Category.Gift, giftid).map { comments =>
-            c.increment(name = "giftyou.events.gifts.comments", tags=Seq("gift-id:" + giftid, "user-id:" + request.identity.id))
+            c.incrementCounter("giftyou.events.gifts.comments", "gift-id:" + giftid, "user-id:" + request.identity.id)
             Ok(Json.obj("comments" -> JsArray(comments.map{p => Json.toJson(p)})))
           }
         }
@@ -449,7 +449,7 @@ class EventsController @Inject()(components: ControllerComponents,
                     case _ => Some(request.identity)
                   }
 
-                  c.increment(name = "giftyou.events.gifts.updated", tags=Seq("gift-id:" + giftid, "status:" + statusValue))
+                  c.incrementCounter("giftyou.events.gifts.updated", "gift-id:" + giftid, "status:" + statusValue)
 
                   historyDAO.save(
                     History(objectid = giftid,

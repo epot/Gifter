@@ -13,7 +13,7 @@ import scala.reflect.ClassTag
  * The DAO to store the OAuth1 information.
  */
 class OAuth1InfoDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(
-  implicit val ex: ExecutionContext, implicit val classTag: ClassTag[OAuth1Info])
+  implicit val ex: ExecutionContext, val classTag: ClassTag[OAuth1Info])
     extends DelegableAuthInfoDAO[OAuth1Info] with DAOSlick {
 
   import profile.api._

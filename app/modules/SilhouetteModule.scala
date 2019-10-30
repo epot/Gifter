@@ -27,16 +27,16 @@ import models.daos._
 import models.services.{UserService, UserServiceImpl}
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
-import net.ceedubs.ficus.readers.EnumerationReader._
 import net.ceedubs.ficus.readers.ValueReader
 import net.codingwell.scalaguice.ScalaModule
 import play.api.Configuration
-import play.api.db.Database
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.openid.OpenIdClient
 import play.api.libs.ws.WSClient
 import play.api.mvc.{Cookie, CookieHeaderEncoding}
 import utils.auth.DefaultEnv
+// do not remove this: otherwise you'll get a compilation error
+import net.ceedubs.ficus.readers.EnumerationReader._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

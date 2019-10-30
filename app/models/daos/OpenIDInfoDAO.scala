@@ -14,7 +14,6 @@ import scala.reflect.ClassTag
  */
 class OpenIDInfoDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(
                                implicit val ex: ExecutionContext,
-                                implicit
                                 val classTag: ClassTag[OpenIDInfo])
     extends DelegableAuthInfoDAO[OpenIDInfo] with DAOSlick {
 

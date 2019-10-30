@@ -14,7 +14,6 @@ import scala.reflect.ClassTag
  */
 class OAuth2InfoDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(
 implicit val ex: ExecutionContext,
-                                implicit
                                 val classTag: ClassTag[OAuth2Info]
                               )
     extends DelegableAuthInfoDAO[OAuth2Info] with DAOSlick {

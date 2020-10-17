@@ -1,5 +1,5 @@
 import { Injectable, ViewContainerRef } from '@angular/core';
-import { Response } from '@angular/http';
+import { HttpResponse } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
@@ -50,11 +50,11 @@ export class ErrorHandleService {
   handleError(err: any) {
     if (typeof err === 'string') {
       this._toastr.error(err);
-    } else if (err instanceof Response) {
+    } else if (err instanceof HttpResponse) {
       // for ng2-ui-auth errors
-      const res: Response = err;
-      if (res.json().message) {
-        this._toastr.error(res.json().message, res.statusText);
+      const res: HttpResponse<any> = err;
+      if (res.body.json().message) {
+        this._toastr.error(res.body.json().message, res.statusText);
       } else {
         this._toastr.error(res.statusText);
       }

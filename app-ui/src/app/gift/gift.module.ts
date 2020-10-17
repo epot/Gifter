@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { CalendarModule } from 'primeng/primeng';
+import { CalendarModule } from 'primeng/calendar';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';

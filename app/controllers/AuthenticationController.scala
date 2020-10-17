@@ -39,6 +39,7 @@ class AuthenticationController @Inject() (
 ) extends AbstractController(components) with I18nSupport {
 
   val c = Metrics.client
+  val logger: Logger = Logger(this.getClass())
 
   /**
     * Converts the JSON into a `SignInForm.Data` object.
@@ -121,10 +122,10 @@ class AuthenticationController @Inject() (
         case _ => Future.failed(new ProviderException(s"Cannot authenticate with unexpected social provider $provider"))
       }).recover {
         case e: ProviderException =>
-          Logger.error("Unexpected provider error", e)
+          logger.error("Unexpected provider error", e)
           Unauthorized(Json.obj("message" -> Messages("could.not.authenticate")))
         case e: Exception =>
-          Logger.error("Unexpected error", e)
+          logger.error("Unexpected error", e)
           Unauthorized(Json.obj("message" -> Messages("could.not.authenticate")))
       }
     }

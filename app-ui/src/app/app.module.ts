@@ -51,7 +51,6 @@ export const GOOGLE_CLIENT_ID =
     GiftModule,
     AboutModule,
     LoginModule,
-    NgbModule.forRoot(),
     ToastrModule.forRoot(),
     CookieModule.forRoot(),
     Ng2UiAuthModule.forRoot({

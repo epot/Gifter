@@ -20,15 +20,15 @@ object PubSubActor {
 }
 
 class PubSubActor(channelPrefix: String, user: User, redisHost: String, redisPort: Int, maybeRedisPassword: Option[String])
-  extends RedisSubscriberActor(new InetSocketAddress(redisHost, redisPort), Nil, Seq(s"$channelPrefix.*"), authPassword = maybeRedisPassword, onConnectStatus = connected => { Logger.info(s"${user.userName} connected: $connected") }) with ActorLogging {
+  extends RedisSubscriberActor(new InetSocketAddress(redisHost, redisPort), Nil, Seq(s"$channelPrefix.*"), authPassword = maybeRedisPassword, onConnectStatus = _ => { }) with ActorLogging {
 
   def onMessage(message: Message) {
-    Logger.info(s"pattern message received: ${message.data.utf8String}")
+    log.info(s"pattern message received: ${message.data.utf8String}")
     context.parent ! PubMessage(message.channel, message.data)
   }
 
   def onPMessage(pmessage: PMessage) {
-    Logger.info(s"pattern message received: ${pmessage.data.utf8String}")
+    log.info(s"pattern message received: ${pmessage.data.utf8String}")
     context.parent ! PubMessage(pmessage.channel, pmessage.data)
   }
 }

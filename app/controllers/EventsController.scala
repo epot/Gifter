@@ -45,6 +45,7 @@ class EventsController @Inject()(components: ControllerComponents,
   extends AbstractController(components) with I18nSupport {
 
   val c = Metrics.client
+  val logger: Logger = Logger(this.getClass())
 
   val eventForm = Form[EventSimple](
     tuple(
@@ -492,7 +493,7 @@ class EventsController @Inject()(components: ControllerComponents,
         }
 
       case rejected =>
-        Logger.error(s"Request ${rejected} failed same origin check")
+        logger.error(s"Request ${rejected} failed same origin check")
         Future.successful {
           Left(Forbidden("forbidden"))
         }
@@ -508,19 +509,19 @@ class EventsController @Inject()(components: ControllerComponents,
   private def sameOriginCheck(implicit rh: RequestHeader): Boolean = {
     // The Origin header is the domain the request originates from.
     // https://tools.ietf.org/html/rfc6454#section-7
-    Logger.debug("Checking the ORIGIN ")
+    logger.debug("Checking the ORIGIN ")
 
     rh.headers.get("Origin") match {
       case Some(originValue) if originMatches(originValue) =>
-        Logger.debug(s"originCheck: originValue = $originValue")
+        logger.debug(s"originCheck: originValue = $originValue")
         true
 
       case Some(badOrigin) =>
-        Logger.error(s"originCheck: rejecting request because Origin header value ${badOrigin} is not in the same origin")
+        logger.error(s"originCheck: rejecting request because Origin header value ${badOrigin} is not in the same origin")
         false
 
       case None =>
-        Logger.error("originCheck: rejecting request because no Origin header found")
+        logger.error("originCheck: rejecting request because no Origin header found")
         false
     }
   }

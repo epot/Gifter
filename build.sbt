@@ -19,12 +19,12 @@ libraryDependencies ++= Seq(
   // anorm is now an external dependency (since play2.4)
   "org.playframework.anorm" %% "anorm" % "2.6.5",
   // silouhette to handle google/yahoo authentification dude dude dude
-  "com.mohiva" %% "play-silhouette" % "6.1.1",
-  "com.mohiva" %% "play-silhouette-persistence" % "6.1.1",
-  "com.mohiva" %% "play-silhouette-crypto-jca" % "6.1.1",
+  "com.mohiva" %% "play-silhouette" % "7.0.0",
+  "com.mohiva" %% "play-silhouette-persistence" % "7.0.0",
+  "com.mohiva" %% "play-silhouette-crypto-jca" % "7.0.0",
   "com.typesafe.play" %% "play-mailer" % "7.0.1",
   "com.typesafe.play" %% "play-mailer-guice" % "7.0.1",
-  "com.enragedginger" %% "akka-quartz-scheduler" % "1.8.1-akka-2.5.x",
+  "com.enragedginger" %% "akka-quartz-scheduler" % "1.8.5-akka-2.6.x",
   "com.github.nscala-time" %% "nscala-time" % "2.22.0",
   "com.beachape" %% "enumeratum-play" % "1.5.16",
   // async postgres

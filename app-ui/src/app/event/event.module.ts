@@ -1,12 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import {
-  DataTableModule,
-  SharedModule as PrimeNgSharedModule
-} from 'primeng/primeng';
+import { TableModule } from 'primeng/table';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { DropdownModule } from 'primeng/components/dropdown/dropdown';
+import { DropdownModule } from 'primeng/dropdown';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { CoreModule } from '@app/core';
@@ -19,8 +16,7 @@ import { WSService } from '../services/ws.service';
   imports: [
     ReactiveFormsModule,
     FormsModule,
-    DataTableModule,
-    PrimeNgSharedModule,
+    TableModule,
     NgbModule,
     DropdownModule,
     CommonModule,

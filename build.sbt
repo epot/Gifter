@@ -8,7 +8,7 @@ scalaVersion := "2.13.1"
 
 resolvers ++= Seq(
   "Atlassian Releases" at "https://maven.atlassian.com/public/",
-  "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
+  "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/"
 )
 resolvers += Resolver.jcenterRepo
 

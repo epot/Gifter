@@ -5,7 +5,7 @@ logLevel := Level.Warn
 resolvers ++= Seq(
   "Atlassian Releases" at "https://maven.atlassian.com/public/",
   "JCenter repo" at "https://bintray.com/bintray/jcenter/",
-  "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
+  "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/"
 )
 
 // Use the Play sbt plugin for Play projects

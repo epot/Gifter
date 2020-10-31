@@ -81,53 +81,31 @@ class AuthenticationController @Inject() (
     }
   }
 
-  def authenticateSocial(provider: String) = Action.async { r =>
-    cacheAuthTokenForOauth1(r) { implicit request =>
-      (socialProviderRegistry.get[SocialProvider](provider) match {
-        case Some(p: SocialProvider with CommonSocialProfileBuilder) =>
-          val jsonBody: Option[JsValue] = request.body.asJson
-          val authorizationData = jsonBody.map { body =>
-            body.\("authorizationData").as[JsObject]
-          }.get
-          val oauthData = jsonBody.map { body =>
-            body.\("oauthData").as[JsObject]
+  def authenticateSocial(provider: String) = Action.async { implicit request: Request[AnyContent] =>
+    (socialProviderRegistry.get[SocialProvider](provider) match {
+      case Some(p: SocialProvider with CommonSocialProfileBuilder) =>
+        p.authenticate().flatMap {
+          case Left(result) => Future.successful(result)
+          case Right(authInfo) => for {
+            profile <- p.retrieveProfile(authInfo)
+            user <- userService.save(profile)
+            _ <- authInfoRepository.save(profile.loginInfo, authInfo)
+            authenticator <- silhouette.env.authenticatorService.create(profile.loginInfo)
+            token <- silhouette.env.authenticatorService.init(authenticator)
+          } yield {
+            silhouette.env.eventBus.publish(LoginEvent(user, request))
+            c.incrementCounter("giftyou.events.login", "provider:" + provider, "user-id:" + user.id)
+            Ok(Json.obj("token" -> token))
           }
-          val userData  = jsonBody.map { body =>
-            body.\("userData").as[JsObject]
-          }
-          val merge = oauthData match {
-            case Some(arg2) =>
-              val merge = userData match {
-                case Some(arg3) =>
-                  arg2 ++ arg3
-                case _ => arg2
-              }
-              merge ++ authorizationData
-            case _ => authorizationData
-          }
-          p.authenticate()(request.withBody(AnyContentAsJson(merge))).flatMap {
-            case Left(result) => Future.successful(result)
-            case Right(authInfo) => for {
-              profile <- p.retrieveProfile(authInfo)
-              user <- userService.save(profile)
-              _ <- authInfoRepository.save(profile.loginInfo, authInfo)
-              authenticator <- silhouette.env.authenticatorService.create(profile.loginInfo)
-              token <- silhouette.env.authenticatorService.init(authenticator)
-            } yield {
-              silhouette.env.eventBus.publish(LoginEvent(user, request))
-              c.incrementCounter("giftyou.events.login", "provider:" + provider, "user-id:" + user.id)
-              Ok(Json.obj("token" -> token))
-            }
-          }
-        case _ => Future.failed(new ProviderException(s"Cannot authenticate with unexpected social provider $provider"))
-      }).recover {
-        case e: ProviderException =>
-          logger.error("Unexpected provider error", e)
-          Unauthorized(Json.obj("message" -> Messages("could.not.authenticate")))
-        case e: Exception =>
-          logger.error("Unexpected error", e)
-          Unauthorized(Json.obj("message" -> Messages("could.not.authenticate")))
-      }
+        }
+      case _ => Future.failed(new ProviderException(s"Cannot authenticate with unexpected social provider $provider"))
+    }).recover {
+      case e: ProviderException =>
+        logger.error("Unexpected provider error", e)
+        Unauthorized(Json.obj("message" -> Messages("could.not.authenticate")))
+      case e: Exception =>
+        logger.error("Unexpected error", e)
+        Unauthorized(Json.obj("message" -> Messages("could.not.authenticate")))
     }
   }
 

@@ -14,215 +14,226 @@
                 >
               </div>
               <br />
-              <p-dataTable
-                *ngIf="visible"
-                rowHover="true"
-                [value]="gifts"
-                [rows]="20"
-                [paginator]="true"
-                #dt
-              >
-                <p-column
-                  field="name"
-                  translate-header
-                  header="Description"
-                  [filter]="true"
-                  translate-filterPlaceholder
-                  filterPlaceholder="Search"
-                >
-                  <ng-template let-col let-g="rowData" pTemplate="body">
-                    <ng-template #elseBlock>
-                      <ng-container
-                        ><p
-                          class="gift-status bg-warning text-center"
-                          translate-ngbTooltip
-                          ngbTooltip="This is a surprise!"
-                        >
-                          ?
-                        </p></ng-container
-                      >
-                    </ng-template>
-                    <div *ngIf="canEditGift(g); else elseBlock">
-                      <ng-template #elseBlock>{{ g.name }}</ng-template>
-                      <ng-container *ngIf="g.secret; else elseBlock"
-                        ><i class="fa fa-gift"></i> {{ g.name }}</ng-container
-                      >
-                    </div>
-                  </ng-template>
-                </p-column>
-                <p-column
-                  *ngIf="event.eventType == 'Christmas'"
-                  field="to.userName"
-                  [filter]="true"
-                  filterMatchMode="equals"
-                  translate-header
-                  header="For"
-                >
-                  <ng-template pTemplate="filter" let-col>
-                    <p-dropdown
-                      [options]="recipients"
-                      [style]="{ width: '100%' }"
-                      (onChange)="
-                        dt.filter($event.value, col.field, col.filterMatchMode)
-                      "
-                      styleClass="ui-column-filter"
-                    ></p-dropdown>
-                  </ng-template>
-                </p-column>
-                <p-column field="status" translate-header header="Status">
-                  <ng-template let-col let-g="rowData" pTemplate="body">
-                    <ng-template #elseTemplate>
-                      <ng-container
-                        ><p
-                          class="gift-status bg-warning text-center"
-                          translate-ngbTooltip
-                          ngbTooltip="This is a surprise!"
-                        >
-                          ?
-                        </p></ng-container
-                      >
-                    </ng-template>
-                    <ng-container
-                      *ngIf="g.to && g.to.id !== user.id; else elseTemplate"
-                    >
-                      <ng-container *ngIf="g.from">
-                        <ng-container *ngIf="g.status === 'Bought'">
-                          <p
-                            class="gift-status bg-primary text-center"
+              <p-table #dt [value]="gifts">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th translate>Description</th>
+                    <th *ngIf="event.eventType == 'Christmas'" translate>
+                      For
+                    </th>
+                    <th translate>Status</th>
+                    <th translate>Links</th>
+                    <th translate>Actions</th>
+                  </tr>
+                  <tr>
+                    <th>
+                      <input
+                        pInputText
+                        type="text"
+                        (input)="
+                          dt.filter($event.target.value, 'name', 'contains')
+                        "
+                        placeholder="Search"
+                        class="p-column-filter"
+                      />
+                    </th>
+                    <th *ngIf="event.eventType == 'Christmas'">
+                      <p-dropdown
+                        [options]="recipients"
+                        [style]="{ width: '100%' }"
+                        (onChange)="
+                          dt.filter($event.value, 'to.userName', 'equals')
+                        "
+                        styleClass="ui-column-filter"
+                      ></p-dropdown>
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-gift>
+                  <tr>
+                    <td>
+                      <ng-template #elseBlock>
+                        <ng-container
+                          ><p
+                            class="gift-status bg-warning text-center"
                             translate-ngbTooltip
-                            ngbTooltip="Offered by {{ g.from.userName }}"
-                            translate
+                            ngbTooltip="This is a surprise!"
                           >
-                            Bought
-                          </p>
-                        </ng-container>
-                        <ng-container *ngIf="g.status === 'AboutToBeBought'">
-                          <p
-                            class="gift-status bg-primary text-center"
-                            translate-ngbTooltip
-                            ngbTooltip="Offered by {{ g.from.userName }}"
-                            translate
-                          >
-                            About to be bought
-                          </p>
-                        </ng-container>
-                      </ng-container>
-                      <ng-container *ngIf="!g.from">
-                        <ng-container *ngIf="g.status === 'New'" translate
-                          ><p class="gift-status bg-info text-center">
-                            New
+                            ?
                           </p></ng-container
                         >
-                        <ng-container
-                          *ngIf="g.status === 'AboutToBeBought'"
-                          translate
-                          >About to be bought</ng-container
+                      </ng-template>
+                      <div *ngIf="canEditGift(gift); else elseBlock">
+                        <ng-template #elseBlock>{{ gift.name }}</ng-template>
+                        <ng-container *ngIf="gift.secret; else elseBlock"
+                          ><i class="fa fa-gift"></i>
+                          {{ gift.name }}</ng-container
                         >
-                        <ng-container *ngIf="g.status === 'Bought'" translate
-                          >Bought</ng-container
-                        >
-                      </ng-container>
-                    </ng-container>
-                  </ng-template>
-                </p-column>
-                <p-column field="links" translate-header header="Links">
-                  <ng-template let-col let-gift="rowData" pTemplate="body">
-                    <div
-                      class="btn-group btn-group-sm"
-                      role="group"
-                      aria-label="..."
-                    >
-                      <a
-                        *ngFor="let url of gift.urls"
-                        type="button"
-                        class="btn btn-light"
-                        href="{{ url }}"
-                        target="_blank\"
-                      >
-                        <i class="fa fa-link"></i>
-                      </a>
-                    </div>
-                  </ng-template>
-                </p-column>
-                <p-column field="actions" translate-header header="Actions">
-                  <ng-template let-col let-g="rowData" pTemplate="body">
-                    <div class="text-centered">
-                      <div class="btn-group btn-group-sm">
-                        <button
-                          class="btn btn-light"
-                          [routerLink]="[
-                            '/events',
-                            event.id,
-                            'gifts',
-                            g.id,
-                            'view'
-                          ]"
-                        >
-                          <i
-                            class="fa fa-eye"
-                            translate-ngbTooltip
-                            ngbTooltip="Details"
-                          ></i>
-                        </button>
-                        <button
-                          class="btn btn-light"
-                          [disabled]="!canEditGift(g)"
-                          [routerLink]="[
-                            '/events',
-                            event.id,
-                            'gifts',
-                            g.id,
-                            'edit'
-                          ]"
-                        >
-                          <i
-                            class="fa fa-edit"
-                            translate-ngbTooltip
-                            ngbTooltip="Modify"
-                          ></i>
-                        </button>
-                        <button
-                          class="btn btn-light open-gift-status-modal"
-                          data-id="{{ g.id }}"
-                          [disabled]="!canBuyGift(g)"
-                          (click)="openBuyGiftModal(g)"
-                        >
-                          <i
-                            class="fa fa-credit-card"
-                            translate-ngbTooltip
-                            ngbTooltip="Buy"
-                          ></i>
-                        </button>
-                        <button
-                          class="btn btn-light"
-                          [disabled]="g.creator.id !== user.id"
-                          (click)="openDeleteGiftModal(g.id)"
-                        >
-                          <i
-                            class="fa fa-times"
-                            translate-ngbTooltip
-                            ngbTooltip="Remove gift"
-                          ></i>
-                        </button>
-                        <button
-                          [ngClass]="{
-                            'btn btn-info open-gift-comment-modal': true,
-                            'btn-info': hasComments[g.id],
-                            'btn-light': !hasComments[g.id]
-                          }"
-                          (click)="openCommentGiftModal(g)"
-                        >
-                          <i
-                            class="fa fa-comment"
-                            translate-ngbTooltip
-                            ngbTooltip="Comment"
-                          ></i>
-                        </button>
                       </div>
-                    </div>
-                  </ng-template>
-                </p-column>
-              </p-dataTable>
+                    </td>
+                    <td *ngIf="event.eventType == 'Christmas'">
+                      {{ gift.to.userName }}
+                    </td>
+                    <td>
+                      <ng-template #elseTemplate>
+                        <ng-container
+                          ><p
+                            class="gift-status bg-warning text-center"
+                            translate-ngbTooltip
+                            ngbTooltip="This is a surprise!"
+                          >
+                            ?
+                          </p></ng-container
+                        >
+                      </ng-template>
+                      <ng-container
+                        *ngIf="
+                          gift.to && gift.to.id !== user.id;
+                          else elseTemplate
+                        "
+                      >
+                        <ng-container *ngIf="gift.from">
+                          <ng-container *ngIf="gift.status === 'Bought'">
+                            <p
+                              class="gift-status bg-primary text-center"
+                              translate-ngbTooltip
+                              ngbTooltip="Offered by {{ gift.from.userName }}"
+                              translate
+                            >
+                              Bought
+                            </p>
+                          </ng-container>
+                          <ng-container
+                            *ngIf="gift.status === 'AboutToBeBought'"
+                          >
+                            <p
+                              class="gift-status bg-primary text-center"
+                              translate-ngbTooltip
+                              ngbTooltip="Offered by {{ gift.from.userName }}"
+                              translate
+                            >
+                              About to be bought
+                            </p>
+                          </ng-container>
+                        </ng-container>
+                        <ng-container *ngIf="!gift.from">
+                          <ng-container *ngIf="gift.status === 'New'" translate
+                            ><p class="gift-status bg-info text-center">
+                              New
+                            </p></ng-container
+                          >
+                          <ng-container
+                            *ngIf="gift.status === 'AboutToBeBought'"
+                            translate
+                            >About to be bought</ng-container
+                          >
+                          <ng-container
+                            *ngIf="gift.status === 'Bought'"
+                            translate
+                            >Bought</ng-container
+                          >
+                        </ng-container>
+                      </ng-container>
+                    </td>
+                    <td>
+                      <div
+                        class="btn-group btn-group-sm"
+                        role="group"
+                        aria-label="..."
+                      >
+                        <a
+                          *ngFor="let url of gift.urls"
+                          type="button"
+                          class="btn btn-light"
+                          href="{{ url }}"
+                          target="_blank\"
+                        >
+                          <i class="fa fa-link"></i>
+                        </a>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="text-centered">
+                        <div class="btn-group btn-group-sm">
+                          <button
+                            class="btn btn-light"
+                            [routerLink]="[
+                              '/events',
+                              event.id,
+                              'gifts',
+                              gift.id,
+                              'view'
+                            ]"
+                          >
+                            <i
+                              class="fa fa-eye"
+                              translate-ngbTooltip
+                              ngbTooltip="Details"
+                            ></i>
+                          </button>
+                          <button
+                            class="btn btn-light"
+                            [disabled]="!canEditGift(gift)"
+                            [routerLink]="[
+                              '/events',
+                              event.id,
+                              'gifts',
+                              gift.id,
+                              'edit'
+                            ]"
+                          >
+                            <i
+                              class="fa fa-edit"
+                              translate-ngbTooltip
+                              ngbTooltip="Modify"
+                            ></i>
+                          </button>
+                          <button
+                            class="btn btn-light open-gift-status-modal"
+                            data-id="{{ gift.id }}"
+                            [disabled]="!canBuyGift(gift)"
+                            (click)="openBuyGiftModal(gift)"
+                          >
+                            <i
+                              class="fa fa-credit-card"
+                              translate-ngbTooltip
+                              ngbTooltip="Buy"
+                            ></i>
+                          </button>
+                          <button
+                            class="btn btn-light"
+                            [disabled]="gift.creator.id !== user.id"
+                            (click)="openDeleteGiftModal(gift.id)"
+                          >
+                            <i
+                              class="fa fa-times"
+                              translate-ngbTooltip
+                              ngbTooltip="Remove gift"
+                            ></i>
+                          </button>
+                          <button
+                            [ngClass]="{
+                              'btn btn-info open-gift-comment-modal': true,
+                              'btn-info': hasComments[gift.id],
+                              'btn-light': !hasComments[gift.id]
+                            }"
+                            (click)="openCommentGiftModal(gift)"
+                          >
+                            <i
+                              class="fa fa-comment"
+                              translate-ngbTooltip
+                              ngbTooltip="Comment"
+                            ></i>
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
             </ng-template>
           </ngb-tab>
           <ngb-tab title="{{ 'DASHBOARD' | translate }}">

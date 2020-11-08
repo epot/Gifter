@@ -1,8 +1,8 @@
 package controllers
 
 import java.util.UUID
-import javax.inject.Inject
 
+import javax.inject.Inject
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.services.AvatarService
 import com.mohiva.play.silhouette.api.util.PasswordHasherRegistry
@@ -13,6 +13,7 @@ import models.user.{RegistrationData, UserForms}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import models.user.User
+import play.api.Logger
 import play.api.libs.json.Json
 import utils.auth.DefaultEnv
 
@@ -26,13 +27,15 @@ class RegistrationController @Inject() (
     authInfoRepository: AuthInfoRepository,
     userService: UserService
 )(implicit ex: ExecutionContext) extends AbstractController(components) with I18nSupport {
+  val logger: Logger = Logger(this.getClass())
 
   def register = silhouette.UnsecuredAction.async { implicit request =>
     UserForms.registrationForm.bindFromRequest.fold(
       form => Future.successful(BadRequest(Json.obj("errors" -> form.errors.map{_.messages.mkString(", ")}))),
       data => {
         userService.retrieve(LoginInfo(CredentialsProvider.ID, data.email)).flatMap {
-          case Some(_) => Future.successful {
+          case Some(u) => Future.successful {
+            logger.info("Failed to register as email already exists " + u.email)
             BadRequest(Json.obj("error" -> "That email address is already taken."))
           }
           case None => saveProfile(data)

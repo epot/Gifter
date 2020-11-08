@@ -48,7 +48,6 @@ export class ErrorHandleService {
   }
 
   handleError(err: any) {
-    console.log(err);
     if (typeof err === 'string') {
       this._toastr.error(err);
     } else if (err instanceof HttpErrorResponse) {

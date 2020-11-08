@@ -57,7 +57,7 @@ class ForgotPasswordController @Inject() (
               val url = jsRouter.absoluteURL("/reset-password/" + authToken.id)
 
               val sender = configuration.getOptional[String]("sender").getOrElse(
-                throw new RuntimeException("Cannot get `snder` from config")
+                throw new RuntimeException("Cannot get `sender` from config")
               )
 
               mailerClient.send(Email(

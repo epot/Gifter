@@ -5,6 +5,7 @@ import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import forms.ForgotPasswordForm
 import models.services.{AuthTokenService, UserService}
+import play.api.Configuration
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.libs.json.Json
 import play.api.libs.mailer.{Email, MailerClient}
@@ -27,6 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
  */
 class ForgotPasswordController @Inject() (
   components: ControllerComponents,
+  configuration: Configuration,
   silhouette: Silhouette[DefaultEnv],
   userService: UserService,
   authTokenService: AuthTokenService,
@@ -54,9 +56,13 @@ class ForgotPasswordController @Inject() (
             authTokenService.create(user.id).map { authToken =>
               val url = jsRouter.absoluteURL("/reset-password/" + authToken.id)
 
+              val sender = configuration.getOptional[String]("sender").getOrElse(
+                throw new RuntimeException("Cannot get `snder` from config")
+              )
+
               mailerClient.send(Email(
                 subject = Messages("email.reset.password.subject"),
-                from = Messages("email.from"),
+                from = sender,
                 to = Seq(email),
                 bodyText = Some(views.txt.emails.resetPassword(user, url).body),
                 bodyHtml = Some(views.html.emails.resetPassword(user, url).body)

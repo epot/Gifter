@@ -53,7 +53,7 @@ export class SignUpComponent implements OnInit {
       })
       .subscribe({
         next: response => {
-          this.auth.setToken(response.json().token);
+          this.auth.setToken(response.token);
           this.userService.renewUser();
         },
         error: (err: any) => this.eh.handleError(err),

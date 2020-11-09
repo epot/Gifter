@@ -56,8 +56,10 @@ export class ErrorHandleService {
       if (res.error) {
         if (res.error.error) {
           this._toastr.error(res.error.error, res.statusText);
+        } else if (res.error.message) {
+          this._toastr.error(res.error.message, res.statusText);
         } else {
-          this._toastr.error(res.error.toSource(), res.statusText);
+          this._toastr.error(JSON.stringify(res.error), res.statusText);
         }
       } else if (res.message) {
         this._toastr.error(res.message, res.statusText);

@@ -5,7 +5,9 @@ import {
   HttpEvent,
   HttpInterceptor
 } from '@angular/common/http';
-import { AuthService } from 'ng2-ui-auth';
+
+import { AuthService } from './auth/auth.service';
+
 import { CookieService } from 'ngx-cookie';
 import { Observable } from 'rxjs';
 
@@ -29,7 +31,8 @@ export class TokenInterceptor implements HttpInterceptor {
     if (this.auth.isAuthenticated()) {
       request = request.clone({
         setHeaders: {
-          'X-Auth-Token': this.auth.getToken()
+          'X-Auth-Token': this.auth.getToken(),
+          'Access-Control-Allow-Origin': '*'
         }
       });
     }
@@ -41,7 +44,8 @@ export class TokenInterceptor implements HttpInterceptor {
       // https://www.playframework.com/documentation/2.4.x/ScalaCsrf
       request = request.clone({
         setHeaders: {
-          'Csrf-Token': token
+          'Csrf-Token': token,
+          'Access-Control-Allow-Origin': '*'
         }
       });
     }

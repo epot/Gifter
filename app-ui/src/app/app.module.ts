@@ -5,7 +5,8 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { Ng2UiAuthModule, StorageType } from 'ng2-ui-auth';
+import { Ng2UiAuthModule } from './auth/ng2-ui-auth.module';
+import { StorageType } from './auth/storage-type.enum';
 import { ToastrModule } from 'ngx-toastr';
 import { CookieModule } from 'ngx-cookie';
 

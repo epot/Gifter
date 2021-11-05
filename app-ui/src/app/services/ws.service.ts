@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable, Observer } from 'rxjs';
-import { AuthService } from 'ng2-ui-auth';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class WSService {

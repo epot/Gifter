@@ -38,7 +38,6 @@
     "core-js": "^2.5.6",
     "jquery": "^3.5.0",
     "lodash": "^4.17.21",
-    "ng2-ui-auth": "^10.0.1",
     "ngx-cookie": "^4.1.2",
     "ngx-toastr": "^13.1.0",
     "popper.js": "^1.14.6",

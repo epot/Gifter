@@ -6,7 +6,7 @@ import {
   Validators,
   FormBuilder
 } from '@angular/forms';
-import { AuthService } from 'ng2-ui-auth';
+import { AuthService } from '../auth/auth.service';
 
 import { FormHelperService } from '../services/form-helper.service';
 import { ErrorHandleService } from '../services/error-handle.service';

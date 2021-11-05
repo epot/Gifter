@@ -63,7 +63,9 @@ export class Oauth2Service implements IOauthService {
     oauthData: object,
     userData: object
   ) {
-    const body = { authorizationData, oauthData, userData };
+    //const body = { authorizationData, oauthData, userData };
+    // I am not sure how it ever worked with silhouette, but it expects to read a code from the body
+    const body = oauthData;
     const { baseUrl, withCredentials } = this.config.options;
     const { url, method = 'POST' } = options;
     const exchangeForTokenUrl = baseUrl ? joinUrl(baseUrl, url) : url;

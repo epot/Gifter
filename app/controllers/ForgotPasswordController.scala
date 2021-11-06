@@ -3,12 +3,14 @@ package controllers
 import javax.inject.Inject
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
+import com.sendgrid.helpers.mail.Mail
+import com.sendgrid.{Method, Request, SendGrid}
+import com.sendgrid.helpers.mail.objects.{Content, Email}
 import forms.ForgotPasswordForm
 import models.services.{AuthTokenService, UserService}
-import play.api.Configuration
+import play.api.{Configuration, Logger}
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.libs.json.Json
-import play.api.libs.mailer.{Email, MailerClient}
 import play.api.mvc.{AbstractController, ControllerComponents}
 import utils.JSRouter
 import utils.auth.DefaultEnv
@@ -32,11 +34,11 @@ class ForgotPasswordController @Inject() (
   silhouette: Silhouette[DefaultEnv],
   userService: UserService,
   authTokenService: AuthTokenService,
-  mailerClient: MailerClient,
   jsRouter: JSRouter
  )(
   implicit val ex: ExecutionContext)
   extends AbstractController(components) with I18nSupport {
+  val logger: Logger = Logger(this.getClass())
 
   /**
    * Sends an email with password reset instructions.
@@ -60,13 +62,24 @@ class ForgotPasswordController @Inject() (
                 throw new RuntimeException("Cannot get `sender` from config")
               )
 
-              mailerClient.send(Email(
-                subject = Messages("email.reset.password.subject"),
-                from = sender,
-                to = Seq(email),
-                bodyText = Some(views.txt.emails.resetPassword(user, url).body),
-                bodyHtml = Some(views.html.emails.resetPassword(user, url).body)
-              ))
+              val sendgridApiKey = configuration.getOptional[String]("sendgridApiKey").getOrElse(
+                throw new RuntimeException("Cannot get `sendgridApiKey` from config")
+              )
+
+              val from = new Email(sender)
+              val subject = Messages("email.reset.password.subject")
+              val to = new Email(email)
+              val content = new Content("text/plain", views.txt.emails.resetPassword(user, url).body)
+              val mail = new Mail(from, subject, to, content)
+
+              val sg = new SendGrid(sendgridApiKey)
+              val emailRequest = new Request()
+
+              emailRequest.setMethod(Method.POST)
+              emailRequest.setEndpoint("mail/send")
+              emailRequest.setBody(mail.build)
+              val response = sg.api(emailRequest)
+              logger.info(s"Email sent with status code ${response.getStatusCode}, body ${response.getBody} and headers ${response.getHeaders}")
               Ok
             }
           case _ => Future.successful(Ok)

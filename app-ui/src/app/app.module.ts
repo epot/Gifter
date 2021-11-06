@@ -66,6 +66,7 @@ export const GOOGLE_CLIENT_ID =
         google: {
           clientId: GOOGLE_CLIENT_ID,
           url: '/authenticate/google',
+          scope: ['profile', 'email'],
           redirectUri: environment.localUrl + '/oauth2'
         }
       }

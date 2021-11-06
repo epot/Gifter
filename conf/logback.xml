@@ -12,7 +12,7 @@
     </encoder>
   </appender>
 
-  <logger name="play" level="DEBUG" />
+  <logger name="play" level="INFO" />
   <logger name="com.mohiva" level="INFO" />
   <logger name="application" level="DEBUG" />
 

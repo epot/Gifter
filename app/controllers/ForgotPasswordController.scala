@@ -56,7 +56,12 @@ class ForgotPasswordController @Inject() (
         userService.retrieve(loginInfo).flatMap {
           case Some(user) if user.email.isDefined =>
             authTokenService.create(user.id).map { authToken =>
-              val url = jsRouter.absoluteURL("/reset-password/" + authToken.id)
+
+              var secure = configuration.getOptional[Boolean]("secure").getOrElse(
+                throw new RuntimeException("Cannot get `secure` from config")
+              )
+
+              val url = jsRouter.absoluteURL("/reset-password/" + authToken.id, secure)
 
               val sender = configuration.getOptional[String]("sender").getOrElse(
                 throw new RuntimeException("Cannot get `sender` from config")

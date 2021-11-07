@@ -20,9 +20,9 @@ class JSRouter @Inject() (env: Environment, conf: Configuration) {
     * @param request The current request header.
     * @return The absolute URL for the given route.
     */
-  def absoluteURL(route: String)(implicit request: RequestHeader): String = {
+  def absoluteURL(route: String, secure: Boolean)(implicit request: RequestHeader): String = {
     env.mode match {
-      case Mode.Prod => Call("GET", route).absoluteURL()
+      case Mode.Prod => Call("GET", route).absoluteURL(secure)
       case _ =>
         val host = conf.getOptional[String]("ui.dev.url")
           .getOrElse(throw new RuntimeException("Cannot get `ui.dev.url` from config"))

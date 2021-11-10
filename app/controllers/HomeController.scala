@@ -55,8 +55,7 @@ class HomeController @Inject() (
     */
   private def serveUI(route: String): Action[AnyContent] = Action.async { request =>
     environment.mode match {
-      case Mode.Prod  =>
-        if (route.contains(".")) assets.at(route)(request) else index(request)
+      case Mode.Prod  => assets.versioned("/public", "ui/" + route)(request)
       case _ =>
         Future.successful(Redirect(conf.getOptional[String]("ui.dev.url").getOrElse(
           throw new RuntimeException("Cannot get `ui.dev.url` from config")

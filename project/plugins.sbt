@@ -10,6 +10,6 @@ resolvers ++= Seq(
 
 // Use the Play sbt plugin for Play projects
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.3")
-addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.9.9")
+addSbtPlugin("com.github.sbt" % "sbt-native-packager" % "1.9.4")
 
 

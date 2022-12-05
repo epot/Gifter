@@ -35,7 +35,6 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "4.0.2",
   "com.typesafe.play" %% "play-slick-evolutions" % "4.0.2",
   "com.github.tototoshi" %% "slick-joda-mapper" % "2.4.1",
-  "com.github.etaty" %% "rediscala" % "1.9.0",
   "com.datadoghq" % "java-dogstatsd-client" % "2.8.1",
   // emails
   "com.sendgrid" % "sendgrid-java" % "4.8.0",

@@ -30,7 +30,6 @@ POST     /api/gifts/:giftid/status              controllers.EventsController.upd
 DELETE   /api/events/:eventid/gifts/:giftid     controllers.EventsController.deleteGift(eventid: Long, giftid: Long)
 GET      /api/events/:eventid/gifts/:giftid/comments controllers.EventsController.getGiftComments(eventid: Long, giftid: Long)
 POST     /api/events/:eventid/gifts/:giftid/comments controllers.EventsController.postGiftComment(eventid: Long, giftid: Long)
-GET      /api/ws/events/:eventid                controllers.EventsController.eventWs(eventid: Long)
 
 # Server all JS routes
 GET         /*route                          controllers.HomeController.route(route)

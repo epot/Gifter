@@ -5,7 +5,6 @@ import java.net.URL
 import javax.inject.Inject
 import java.util.UUID
 
-import actors.EventActor
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import models.gift._
@@ -472,32 +471,6 @@ class EventsController @Inject()(components: ControllerComponents,
       }
     )
   }
-
-  def eventWs(eventid: Long) =
-    WebSocket.acceptOrResult[String, String] {
-      case rh if sameOriginCheck(rh) =>
-        implicit val req = Request(rh, AnyContentAsEmpty)
-        silhouette.SecuredRequestHandler { securedRequest =>
-          Future.successful(HandlerResult(Ok, Some(securedRequest.identity)))
-        }.flatMap {
-          case HandlerResult(r, Some(user)) =>
-            eventDAO.find(eventid).map {
-              case maybeEvent =>
-                maybeEvent match {
-                  case Some(event) =>
-                    Right(ActorFlow.actorRef(out => EventActor.props(event, user, out, eventDAO)))
-                  case _ => Left(r)
-                }
-            }
-          case HandlerResult(r, None) => Future.successful(Left(r))
-        }
-
-      case rejected =>
-        logger.error(s"Request ${rejected} failed same origin check")
-        Future.successful {
-          Left(Forbidden("forbidden"))
-        }
-    }
 
   /**
     * Checks that the WebSocket comes from the same origin.  This is necessary to protect

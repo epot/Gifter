@@ -1,3 +1,5 @@
+import NativePackagerKeys._
+
 name := """Gifter"""
 
 version := "1.0-SNAPSHOT"

@@ -54,7 +54,3 @@ unmanagedResourceDirectories in Assets += baseDirectory.value / "app-ui" / "app"
 // other, legacy style, accesses its actions statically.
 routesGenerator := InjectedRoutesGenerator
 routesImport += "play.api.mvc.PathBindable.bindableUUID"
-
-// see https://devcenter.heroku.com/articles/reducing-the-slug-size-of-play-2-x-applications
-WebKeys.webTarget := target.value / "scala-web"
-artifactPath in PlayKeys.playPackageAssets := WebKeys.webTarget.value / (artifactPath in PlayKeys.playPackageAssets).value.getName

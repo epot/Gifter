@@ -10,7 +10,6 @@ import { CoreModule } from '@app/core';
 import { SharedModule } from '@app/shared';
 import { EventRoutingModule } from './event-routing.module';
 import { EventComponent } from './event.component';
-import { WSService } from '../services/ws.service';
 
 @NgModule({
   imports: [
@@ -26,6 +25,5 @@ import { WSService } from '../services/ws.service';
     EventRoutingModule
   ],
   declarations: [EventComponent],
-  providers: [WSService]
 })
 export class EventModule {}

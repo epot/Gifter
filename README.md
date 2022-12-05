@@ -36,13 +36,6 @@ postgres=# CREATE DATABASE gifter3;
 CREATE DATABASE
 ```
 
-Redis is optional but it is advised to start it as well:
-
-```
-brew install redis
-brew services start redis
-```
-
 And then:
 
 ```

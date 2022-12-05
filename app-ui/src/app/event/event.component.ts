@@ -11,7 +11,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { UserService } from '../services/user.service';
 import { EventsService } from '../services/events.service';
-import { WSService } from '../services/ws.service';
 import { TokenUser } from '../token-user';
 import { ErrorHandleService } from '../services/error-handle.service';
 import { FormHelperService } from '../services/form-helper.service';
@@ -45,7 +44,6 @@ export class EventComponent implements OnInit, OnDestroy {
   constructor(
     private userService: UserService,
     private eventsService: EventsService,
-    private wsService: WSService,
     private eh: ErrorHandleService,
     private fb: FormBuilder,
     public fh: FormHelperService,
@@ -88,28 +86,6 @@ export class EventComponent implements OnInit, OnDestroy {
           }
 
           this.participants = response['participants'];
-          this.wsService.connectEventWS(location, +this.event['id']).subscribe(
-            value => {
-              const json = JSON.parse(value.data.toString());
-              if (
-                json['comment'] &&
-                this.user &&
-                json['comment']['user']['id'] !== this.user['id']
-              ) {
-                if (json['comment']['category'] === 'Gift') {
-                  this.hasComments[json['comment']['objectid']] = true;
-                }
-              } else if (json['gift']) {
-                this.updateGift(json['gift']);
-              }
-            },
-            error => {
-              console.log('Error ws: ' + error);
-            },
-            () => {
-              console.log('Completed ws');
-            }
-          );
         },
         err => {
           this.error = err;

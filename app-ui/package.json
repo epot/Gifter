@@ -51,7 +51,7 @@
     "@angular/cli": "^10.1.6",
     "@angular/compiler-cli": "^10.1.6",
     "@angular/language-service": "^10.1.6",
-    "@biesbjerg/ngx-translate-extract": "^2.3.4",
+    "@biesbjerg/ngx-translate-extract": "^7.0.4",
     "@nguniversal/express-engine": "^7.0.2",
     "@ngx-rocket/scripts": "^3.0.0",
     "@types/jasmine": "^2.8.7",
